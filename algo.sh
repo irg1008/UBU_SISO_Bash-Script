@@ -45,7 +45,7 @@ function asignarValores() {
 }
 
 # Funcion Imprime
-function imprime() {
+function imprimirTabla() {
 
   local array1=array1
   local array2=array2
@@ -80,4 +80,4 @@ function imprime() {
 }
 
 asignarValores
-imprime
+imprimirTabla
