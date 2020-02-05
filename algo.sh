@@ -23,6 +23,7 @@ WHITE='\033[1;37m'
 # Variables TODO -> Cambiar cuando usemos los arrays de los proceoss
 num_rows=4
 num_columns=6
+column_width=10 # Recomendamos dar un valor de 10 o más
 
 #Arrays
 declare -A array
@@ -31,7 +32,7 @@ declare -A array
 function asignarValores() {
   for ((i = 1; i <= num_columns; i++)); do
     for ((j = 1; j <= num_rows; j++)); do
-      array[$i,$j]=$RANDOM
+      array[$i, $j]=$RANDOM
     done
   done
 }
@@ -39,28 +40,58 @@ function asignarValores() {
 # Funcion Imprime
 function imprimirTabla() {
 
-  local encabezado="╔══════════╦══════════╦══════════╦══════════╦══════════╦══════════╗"
-  local pie="╚══════════╩══════════╩══════════╩══════════╩══════════╩══════════╝"
-  local interline="╠══════════╬══════════╬══════════╬══════════╬══════════╬══════════╣"
+  # Crea el elemento separador
+  local horizontalSymbol=""
+  for ((i = 1; i <= column_width; i++)); do
+    horizontalSymbol+="═"
+  done
 
+  local encabezado="╔"${horizontalSymbol}
+  local pie="╚"${horizontalSymbol}
+  local interline="╠"${horizontalSymbol}
+
+  # Imprime Marcos
+  marcos() {
+
+    for ((i = 1; i < num_columns; i++)); do
+      encabezado+="╦"${horizontalSymbol}
+      pie+="╩"${horizontalSymbol}
+      interline+="╬"${horizontalSymbol}
+    done
+
+    encabezado+="╗"
+    pie+="╝"
+    interline+="╣"
+
+    printf "${LIGHTBLUE}%s\n${NC}" "$encabezado"
+
+  }
+
+  # Imprime Cuerpo
   cuerpo() {
+
     for ((i = 1; i <= num_columns; i++)); do
-      printf "${LIGHTBLUE}║${NC}%-10s" " Array${i}"
+      printf "${LIGHTBLUE}║${NC}%-${column_width}s" " Array${i}"
     done
     printf "${LIGHTBLUE}║${NC}\n"
 
     for ((i = 1; i <= num_rows; i++)); do
       printf "${LIGHTBLUE}%s\n${NC}" $interline
+
       for ((j = 1; j <= num_columns; j++)); do
-        printf "${LIGHTBLUE}║${NC}%10s" "${array[$j,$i]} "
+        printf "${LIGHTBLUE}║${NC}%${column_width}s" "${array[$j, $i]} "
       done
+
       printf "${LIGHTBLUE}║${NC}\n"
     done
+
+    printf "${LIGHTBLUE}%s\n${NC}" "$pie"
+
   }
 
-  printf "${LIGHTBLUE}%s\n${NC}" "$encabezado"
+  marcos
   cuerpo
-  printf "${LIGHTBLUE}%s\n${NC}" "$pie"
+
 }
 
 asignarValores
