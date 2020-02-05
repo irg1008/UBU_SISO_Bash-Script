@@ -15,17 +15,45 @@
 #     - 0: Red - 1: Light Red
 #     - 0: Green - 1: Light Green
 #     - 0: Brown - 1: Yellow
-#     - 0: Blue video - 1: Light Blue
+#     - 0: Blue - 1: Light Blue
 #     - 0: Purple - 1: Light Purple
 #     - 0: Cyan - 1: Light Cyan
 #     - 0: Light Gray - 1: White
 # No color: \033[0m
 # ----------------------------------
 #
-declare -r L_RED_BG='\e[1;41m'
-declare -r L_CYAN_FG='\e[1;36m'
-declare -r BLACK_FG='\e[0;20m'
+# Esto siempre
+declare -r COM="\e["
+# Más uno de estos
+declare -r BOLD="1"
+declare -r NORMAL="0"
+declare -r UNDERLINE="4"
+declare -r BLINKING="5"
+declare -r REVERSE_VIDEO="7"
+# Más uno de estos [Opcional] - FG
+declare -r FG_BLACK='30'
+declare -r FG_RED='31'
+declare -r FG_GREEN='32'
+declare -r FG_BROWN='33'
+declare -r FG_BLUE='34'
+declare -r FG_PURPLE="35"
+declare -r FG_CYAN="36"
+declare -r FG_WHITE="37"
+# Más uno de estos [Opcional] - BG
+declare -r BG_BLACK='40'
+declare -r BG_RED='41'
+declare -r BG_GREEN='42'
+declare -r BG_BROWN='43'
+declare -r BG_BLUE='44'
+declare -r BG_PURPLE="45"
+declare -r BG_CYAN="46"
+declare -r BG_WHITE="47"
+# Esto siempre
+declare FIN="m"
+# Más el separador
+declare -r SEP=";"
 
+# No color
 declare -r NC='\033[0m'
 # ----------------------------------
 
@@ -33,7 +61,7 @@ declare -r NC='\033[0m'
 
 # Variables TODO -> Cambiar cuando usemos los arrays de los procesos, eliminar las dos variables, ya que podremos sacarlas del tamaño del array con #, ver so (stackoverflow)
 # ----------------------------------
-num_rows=12
+num_rows=8
 num_columns=8
 # ----------------------------------
 
@@ -73,10 +101,6 @@ function imprimirTabla() {
 
   # Tamaño de tabla, pasado por valor
   local column_width=$1
-
-  # Color de la tabla salida
-  local colorTabla=${L_RED_BG}
-  local colorLetra=${BLACK_FG}
 
   # Crea el elemento separador
   local horizontalSymbol=""
@@ -136,7 +160,8 @@ function imprimirTabla() {
 
   }
 
-  printf "${colorTabla}${colorLetra}"
+  # Color de tabla y de letra de tabla
+  printf "${COM}${BLINKING}${SEP}${BOLD}${SEP}${FG_WHITE}${SEP}${BG_RED}${FIN}"
   marcos # Imprime marcos de la tabla
   cuerpo # Imprime el cuerpo de la tabla
   printf "${NC}"
