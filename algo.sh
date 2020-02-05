@@ -20,27 +20,19 @@ LIGHTPURPLE='\033[1;35m'
 LIGHTCYAN='\033[1;36m'
 WHITE='\033[1;37m'
 
-# Variables
+# Variables TODO -> Cambiar cuando usemos los arrays de los proceoss
 num_rows=4
 num_columns=6
 
 #Arrays
-declare -A array1
-declare -A array2
-declare -A array3
-declare -A array4
-declare -A array5
-declare -A array6
+declare -A array
 
 # Funcion Crea Arrays Y Asigna Valores
 function asignarValores() {
-  for ((i = 1; i <= num_rows; i++)); do
-    array1[$i]=$RANDOM
-    array2[$i]=$RANDOM
-    array3[$i]=$RANDOM
-    array4[$i]=$RANDOM
-    array5[$i]=$RANDOM
-    array6[$i]=$RANDOM
+  for ((i = 1; i <= num_columns; i++)); do
+    for ((j = 1; j <= num_rows; j++)); do
+      array[$i,$j]=$RANDOM
+    done
   done
 }
 
@@ -59,9 +51,8 @@ function imprimirTabla() {
 
     for ((i = 1; i <= num_rows; i++)); do
       printf "${LIGHTBLUE}%s\n${NC}" $interline
-      for ((j = 1; j <= 6; j++)); do
-        looped="array${j}[$i]"
-        printf "${LIGHTBLUE}║${NC}%10s" "${!looped} "
+      for ((j = 1; j <= num_columns; j++)); do
+        printf "${LIGHTBLUE}║${NC}%10s" "${array[$j,$i]} "
       done
       printf "${LIGHTBLUE}║${NC}\n"
     done
