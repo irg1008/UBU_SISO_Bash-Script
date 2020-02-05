@@ -47,13 +47,6 @@ function asignarValores() {
 # Funcion Imprime
 function imprimirTabla() {
 
-  local array1=array1
-  local array2=array2
-  local array3=array
-  local array4=array3
-  local array5=array4
-  local array6=array5
-
   local encabezado="╔══════════╦══════════╦══════════╦══════════╦══════════╦══════════╗"
   local pie="╚══════════╩══════════╩══════════╩══════════╩══════════╩══════════╝"
   local interline="╠══════════╬══════════╬══════════╬══════════╬══════════╬══════════╣"
