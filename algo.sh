@@ -46,6 +46,8 @@ function imprimirTabla() {
     horizontalSymbol+="═"
   done
 
+  local colorTabla=${LIGHTBLUE}
+
   local encabezado="╔"${horizontalSymbol}
   local pie="╚"${horizontalSymbol}
   local interline="╠"${horizontalSymbol}
@@ -63,7 +65,7 @@ function imprimirTabla() {
     pie+="╝"
     interline+="╣"
 
-    printf "${LIGHTBLUE}%s\n${NC}" "$encabezado"
+    printf "${colorTabla}%s\n${NC}" "$encabezado"
 
   }
 
@@ -71,21 +73,21 @@ function imprimirTabla() {
   cuerpo() {
 
     for ((i = 1; i <= num_columns; i++)); do
-      printf "${LIGHTBLUE}║${NC}%-${column_width}s" " Array${i}"
+      printf "${colorTabla}║${NC}%-${column_width}s" " Array${i}"
     done
-    printf "${LIGHTBLUE}║${NC}\n"
+    printf "${colorTabla}║${NC}\n"
 
     for ((i = 1; i <= num_rows; i++)); do
-      printf "${LIGHTBLUE}%s\n${NC}" $interline
+      printf "${colorTabla}%s\n${NC}" $interline
 
       for ((j = 1; j <= num_columns; j++)); do
-        printf "${LIGHTBLUE}║${NC}%${column_width}s" "${array[$j, $i]} "
+        printf "${colorTabla}║${NC}%${column_width}s" "${array[$j, $i]} "
       done
 
-      printf "${LIGHTBLUE}║${NC}\n"
+      printf "${colorTabla}║${NC}\n"
     done
 
-    printf "${LIGHTBLUE}%s\n${NC}" "$pie"
+    printf "${colorTabla}%s\n${NC}" "$pie"
 
   }
 
