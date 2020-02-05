@@ -1,34 +1,53 @@
 #!/bin/bash
 
-# ----------------------------------
-# Colors
-# ----------------------------------
-NC='\033[0m'
-LIGHTBLUE='\033[0;31m'
-GREEN='\033[0;32m'
-ORANGE='\033[0;33m'
-BLUE='\033[0;34m'
-PURPLE='\033[0;35m'
-CYAN='\033[0;36m'
-LIGHTGRAY='\033[0;37m'
-DARKGRAY='\033[1;30m'
-LIGHTLIGHTBLUE='\033[1;31m'
-LIGHTGREEN='\033[1;32m'
-YELLOW='\033[1;33m'
-LIGHTBLUE='\033[1;34m'
-LIGHTPURPLE='\033[1;35m'
-LIGHTCYAN='\033[1;36m'
-WHITE='\033[1;37m'
 
-# Variables TODO -> Cambiar cuando usemos los arrays de los proceoss
-num_rows=4
-num_columns=6
-column_width=10 # Recomendamos dar un valor de 10 o más
 
-#Arrays
+# Colors = '\e[<tipo de caracter>;<FG o BG>'
+# FG = [30, 37]; BG = [40, 47]
+# Tipo de caracter:
+#     - 0: Normal
+#     - 1: Bold
+#     - 4: Undelrine
+#     - 5: Blinking
+#     - 7: Reverse video
+# Colores:
+#     - 0: Black - 1: Dark Gray
+#     - 0: Red - 1: Light Red
+#     - 0: Green - 1: Light Green
+#     - 0: Brown - 1: Yellow
+#     - 0: Blue video - 1: Light Blue
+#     - 0: Purple - 1: Light Purple
+#     - 0: Cyan - 1: Light Cyan
+#     - 0: Light Gray - 1: White
+# No color: \033[0m
+# ----------------------------------
+#
+declare -r L_RED_BG='\e[1;41m'
+declare -r L_CYAN_FG='\e[1;36m'
+declare -r BLACK_FG='\e[0;20m'
+
+declare -r NC='\033[0m'
+# ----------------------------------
+
+
+
+# Variables TODO -> Cambiar cuando usemos los arrays de los procesos, eliminar las dos variables, ya que podremos sacarlas del tamaño del array con #, ver so (stackoverflow)
+# ----------------------------------
+num_rows=12
+num_columns=8
+# ----------------------------------
+
+
+
+#Array bidimensional con todos los datos
+# ----------------------------------
 declare -A array
+# ----------------------------------
 
-# Funcion Crea Arrays Y Asigna Valores
+
+
+# Crea arrays y asigna valores
+# ----------------------------------
 function asignarValores() {
   for ((i = 1; i <= num_columns; i++)); do
     for ((j = 1; j <= num_rows; j++)); do
@@ -36,9 +55,28 @@ function asignarValores() {
     done
   done
 }
+# ----------------------------------
 
-# Funcion Imprime
+
+
+# Imprime la tabla pasandole el argumento del ancho de tabla
+# @arg ancho
+# ----------------------------------
 function imprimirTabla() {
+
+  # Titulos de las columnas, la tabla tendrá tantas columnas como titulos pasados
+  local titulos=("$@")
+
+  # Numero de columnas y filas. Se calculará al saber cuantos datos almacena al array DATOS. De momento usamos la variable global
+  local numeroColumnas
+  local numeroFilas
+
+  # Tamaño de tabla, pasado por valor
+  local column_width=$1
+
+  # Color de la tabla salida
+  local colorTabla=${L_RED_BG}
+  local colorLetra=${BLACK_FG}
 
   # Crea el elemento separador
   local horizontalSymbol=""
@@ -46,15 +84,15 @@ function imprimirTabla() {
     horizontalSymbol+="═"
   done
 
-  local colorTabla=${LIGHTBLUE}
-
+  # Variables marco
   local encabezado="╔"${horizontalSymbol}
-  local pie="╚"${horizontalSymbol}
   local interline="╠"${horizontalSymbol}
+  local pie="╚"${horizontalSymbol}
 
-  # Imprime Marcos
+  # Imprime marcos
   marcos() {
 
+    # Valores de las intersecciones en el encabezado, pie, y interfila
     for ((i = 1; i < num_columns; i++)); do
       encabezado+="╦"${horizontalSymbol}
       pie+="╩"${horizontalSymbol}
@@ -65,36 +103,52 @@ function imprimirTabla() {
     pie+="╝"
     interline+="╣"
 
-    printf "${colorTabla}%s\n${NC}" "$encabezado"
+    # Encabezado de la tabla
+    printf "%s\n" "$encabezado"
 
   }
 
-  # Imprime Cuerpo
+  # Imprime cuerpo
   cuerpo() {
 
     for ((i = 1; i <= num_columns; i++)); do
-      printf "${colorTabla}║${NC}%-${column_width}s" " Array${i}"
+      # Títulos de los array a desplegar, por columna
+      printf "║%-${column_width}s" "> ${titulos[$i]}"
     done
-    printf "${colorTabla}║${NC}\n"
+    # Divisor lateral final de primera fila
+    printf "║\n"
 
     for ((i = 1; i <= num_rows; i++)); do
-      printf "${colorTabla}%s\n${NC}" $interline
+      # Divisor de filas
+      printf "%s\n" $interline
 
       for ((j = 1; j <= num_columns; j++)); do
-        printf "${colorTabla}║${NC}%${column_width}s" "${array[$j, $i]} "
+        # Celda
+        printf "║%${column_width}s" "${array[$j, $i]} <"
       done
 
-      printf "${colorTabla}║${NC}\n"
+      # Divisor lateral final de fila
+      printf "║\n"
     done
 
-    printf "${colorTabla}%s\n${NC}" "$pie"
+    # Imprime el pie de tabla
+    printf "%s\n" "$pie"
 
   }
 
-  marcos
-  cuerpo
+  printf "${colorTabla}${colorLetra}"
+  marcos # Imprime marcos de la tabla
+  cuerpo # Imprime el cuerpo de la tabla
+  printf "${NC}"
 
 }
+# ----------------------------------
 
-asignarValores
-imprimirTabla
+
+
+
+# Main
+# ----------------------------------
+asignarValores   # Asignamos valores al array que contiene TODOS los datos
+imprimirTabla 12 Array{1..20} # Creamos una tabla con un tamaño específico junto a titulos para cada columna en orden, si se pasan menos titulos que el tamaño del array de datos se dará un valor predeterminado
+# ----------------------------------
