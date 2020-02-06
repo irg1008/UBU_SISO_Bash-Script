@@ -151,3 +151,4 @@ asignarValores # Asignamos valores al array que contiene TODOS los datos
 
 imprimirTabla 12 1 8 ${BG_BLACK} ${FG_WHITE} true true
 # ----------------------------------
+echo hola
