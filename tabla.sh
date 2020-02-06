@@ -78,6 +78,7 @@ function fc() {
 
 # Imprime una tabla según el tamaño del array de datos
 # @param numeroFilasImprimir
+# @param numeroTabulaciones
 # ----------------------------------
 function imprimirTabla() {
   local titulos
@@ -88,6 +89,7 @@ function imprimirTabla() {
   local encTabla
   local interTabla
   local pieTabla
+  local tabulaciones
 
   # Guarda los colores aleatorio de la tabla
   # ----------------------------------
@@ -158,23 +160,31 @@ function imprimirTabla() {
     pieTabla+=${estiloTabla[9]}
   }
 
+  # Asigna las tabulaciones de la tabla
+  function asignarTabulaciones() {
+    for ((i = 1; i <= $1; i++)); do
+      tabulaciones+="\t"
+    done
+  }
+
   # Imprime la tabla final en orden
   # ----------------------------------
   function imprimir() {
     # Encabezado
     printf "$colorEncabezado%s" ""
-    printf "%s" "$encTabla"
+    printf "$tabulaciones%s" "$encTabla"
     printf "$(fc)\n%s" ""
 
     # Fila de titulos
     printf "$colorEncabezado%s" ""
+    printf "$tabulaciones%s" ""
     imprimirTitulos
     printf "$(fc)\n%s" ""
 
     for ((k = 1; k <= filasImprimir; k++)); do
       # Fila de datos
       printf "${coloresTabla[$k]}%s" ""
-      printf "%s\n" "$interTabla"
+      printf "$tabulaciones%s\n$tabulaciones" "$interTabla"
       for ((j = 1; j <= NUM_COL; j++)); do
         # Celda
         printf "║%*s" "$anchoCelda" "${array[$j, $k]} "
@@ -184,7 +194,7 @@ function imprimirTabla() {
       if [ "$k" == "$filasImprimir" ]; then
         # Fila de pie
         printf "${coloresTabla[$k]}%s" ""
-        printf "%s" "$pieTabla"
+        printf "$tabulaciones%s" "$pieTabla"
         printf "$(fc)\n%s" ""
       fi
     done
@@ -194,6 +204,7 @@ function imprimirTabla() {
   # ----------------------------------
   guardarColoresDeTabla
   asignarAnchoYFilasMostrar "$1"
+  asignarTabulaciones "$2"
   asignarEstiloDeTabla
   imprimir
 }
@@ -201,4 +212,4 @@ function imprimirTabla() {
 # Main
 # ----------------------------------
 asignarValores
-imprimirTabla 8
+imprimirTabla 8 8
