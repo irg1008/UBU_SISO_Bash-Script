@@ -8,7 +8,7 @@
 # Tipo de uso de colores
 declare -r BOLD="1"; declare -r NORMAL="0"; declare -r UNDERLINE="4"; declare -r BLINKING="5"; declare -r REVERSE="7"
 # FG color # BG color # Equivalente
-declare -r FG_BLACK="30"; declare -r BG_BLACK="40" # - 0: Black - 1: Dark Gray
+# declare -r FG_BLACK="30"; declare -r BG_BLACK="40" # - 0: Black - 1: Dark Gray
 declare -r FG_RED="31"; declare -r BG_RED="41" # - 0: Red - 1: Light Red
 declare -r FG_GREEN="32"; declare -r BG_GREEN="42" # - 0: Green - 1: Light Green
 declare -r FG_BROWN="33"; declare -r BG_BROWN="43" # - 0: Brown - 1: Yellow
@@ -16,6 +16,7 @@ declare -r FG_BLUE="34"; declare -r BG_BLUE="44" # - 0: Blue - 1: Light Blue
 declare -r FG_PURPLE="35"; declare -r BG_PURPLE="45" # - 0: Purple - 1: Light Purple
 declare -r FG_CYAN="36"; declare -r BG_CYAN="46" # - 0: Cyan - 1: Light Cyan
 declare -r FG_WHITE="37"; declare -r BG_WHITE="47" # - 0: Light Gray - 1: White
+declare -A arrayDeColores
 # Inicio color # Fin de color # Separador # No color
 declare -r COM="\e["; declare FIN="m"; declare -r SEP=";"; declare -r NC="\033[0m"
 # ----------------------------------
@@ -37,9 +38,23 @@ function asignarValores() {
   for ((i = 1; i <= NUM_COLUMNS; i++)); do
     for ((j = 1; j <= NUM_ROWS; j++)); do
       array[$i, $j]=$RANDOM
-      array[1, $j]="P "${j}
+      array[1, $j]="Proc "${j}
     done
   done
+}
+# ----------------------------------
+
+
+# Devuelve un numero de color random
+# ----------------------------------
+function randomColor() {
+
+  if [ $1 == "fg" ]; then
+    echo $((RANDOM%7+31))
+  elif [ $1 == "bg" ]; then
+    echo $((RANDOM%7+41))
+  fi
+
 }
 # ----------------------------------
 
@@ -49,13 +64,12 @@ function asignarValores() {
 function imprimirTabla() {
 
   # Titulos de las columnas, la tabla tendrá tantas columnas como titulos pasados
-  local titulos=("" Datos{1..20})
+  local titulos=("" "Datos "{A..Z})
 
   # Numero de columnas y filas. Se calculará al saber cuantos datos almacena al array DATOS. De momento usamos la variable global
   local numeroColumnas=$NUM_COLUMNS
   local filaComienzo=$2
   local numeroFilas=$((filaComienzo + $3 - 1))
-
   if [ "$filaComienzo" -gt "$NUM_ROWS" ]; then
     filaComienzo=$NUM_ROWS
     numeroFilas=$NUM_ROWS
@@ -74,6 +88,16 @@ function imprimirTabla() {
   local encabezado="╔"${horizontalSymbol}
   local interline="╠"${horizontalSymbol}
   local pie="╚"${horizontalSymbol}
+
+  # Color de tabla y de letra de tabla
+  local random_fg_color=$(randomColor "fg")
+  local random_bg_color=$(randomColor "bg")
+
+  # Main de tabla
+  printf "${COM}$4${SEP}$random_fg_color${SEP}$random_bg_color${FIN}"
+  marcos $5 # Cabecera, pasamos true o false si queremos o no cabecera
+  cuerpo $6 # Imprime el cuerpo de la tabla y el pie si se quiere
+  printf "${NC}"
 
   # Imprime marcos
   marcos() {
@@ -127,27 +151,17 @@ function imprimirTabla() {
 
   }
 
-  # Color de tabla y de letra de tabla
-  printf "${COM}${BLINKING}${SEP}${BOLD}${SEP}$4${SEP}$5${FIN}"
-  marcos $6 # Cabecera, pasamos true o false si queremos o no cabecera
-  cuerpo $7 # Imprime el cuerpo de la tabla y el pie si se quiere
-  printf "${NC}"
-
 }
 # ----------------------------------
 
 # Main
 # ----------------------------------
 asignarValores # Asignamos valores al array que contiene TODOS los datos
-# Imprime (Ancho de celda, Fila comienzo (Si pones mas de las que hay coge la ultima), Filas a mostrar (Si te has pasado en la anterior, solo muestra la ultima), Color del fondo de las filas, Color del frente de las filas, Imprimir cabecera si o no, Imprimir pie de tabla si o no)
-#tablaACachos=$(imprimirTabla 12 1 1 ${BG_BLACK} ${FG_WHITE} true false)
-#tablaACachos+=$(imprimirTabla 12 2 1 ${BG_RED} ${FG_WHITE} false false)
-#tablaACachos+=$(imprimirTabla 12 3 1 ${BG_CYAN} ${FG_WHITE} false false)
-#tablaACachos+=$(imprimirTabla 12 4 1 ${BG_PURPLE} ${FG_WHITE} false false)
-#tablaACachos+=$(imprimirTabla 12 5 1 ${BG_GREEN} ${FG_WHITE} false false)
-#tablaACachos+=$(imprimirTabla 12 6 1 ${BG_BROWN} ${FG_BLACK} false false)
-#tablaACachos+=$(imprimirTabla 12 7 1 ${BG_WHITE} ${FG_BLUE} false false)
-#tablaACachos+=$(imprimirTabla 12 8 1 ${BG_BLUE} ${FG_WHITE} false true)
 
-imprimirTabla 12 1 8 ${BG_BLACK} ${FG_WHITE} true true
+# Hacemos for de impresion de tabla fila por fila dando al intro con cada fila un color aleatorio
+# Eliminamos los colores del final de la fila
+# Centramos la tabla al medio
+
+# Imprime (Tamaño, FilaInicio, NumFilas, Fuerte o Normal, Cabecera, Pie)
+imprimirTabla 12 1 8 ${BOLD} true true
 # ----------------------------------
