@@ -1,66 +1,29 @@
 #!/bin/bash
 
 # TODO -> Poner colores aleatorios para cada fila
+# TODO -> Cambiar las variables de filas y columnas cuando implementemos el algoritmo
 
-# Colors = '\e[<tipo de caracter>;<FG o BG>'
-# FG = [30, 37]; BG = [40, 47]
-# Tipo de caracter:
-#     - 0: Normal
-#     - 1: Bold
-#     - 4: Undelrine
-#     - 5: Blinking
-#     - 7: Reverse video
-# Colores:
-#     - 0: Black - 1: Dark Gray
-#     - 0: Red - 1: Light Red
-#     - 0: Green - 1: Light Green
-#     - 0: Brown - 1: Yellow
-#     - 0: Blue - 1: Light Blue
-#     - 0: Purple - 1: Light Purple
-#     - 0: Cyan - 1: Light Cyan
-#     - 0: Light Gray - 1: White
-# No color: \033[0m
+# Colores
 # ----------------------------------
-#
-# Esto siempre
-declare -r COM="\e["
-# Más uno de estos
-declare -r BOLD="1"
-declare -r NORMAL="0"
-declare -r UNDERLINE="4"
-declare -r BLINKING="5"
-declare -r REVERSE_VIDEO="7"
-# Más uno de estos [Opcional] - FG
-declare -r FG_BLACK='30'
-declare -r FG_RED='31'
-declare -r FG_GREEN='32'
-declare -r FG_BROWN='33'
-declare -r FG_BLUE='34'
-declare -r FG_PURPLE="35"
-declare -r FG_CYAN="36"
-declare -r FG_WHITE="37"
-# Más uno de estos [Opcional] - BG
-declare -r BG_BLACK='40'
-declare -r BG_RED='41'
-declare -r BG_GREEN='42'
-declare -r BG_BROWN='43'
-declare -r BG_BLUE='44'
-declare -r BG_PURPLE="45"
-declare -r BG_CYAN="46"
-declare -r BG_WHITE="47"
-# Esto siempre
-declare FIN="m"
-# Más el separador
-declare -r SEP=";"
-
-# No color
-declare -r NC='\033[0m'
+# Tipo de uso de colores
+declare -r BOLD="1"; declare -r NORMAL="0"; declare -r UNDERLINE="4"; declare -r BLINKING="5"; declare -r REVERSE="7"
+# FG color # BG color # Equivalente
+declare -r FG_BLACK="30"; declare -r BG_BLACK="40" # - 0: Black - 1: Dark Gray
+declare -r FG_RED="31"; declare -r BG_RED="41" # - 0: Red - 1: Light Red
+declare -r FG_GREEN="32"; declare -r BG_GREEN="42" # - 0: Green - 1: Light Green
+declare -r FG_BROWN="33"; declare -r BG_BROWN="43" # - 0: Brown - 1: Yellow
+declare -r FG_BLUE="34"; declare -r BG_BLUE="44" # - 0: Blue - 1: Light Blue
+declare -r FG_PURPLE="35"; declare -r BG_PURPLE="45" # - 0: Purple - 1: Light Purple
+declare -r FG_CYAN="36"; declare -r BG_CYAN="46" # - 0: Cyan - 1: Light Cyan
+declare -r FG_GRAY="37"; declare -r BG_GRAY="47" # - 0: Light Gray - 1: White
+# Inicio color # Fin de color # Separador # No color
+declare -r COM="\e["; declare FIN="m"; declare -r SEP=";"; declare -r NC="\033[0m"
 # ----------------------------------
 
-# Variables TODO -> Cambiar cuando usemos los arrays de los procesos, eliminar las dos variables, ya que podremos sacarlas del tamaño del array con #, ver so (stackoverflow)
+# Variables
 # ----------------------------------
-num_rows=8
-num_columns=8
+declare -r NUM_ROWS=8
+declare -r UM_COLUMNS=8
 # ----------------------------------
 
 #Array bidimensional con todos los datos
@@ -71,8 +34,8 @@ declare -A array
 # Crea arrays y asigna valores
 # ----------------------------------
 function asignarValores() {
-  for ((i = 1; i <= num_columns; i++)); do
-    for ((j = 1; j <= num_rows; j++)); do
+  for ((i = 1; i <= NUM_COLUMNS; i++)); do
+    for ((j = 1; j <= NUM_ROWS; j++)); do
       array[$i, $j]=$RANDOM
       array[1, $j]="P "${j}
     done
@@ -89,13 +52,13 @@ function imprimirTabla() {
   local titulos=("" Datos{1..20})
 
   # Numero de columnas y filas. Se calculará al saber cuantos datos almacena al array DATOS. De momento usamos la variable global
-  local numeroColumnas=$num_columns
+  local numeroColumnas=$NUM_COLUMNS
   local filaComienzo=$2
   local numeroFilas=$((filaComienzo + $3 - 1))
 
-  if [ "$filaComienzo" -gt "$num_rows" ]; then
-    filaComienzo=$num_rows
-    numeroFilas=$num_rows
+  if [ "$filaComienzo" -gt "$NUM_ROWS" ]; then
+    filaComienzo=$NUM_ROWS
+    numeroFilas=$NUM_ROWS
   fi
 
   # Tamaño de tabla, pasado por valor
@@ -141,7 +104,7 @@ function imprimirTabla() {
     # Divisor lateral final de primera fila
     printf "║\n"
 
-    for ((i = filaComienzo; i <= numeroFilas && i <=num_rows; i++)); do
+    for ((i = filaComienzo; i <= numeroFilas && i <=NUM_ROWS; i++)); do
       # Divisor de filas
       printf "%s\n" $interline
 
@@ -172,6 +135,5 @@ function imprimirTabla() {
 # ----------------------------------
 asignarValores # Asignamos valores al array que contiene TODOS los datos
 # Imprime (Ancho de celda, Fila comienzo (Si pones mas de las que hay coge la ultima), Filas a mostrar (Si te has pasado en la anterior, solo muestra la ultima))
-imprimirTabla 12 8 1
-imprimirTabla 10 1 5
+imprimirTabla 12 1 ${NUM_ROWS}
 # ----------------------------------
