@@ -83,9 +83,10 @@ function imprimirTabla() {
   function guardarColoresDeTabla() {
     colorEncabezado=$(cc Neg)
     for ((i = 1; i <= NUM_FIL; i++)); do
-      coloresTabla[i]=$(cc Nor)
+      coloresTabla[i]=$(cc Neg)
+      echo ${coloresTabla[i]}
     done
-    echo ${coloresTabla[*]}
+    echo "${coloresTabla[*]}"
   }
 
   # Imprime los titulos de las columnas de datos
@@ -142,33 +143,30 @@ function imprimirTabla() {
   # Imprime la tabla final en orden
   # ----------------------------------
   function imprimir() {
+    # Encabezado
+    printf "$colorEncabezado%s" ""
+    printf "%s" "$encTabla"
+    printf "$(fc)\n%s" ""
+
+    # Fila de titulos
+    printf "$colorEncabezado%s" ""
+    imprimirTitulos
+    printf "$(fc)\n%s" ""
 
     for ((k = 1; k <= filasImprimir; k++)); do
-      if [ "$k" == "1" ]; then
-        # Encabezado + fila de titulos
-        printf "$colorEncabezado%s" ""
-        printf "%s" "$encTabla"
+      # Fila de datos
+      printf "${coloresTabla[k]}%s" ""
+      printf "%s\n" "$interTabla"
+      for ((j = 1; j <= NUM_COL; j++)); do
+        # Celda
+        printf "║%*s" "$anchoCelda" "${array[$j, $k]} "
+      done
+      printf "║$(fc)\n%s" ""
+      if [ "$k" == "$filasImprimir" ]; then
+        # Fila de pie
+        printf "${coloresTabla[i]}%s" ""
+        printf "%s" "$pieTabla"
         printf "$(fc)\n%s" ""
-
-        printf "$colorEncabezado%s" ""
-        imprimirTitulos
-        printf "$(fc)\n%s" ""
-      else
-        # Fila de datos
-        printf "%s" "${coloresTabla[k]}"
-        printf "%s\n" "$interTabla"
-        for ((j = 1; j <= NUM_COL; j++)); do
-          # Celda
-          printf "║%*s" "$anchoCelda" "${array[$j, $k]} "
-        done
-        printf "║"
-        printf "$(fc)\n%s" ""
-        if [ "$k" == "$filasImprimir" ]; then
-          # Fila de pie
-          printf "${coloresTabla[i]}%s" ""
-          printf "%s" "$pieTabla"
-          printf "$(fc)\n%s" ""
-        fi
       fi
     done
   }
