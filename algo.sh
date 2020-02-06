@@ -19,7 +19,7 @@ declare -r FG_WHITE="37"; declare -r BG_WHITE="47" # - 0: Light Gray - 1: White
 # Inicio color # Fin de color # Separador # No color
 declare -r COM="\e["; declare FIN="m"; declare -r SEP=";"; declare -r NC="\033[0m"
 # ----------------------------------
-
+echo test
 # Variables
 # ----------------------------------
 NUM_ROWS=8
