@@ -80,6 +80,7 @@ function asignarValores() {
   for ((i = 1; i <= num_columns; i++)); do
     for ((j = 1; j <= num_rows; j++)); do
       array[$i, $j]=$RANDOM
+      array[1, $j]="Proceso "${j}
     done
   done
 }
@@ -93,11 +94,12 @@ function asignarValores() {
 function imprimirTabla() {
 
   # Titulos de las columnas, la tabla tendrá tantas columnas como titulos pasados
-  local titulos=("$@")
+  local titulos=(Array{1..20})
 
   # Numero de columnas y filas. Se calculará al saber cuantos datos almacena al array DATOS. De momento usamos la variable global
-  local numeroColumnas
-  local numeroFilas
+  local numeroColumnas=$num_columns
+  local filaComienzo=$2
+  local numeroFilas=$((filaComienzo+$3-1))
 
   # Tamaño de tabla, pasado por valor
   local column_width=$1
@@ -117,7 +119,7 @@ function imprimirTabla() {
   marcos() {
 
     # Valores de las intersecciones en el encabezado, pie, y interfila
-    for ((i = 1; i < num_columns; i++)); do
+    for ((i = 1; i < numeroColumnas; i++)); do
       encabezado+="╦"${horizontalSymbol}
       pie+="╩"${horizontalSymbol}
       interline+="╬"${horizontalSymbol}
@@ -135,18 +137,18 @@ function imprimirTabla() {
   # Imprime cuerpo
   cuerpo() {
 
-    for ((i = 1; i <= num_columns; i++)); do
+    for ((i = 0; i < numeroColumnas; i++)); do
       # Títulos de los array a desplegar, por columna
       printf "║%-${column_width}s" "> ${titulos[$i]}"
     done
     # Divisor lateral final de primera fila
     printf "║\n"
 
-    for ((i = 1; i <= num_rows; i++)); do
+    for ((i = filaComienzo; i <= numeroFilas; i++)); do
       # Divisor de filas
       printf "%s\n" $interline
 
-      for ((j = 1; j <= num_columns; j++)); do
+      for ((j = 1; j <= numeroColumnas; j++)); do
         # Celda
         printf "║%${column_width}s" "${array[$j, $i]} <"
       done
@@ -175,5 +177,6 @@ function imprimirTabla() {
 # Main
 # ----------------------------------
 asignarValores   # Asignamos valores al array que contiene TODOS los datos
-imprimirTabla 12 Array{1..20} # Creamos una tabla con un tamaño específico junto a titulos para cada columna en orden, si se pasan menos titulos que el tamaño del array de datos se dará un valor predeterminado
+# Imprime (Ancho de celda, Fila comienzo, Filas a mostrar)
+imprimirTabla 12 2 1
 # ----------------------------------
