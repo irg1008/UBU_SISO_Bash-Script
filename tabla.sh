@@ -81,12 +81,11 @@ function imprimirTabla() {
   # Guarda los colores aleatorio de la tabla
   # ----------------------------------
   function guardarColoresDeTabla() {
+    local hola=()
     colorEncabezado=$(cc Neg)
     for ((i = 1; i <= NUM_FIL; i++)); do
-      coloresTabla[i]=$(cc Neg)
-      echo ${coloresTabla[i]}
+      coloresTabla[$i]=$(cc Neg)
     done
-    echo "${coloresTabla[*]}"
   }
 
   # Imprime los titulos de las columnas de datos
@@ -155,7 +154,7 @@ function imprimirTabla() {
 
     for ((k = 1; k <= filasImprimir; k++)); do
       # Fila de datos
-      printf "${coloresTabla[k]}%s" ""
+      printf "${coloresTabla[$k]}%s" ""
       printf "%s\n" "$interTabla"
       for ((j = 1; j <= NUM_COL; j++)); do
         # Celda
@@ -164,7 +163,7 @@ function imprimirTabla() {
       printf "║$(fc)\n%s" ""
       if [ "$k" == "$filasImprimir" ]; then
         # Fila de pie
-        printf "${coloresTabla[i]}%s" ""
+        printf "${coloresTabla[$i]}%s" ""
         printf "%s" "$pieTabla"
         printf "$(fc)\n%s" ""
       fi
