@@ -1,6 +1,6 @@
 #!/bin/bash
 
-
+# TODO -> Poner colores aleatorios para cada fila
 
 # Colors = '\e[<tipo de caracter>;<FG o BG>'
 # FG = [30, 37]; BG = [40, 47]
@@ -57,22 +57,16 @@ declare -r SEP=";"
 declare -r NC='\033[0m'
 # ----------------------------------
 
-
-
 # Variables TODO -> Cambiar cuando usemos los arrays de los procesos, eliminar las dos variables, ya que podremos sacarlas del tamaño del array con #, ver so (stackoverflow)
 # ----------------------------------
 num_rows=8
 num_columns=8
 # ----------------------------------
 
-
-
 #Array bidimensional con todos los datos
 # ----------------------------------
 declare -A array
 # ----------------------------------
-
-
 
 # Crea arrays y asigna valores
 # ----------------------------------
@@ -80,13 +74,11 @@ function asignarValores() {
   for ((i = 1; i <= num_columns; i++)); do
     for ((j = 1; j <= num_rows; j++)); do
       array[$i, $j]=$RANDOM
-      array[1, $j]="Proceso "${j}
+      array[1, $j]="P "${j}
     done
   done
 }
 # ----------------------------------
-
-
 
 # Imprime la tabla pasandole el argumento del ancho de tabla
 # @arg ancho
@@ -94,12 +86,17 @@ function asignarValores() {
 function imprimirTabla() {
 
   # Titulos de las columnas, la tabla tendrá tantas columnas como titulos pasados
-  local titulos=(Array{1..20})
+  local titulos=("" Datos{1..20})
 
   # Numero de columnas y filas. Se calculará al saber cuantos datos almacena al array DATOS. De momento usamos la variable global
   local numeroColumnas=$num_columns
   local filaComienzo=$2
-  local numeroFilas=$((filaComienzo+$3-1))
+  local numeroFilas=$((filaComienzo + $3 - 1))
+
+  if [ "$filaComienzo" -gt "$num_rows" ]; then
+    filaComienzo=$num_rows
+    numeroFilas=$num_rows
+  fi
 
   # Tamaño de tabla, pasado por valor
   local column_width=$1
@@ -139,12 +136,12 @@ function imprimirTabla() {
 
     for ((i = 0; i < numeroColumnas; i++)); do
       # Títulos de los array a desplegar, por columna
-      printf "║%-${column_width}s" "> ${titulos[$i]}"
+      printf "║%-${column_width}s" " ${titulos[$i]}"
     done
     # Divisor lateral final de primera fila
     printf "║\n"
 
-    for ((i = filaComienzo; i <= numeroFilas; i++)); do
+    for ((i = filaComienzo; i <= numeroFilas && i <=num_rows; i++)); do
       # Divisor de filas
       printf "%s\n" $interline
 
@@ -171,12 +168,10 @@ function imprimirTabla() {
 }
 # ----------------------------------
 
-
-
-
 # Main
 # ----------------------------------
-asignarValores   # Asignamos valores al array que contiene TODOS los datos
-# Imprime (Ancho de celda, Fila comienzo, Filas a mostrar)
-imprimirTabla 12 2 1
+asignarValores # Asignamos valores al array que contiene TODOS los datos
+# Imprime (Ancho de celda, Fila comienzo (Si pones mas de las que hay coge la ultima), Filas a mostrar (Si te has pasado en la anterior, solo muestra la ultima))
+imprimirTabla 12 8 1
+imprimirTabla 10 1 5
 # ----------------------------------
