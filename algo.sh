@@ -140,16 +140,14 @@ function imprimirTabla() {
 # ----------------------------------
 asignarValores # Asignamos valores al array que contiene TODOS los datos
 # Imprime (Ancho de celda, Fila comienzo (Si pones mas de las que hay coge la ultima), Filas a mostrar (Si te has pasado en la anterior, solo muestra la ultima), Color del fondo de las filas, Color del frente de las filas, Imprimir cabecera si o no, Imprimir pie de tabla si o no)
-tablaACachos=$(imprimirTabla 12 1 1 ${BG_BLACK} ${FG_WHITE} true false)
-tablaACachos+=$(imprimirTabla 12 2 1 ${BG_RED} ${FG_WHITE} false false)
-tablaACachos+=$(imprimirTabla 12 3 1 ${BG_CYAN} ${FG_WHITE} false false)
-tablaACachos+=$(imprimirTabla 12 4 1 ${BG_PURPLE} ${FG_WHITE} false false)
-tablaACachos+=$(imprimirTabla 12 5 1 ${BG_GREEN} ${FG_WHITE} false false)
-tablaACachos+=$(imprimirTabla 12 6 1 ${BG_BROWN} ${FG_BLACK} false false)
-tablaACachos+=$(imprimirTabla 12 7 1 ${BG_WHITE} ${FG_BLUE} false false)
-tablaACachos+=$(imprimirTabla 12 8 1 ${BG_BLUE} ${FG_WHITE} false true)
+#tablaACachos=$(imprimirTabla 12 1 1 ${BG_BLACK} ${FG_WHITE} true false)
+#tablaACachos+=$(imprimirTabla 12 2 1 ${BG_RED} ${FG_WHITE} false false)
+#tablaACachos+=$(imprimirTabla 12 3 1 ${BG_CYAN} ${FG_WHITE} false false)
+#tablaACachos+=$(imprimirTabla 12 4 1 ${BG_PURPLE} ${FG_WHITE} false false)
+#tablaACachos+=$(imprimirTabla 12 5 1 ${BG_GREEN} ${FG_WHITE} false false)
+#tablaACachos+=$(imprimirTabla 12 6 1 ${BG_BROWN} ${FG_BLACK} false false)
+#tablaACachos+=$(imprimirTabla 12 7 1 ${BG_WHITE} ${FG_BLUE} false false)
+#tablaACachos+=$(imprimirTabla 12 8 1 ${BG_BLUE} ${FG_WHITE} false true)
 
-printf "%10s\n" "$tablaACachos"
-
-#imprimirTabla 12 1 8 ${BG_BLACK} ${FG_WHITE} true true
+imprimirTabla 12 1 8 ${BG_BLACK} ${FG_WHITE} true true
 # ----------------------------------
