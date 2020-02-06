@@ -15,15 +15,15 @@ declare -r FG_BROWN="33"; declare -r BG_BROWN="43" # - 0: Brown - 1: Yellow
 declare -r FG_BLUE="34"; declare -r BG_BLUE="44" # - 0: Blue - 1: Light Blue
 declare -r FG_PURPLE="35"; declare -r BG_PURPLE="45" # - 0: Purple - 1: Light Purple
 declare -r FG_CYAN="36"; declare -r BG_CYAN="46" # - 0: Cyan - 1: Light Cyan
-declare -r FG_GRAY="37"; declare -r BG_GRAY="47" # - 0: Light Gray - 1: White
+declare -r FG_WHITE="37"; declare -r BG_WHITE="47" # - 0: Light Gray - 1: White
 # Inicio color # Fin de color # Separador # No color
 declare -r COM="\e["; declare FIN="m"; declare -r SEP=";"; declare -r NC="\033[0m"
 # ----------------------------------
 
 # Variables
 # ----------------------------------
-declare -r NUM_ROWS=8
-declare -r UM_COLUMNS=8
+NUM_ROWS=8
+NUM_COLUMNS=8
 # ----------------------------------
 
 #Array bidimensional con todos los datos
@@ -110,7 +110,7 @@ function imprimirTabla() {
 
       for ((j = 1; j <= numeroColumnas; j++)); do
         # Celda
-        printf "║%${column_width}s" "${array[$j, $i]} <"
+        printf "║%${column_width}s" "${array[$j, $i]} "
       done
 
       # Divisor lateral final de fila
