@@ -179,7 +179,8 @@ function imprimirTabla() {
         # Celda
         printf "║%*s" "$anchoCelda" "${array[$j, $k]} "
       done
-      printf "║$(fc)\n%s" ""
+      printf "║"
+      printf "$(fc)\n%s" ""
       if [ "$k" == "$filasImprimir" ]; then
         # Fila de pie
         printf "${coloresTabla[$k]}%s" ""
