@@ -4,7 +4,7 @@
 # ----------------------------------
 declare -A array
 NUM_COL=8
-NUM_FIL=6
+NUM_FIL=10
 function asignarValores() {
   for ((i = 1; i <= NUM_COL; i++)); do
     for ((j = 1; j <= NUM_FIL; j++)); do
@@ -20,6 +20,7 @@ function asignarValores() {
 # Devuelve la expresión completa de color, pasándole los parámetros
 # que queremos en orden
 # @param tipoEspecial (Negrita=Neg, Subrayado=Sub, Normal=Nor, Parpadeo=Par)
+# @param random (valor random, ruleta o default de sistema)
 # ----------------------------------
 function cc() {
 
@@ -33,6 +34,8 @@ function cc() {
       echo "30"
     elif [ "$1" == "bg" ]; then
       echo $((RANDOM % 7 + 41))
+    elif [ "$1" == "bg_negro" ]; then
+      echo "40"
     fi
   }
 
@@ -54,7 +57,15 @@ function cc() {
     ;;
   esac
 
-  salida+="$(generarColor fg_negro);$(generarColor bg)m"
+  if [ "$2" == "random" ]; then
+    salida+="$(generarColor fg_negro);$(generarColor bg)m"
+  elif [ "$2" == "default" ]; then
+    salida+="$(($(generarColor fg_negro) + 7));$(generarColor bg_negro)m"
+  elif [ "$2" == "0" ]; then
+    salida+="$(generarColor fg);$(generarColor bg_negro)m"
+  else
+    salida+="$(generarColor fg_negro);$(($(generarColor bg_negro) + 1 + $(($2 % 7))))m"
+  fi
 
   echo "$salida"
 }
@@ -81,11 +92,19 @@ function imprimirTabla() {
   # Guarda los colores aleatorio de la tabla
   # ----------------------------------
   function guardarColoresDeTabla() {
-    local hola=()
-    colorEncabezado=$(cc Neg)
-    for ((i = 1; i <= NUM_FIL; i++)); do
-      coloresTabla[$i]=$(cc Neg)
-    done
+    local random="false"
+
+    if [ "$random" == "true" ]; then
+      colorEncabezado=$(cc Neg)
+      for ((i = 1; i <= NUM_FIL; i++)); do
+        coloresTabla[$i]=$(cc Neg random)
+      done
+    else
+      colorEncabezado=$(cc Neg default)
+      for ((i = 1; i <= NUM_FIL; i++)); do
+        coloresTabla[$i]=$(cc Neg "$i")
+      done
+    fi
   }
 
   # Imprime los titulos de las columnas de datos
@@ -163,7 +182,7 @@ function imprimirTabla() {
       printf "║$(fc)\n%s" ""
       if [ "$k" == "$filasImprimir" ]; then
         # Fila de pie
-        printf "${coloresTabla[$i]}%s" ""
+        printf "${coloresTabla[$k]}%s" ""
         printf "%s" "$pieTabla"
         printf "$(fc)\n%s" ""
       fi
@@ -181,4 +200,4 @@ function imprimirTabla() {
 # Main
 # ----------------------------------
 asignarValores
-imprimirTabla 6
+imprimirTabla 8
