@@ -247,6 +247,7 @@ function main() {
   asignarValores
   for ((fila = 1; fila <= NUM_FIL; fila++)); do
     clear
+    centrarEnPantalla "TÍTULO DE LA TABLA CENTRADOOOO CON SOLO UNA LLAMADA A FUNCION"
     centrarEnPantalla "$(imprimirTabla $fila)"
     read -r -p "Pulsa enter para avanzar"
   done
