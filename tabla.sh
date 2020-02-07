@@ -76,6 +76,14 @@ function fc() {
   echo "\033[0m"
 }
 
+# Devuelve la longitud del string
+# ----------------------------------
+function calcularLongitud() {
+  local elementoArray # Elemento a ser centrado
+  elementoArray=$1
+  echo ${#elementoArray}
+}
+
 # Imprime una tabla según el tamaño del array de datos
 # @param numeroFilasImprimir
 # @param numeroTabulaciones
@@ -90,15 +98,6 @@ function imprimirTabla() {
   local encTabla
   local interTabla
   local pieTabla
-  local tabulaciones
-
-  # Devuelve la longitud del array pasado
-  # ----------------------------------
-  function calcularLongitud() {
-    local elementoArray # Elemento a ser centrado
-    elementoArray=$1
-    echo ${#elementoArray}
-  }
 
   # Guarda los colores aleatorio de la tabla
   # ----------------------------------
@@ -126,10 +125,10 @@ function imprimirTabla() {
     local longitudArray # Para centrar en la tabla
 
     for ((i = 0; i < NUM_COL; i++)); do
-      longitudArray=$(calcularLongitud "${titulos[$i]} m")
-      printf "${estiloTabla[10]}%-*s" "$((anchoCelda / 2 - longitudArray / 2 + 1))" ""
+      longitudArray=$(calcularLongitud "${titulos[$i]}")
+      printf "${estiloTabla[10]}%-*s" "$((anchoCelda / 2 - longitudArray / 2))" ""
       printf "%s" "${titulos[$i]}" ""
-      printf "%*s" "$((anchoCelda / 2 - (longitudArray + 1) / 2 + 1))" ""
+      printf "%*s" "$((anchoCelda / 2 - (longitudArray + 1) / 2))" ""
     done
 
     printf "${estiloTabla[10]}%s" ""
@@ -177,13 +176,6 @@ function imprimirTabla() {
     pieTabla+=${estiloTabla[9]}
   }
 
-  # Asigna las tabulaciones de la tabla
-  function asignarTabulaciones() {
-    for ((i = 1; i <= $1; i++)); do
-      tabulaciones+="\t"
-    done
-  }
-
   # Imprime la tabla final en orden
   # ----------------------------------
   function imprimir() {
@@ -191,19 +183,19 @@ function imprimirTabla() {
 
     # Encabezado
     printf "$colorEncabezado%s" ""
-    printf "$tabulaciones%s" "$encTabla"
+    printf "%s" "$encTabla"
     printf "$(fc)\n%s" ""
 
     # Fila de titulos
     printf "$colorEncabezado%s" ""
-    printf "$tabulaciones%s" ""
+    printf "%s" ""
     imprimirTitulos
     printf "$(fc)\n%s" ""
 
     for ((k = 1; k <= filasImprimir; k++)); do
       # Fila de datos
       printf "${coloresTabla[$k]}%s" ""
-      printf "$tabulaciones%s\n$tabulaciones" "$interTabla"
+      printf "%s\n" "$interTabla"
       for ((j = 1; j <= NUM_COL; j++)); do
         # Celda
         longitudArray=$(calcularLongitud "${array[$j, $k]}")
@@ -216,7 +208,7 @@ function imprimirTabla() {
       if [ "$k" == "$filasImprimir" ]; then
         # Fila de pie
         printf "${coloresTabla[$k]}%s" ""
-        printf "$tabulaciones%s" "$pieTabla"
+        printf "%s" "$pieTabla"
         printf "$(fc)\n%s" ""
       fi
     done
@@ -226,16 +218,38 @@ function imprimirTabla() {
   # ----------------------------------
   guardarColoresDeTabla
   asignarAnchoYFilasMostrar "$1"
-  asignarTabulaciones "$2"
   asignarEstiloDeTabla
   imprimir
 }
 
+# Centra en pantalla el valor pasado, si es un string, divide por saltos de
+# linea y coloca cada linea en el centro
+# @param string a centrar
+function centrarEnPantalla() {
+  local string
+  local termwidth
+  local padding
+  local longitudElemento
+
+  IFS=$'\n' string=($1)
+  termwidth="$(tput cols)"
+  padding="$(printf '%0.1s' ' '{1..500})"
+  longitudElemento=$(calcularLongitud "${string[0]}")
+
+  for ((i = 0; i < ${#string[@]}; i++)); do
+    printf "%*.*s %s %*.*s\n" 0 "$(((termwidth - 2 - longitudElemento) / 2))" "$padding" "${string[$i]}" 0 "$(((termwidth - 1 - longitudElemento) / 2))" "$padding"
+  done
+}
+
 # Main
 # ----------------------------------
-asignarValores
-for ((fila = 1; fila <= NUM_FIL; fila++)); do
-  clear
-  imprimirTabla $fila 2
-  read -r -p "Pulsa enter para avanzar"
-done
+function main() {
+  asignarValores
+  for ((fila = 1; fila <= NUM_FIL; fila++)); do
+    clear
+    centrarEnPantalla "$(imprimirTabla $fila)"
+    read -r -p "Pulsa enter para avanzar"
+  done
+}
+
+main
