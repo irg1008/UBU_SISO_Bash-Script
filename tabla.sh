@@ -212,4 +212,21 @@ function imprimirTabla() {
 # Main
 # ----------------------------------
 asignarValores
-imprimirTabla 8 8
+
+
+seguir=true
+i=1
+while [ $seguir = "true" ]
+do
+  echo "dfsdfdfsfd"
+  echo "sdasdadsda"
+  imprimirTabla $i 4
+
+  echo "Quieres ver la siguiente linea? [S]"
+  read
+  ((i+1))
+
+  if [ ${REPLY} != "S" ];then
+  seguir=false
+  fi
+done
