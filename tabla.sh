@@ -84,6 +84,7 @@ function imprimirTabla() {
   local titulos
   local colorEncabezado
   local -A coloresTabla
+  local -A estiloTabla
   local anchoCelda
   local filasImprimir
   local encTabla
@@ -115,10 +116,10 @@ function imprimirTabla() {
     titulos=("NumFila" "Datos "{A..Z})
 
     for ((i = 0; i < NUM_COL; i++)); do
-      printf "║%-*s" "$anchoCelda" "${titulos[$i]}"
+      printf "${estiloTabla[10]}%-*s" "$anchoCelda" "${titulos[$i]}"
     done
 
-    printf "║"
+    printf "${estiloTabla[10]}"
   }
 
   # Asigna el ancho de la celda y el numero de filas a mostrar
@@ -138,8 +139,10 @@ function imprimirTabla() {
   # ----------------------------------
   function asignarEstiloDeTabla() {
     local simboloHorizontal
-    local estiloTabla
-    estiloTabla=("═" "╔" "╠" "╚" "╦" "╬" "╩" "╗" "╣" "╝")
+    local estiloTabla1=()
+    local estiloTabla2=("─" "╭" "├" "╰" "┬" "┼" "┴" "╮" "┤" "╯" "│")
+
+    estiloTabla=$estiloTabla2
 
     for ((i = 1; i <= anchoCelda; i++)); do
       simboloHorizontal+=${estiloTabla[0]}
@@ -187,9 +190,9 @@ function imprimirTabla() {
       printf "$tabulaciones%s\n$tabulaciones" "$interTabla"
       for ((j = 1; j <= NUM_COL; j++)); do
         # Celda
-        printf "║%*s" "$anchoCelda" "${array[$j, $k]} "
+        printf "${estiloTabla[10]}%*s" "$anchoCelda" "${array[$j, $k]} "
       done
-      printf "║"
+      printf "${estiloTabla[10]}"
       printf "$(fc)\n%s" ""
       if [ "$k" == "$filasImprimir" ]; then
         # Fila de pie
@@ -220,5 +223,5 @@ done
 
 
 git add .
-git commit -m "alo presidente"
+git commit -m "commit al salvar"
 git push origin Ivan
