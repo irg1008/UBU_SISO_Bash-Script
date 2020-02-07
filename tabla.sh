@@ -92,6 +92,14 @@ function imprimirTabla() {
   local pieTabla
   local tabulaciones
 
+  # Devuelve la longitud del array pasado
+  # ----------------------------------
+  function calcularLongitud() {
+    local elementoArray # Elemento a ser centrado
+    elementoArray=$1
+    echo ${#elementoArray}
+  }
+
   # Guarda los colores aleatorio de la tabla
   # ----------------------------------
   function guardarColoresDeTabla() {
@@ -118,10 +126,10 @@ function imprimirTabla() {
     local longitudArray # Para centrar en la tabla
 
     for ((i = 0; i < NUM_COL; i++)); do
-      longitudArray=$(calcularLongitud "${titulos[$i]}")
-      printf "${estiloTabla[10]}%-*s" "$((anchoCelda / 2 - longitudArray / 2))" ""
+      longitudArray=$(calcularLongitud "${titulos[$i]} m")
+      printf "${estiloTabla[10]}%-*s" "$((anchoCelda / 2 - longitudArray / 2 + 1))" ""
       printf "%s" "${titulos[$i]}" ""
-      printf "%*s" "$((anchoCelda / 2 - (longitudArray + 1) / 2))" ""
+      printf "%*s" "$((anchoCelda / 2 - (longitudArray + 1) / 2 + 1))" ""
     done
 
     printf "${estiloTabla[10]}%s" ""
@@ -176,14 +184,6 @@ function imprimirTabla() {
     done
   }
 
-  # Devuelve la longitud del array pasado
-  # ----------------------------------
-  function calcularLongitud() {
-    local elementoArray # Elemento a ser centrado
-    elementoArray=$1
-    echo ${#elementoArray}
-  }
-
   # Imprime la tabla final en orden
   # ----------------------------------
   function imprimir() {
@@ -236,6 +236,6 @@ function imprimirTabla() {
 asignarValores
 for ((fila = 1; fila <= NUM_FIL; fila++)); do
   clear
-  imprimirTabla $fila 5
+  imprimirTabla $fila 2
   read -r -p "Pulsa enter para avanzar"
 done
