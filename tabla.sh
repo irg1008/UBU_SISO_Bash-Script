@@ -3,7 +3,7 @@
 # Crea un array con valores aleatorio para fase desarrollo
 # ----------------------------------
 declare -A array
-NUM_COL=8
+NUM_COL=6
 NUM_FIL=10
 function asignarValores() {
   for ((i = 1; i <= NUM_COL; i++)); do
@@ -212,21 +212,13 @@ function imprimirTabla() {
 # Main
 # ----------------------------------
 asignarValores
-
-
-seguir=true
-i=1
-while [ $seguir = "true" ]
-do
-  echo "dfsdfdfsfd"
-  echo "sdasdadsda"
-  imprimirTabla $i 4
-
-  echo "Quieres ver la siguiente linea? [S]"
-  read
-  ((i+1))
-
-  if [ ${REPLY} != "S" ];then
-  seguir=false
-  fi
+for ((fila=1; fila <= NUM_FIL; fila++)); do
+  clear
+  imprimirTabla $fila 5
+  read -p "Pulsa enter para avanzar"
 done
+
+
+git add .
+git commit -m "alo presidente"
+git push origin Ivan
