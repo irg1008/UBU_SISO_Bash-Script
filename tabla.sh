@@ -115,18 +115,23 @@ function imprimirTabla() {
   function imprimirTitulos() {
     titulos=("NumFila" "Datos "{A..Z})
 
+    local longitudArray # Para centrar en la tabla
+
     for ((i = 0; i < NUM_COL; i++)); do
-      printf "${estiloTabla[10]}%*s" "$anchoCelda" "${titulos[$i]}"
+      longitudArray=$(calcularLongitud "${titulos[$i]}")
+      printf "${estiloTabla[10]}%-*s" "$((anchoCelda / 2 - longitudArray / 2))" ""
+      printf "%s" "${titulos[$i]}" ""
+      printf "%*s" "$((anchoCelda / 2 - (longitudArray + 1) / 2))" ""
     done
 
-    printf "${estiloTabla[10]}"
+    printf "${estiloTabla[10]}%s" ""
   }
 
   # Asigna el ancho de la celda y el numero de filas a mostrar
   # desde el indice
   # ----------------------------------
   function asignarAnchoYFilasMostrar() {
-    anchoCelda="12"
+    anchoCelda="20"
     filasImprimir="$1"
 
     if [ "$filasImprimir" -gt "$NUM_FIL" ]; then
@@ -138,9 +143,9 @@ function imprimirTabla() {
   # esquinas redondeadas, etc...
   # ----------------------------------
   function asignarEstiloDeTabla() {
-    local estiloTabla1=("═" "╔" "╠" "╚" "╦" "╬" "╩" "╗" "╣" "╝" "║")
+    #local estiloTabla1=("═" "╔" "╠" "╚" "╦" "╬" "╩" "╗" "╣" "╝" "║")
     local estiloTabla2=("─" "╭" "├" "╰" "┬" "┼" "┴" "╮" "┤" "╯" "│")
-    local estiloTabla3=("━" "┏" "┣" "┗" "┳" "╋" "┻" "┓" "┫" "┛" "┃")
+    #local estiloTabla3=("━" "┏" "┣" "┗" "┳" "╋" "┻" "┓" "┫" "┛" "┃")
     local simboloHorizontal
 
     estiloTabla=("${estiloTabla2[@]}")
@@ -171,9 +176,19 @@ function imprimirTabla() {
     done
   }
 
+  # Devuelve la longitud del array pasado
+  # ----------------------------------
+  function calcularLongitud() {
+    local elementoArray # Elemento a ser centrado
+    elementoArray=$1
+    echo ${#elementoArray}
+  }
+
   # Imprime la tabla final en orden
   # ----------------------------------
   function imprimir() {
+    local longitudArray
+
     # Encabezado
     printf "$colorEncabezado%s" ""
     printf "$tabulaciones%s" "$encTabla"
@@ -191,9 +206,12 @@ function imprimirTabla() {
       printf "$tabulaciones%s\n$tabulaciones" "$interTabla"
       for ((j = 1; j <= NUM_COL; j++)); do
         # Celda
-        printf "${estiloTabla[10]}%*s" "$anchoCelda" "${array[$j, $k]} "
+        longitudArray=$(calcularLongitud "${array[$j, $k]}")
+        printf "${estiloTabla[10]}%-*s" "$((anchoCelda / 2 - longitudArray / 2))" ""
+        printf "%s" "${array[$j, $k]}" ""
+        printf "%*s" "$((anchoCelda / 2 - (longitudArray + 1) / 2))" ""
       done
-      printf "${estiloTabla[10]}"
+      printf "${estiloTabla[10]}%s" ""
       printf "$(fc)\n%s" ""
       if [ "$k" == "$filasImprimir" ]; then
         # Fila de pie
@@ -219,5 +237,5 @@ asignarValores
 for ((fila = 1; fila <= NUM_FIL; fila++)); do
   clear
   imprimirTabla $fila 5
-  read -p "Pulsa enter para avanzar"
+  read -r -p "Pulsa enter para avanzar"
 done
