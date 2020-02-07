@@ -84,7 +84,7 @@ function imprimirTabla() {
   local titulos
   local colorEncabezado
   local -A coloresTabla
-  local -A estiloTabla
+  local estiloTabla
   local anchoCelda
   local filasImprimir
   local encTabla
@@ -116,7 +116,7 @@ function imprimirTabla() {
     titulos=("NumFila" "Datos "{A..Z})
 
     for ((i = 0; i < NUM_COL; i++)); do
-      printf "${estiloTabla[10]}%-*s" "$anchoCelda" "${titulos[$i]}"
+      printf "${estiloTabla[10]}%*s" "$anchoCelda" "${titulos[$i]}"
     done
 
     printf "${estiloTabla[10]}"
@@ -138,11 +138,12 @@ function imprimirTabla() {
   # esquinas redondeadas, etc...
   # ----------------------------------
   function asignarEstiloDeTabla() {
-    local simboloHorizontal
-    local estiloTabla1=()
+    local estiloTabla1=("═" "╔" "╠" "╚" "╦" "╬" "╩" "╗" "╣" "╝" "║")
     local estiloTabla2=("─" "╭" "├" "╰" "┬" "┼" "┴" "╮" "┤" "╯" "│")
+    local estiloTabla3=("━" "┏" "┣" "┗" "┳" "╋" "┻" "┓" "┫" "┛" "┃")
+    local simboloHorizontal
 
-    estiloTabla=$estiloTabla2
+    estiloTabla=("${estiloTabla2[@]}")
 
     for ((i = 1; i <= anchoCelda; i++)); do
       simboloHorizontal+=${estiloTabla[0]}
@@ -215,13 +216,8 @@ function imprimirTabla() {
 # Main
 # ----------------------------------
 asignarValores
-for ((fila=1; fila <= NUM_FIL; fila++)); do
+for ((fila = 1; fila <= NUM_FIL; fila++)); do
   clear
   imprimirTabla $fila 5
   read -p "Pulsa enter para avanzar"
 done
-
-
-git add .
-git commit -m "commit al salvar"
-git push origin Ivan
