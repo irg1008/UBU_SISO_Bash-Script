@@ -195,7 +195,9 @@ function imprimirTabla() {
     for ((k = 1; k <= filasImprimir; k++)); do
       # Fila de datos
       printf "${coloresTabla[$k]}%s" ""
-      printf "%s\n" "$interTabla"
+      printf "%s" "$interTabla"
+      printf "$(fc)\n%s" ""
+      printf "${coloresTabla[$k]}%s" ""
       for ((j = 1; j <= NUM_COL; j++)); do
         # Celda
         longitudArray=$(calcularLongitud "${array[$j, $k]}")
@@ -248,7 +250,7 @@ function main() {
   for ((fila = 1; fila <= NUM_FIL; fila++)); do
     clear
     centrarEnPantalla "TÍTULO DE LA TABLA CENTRADOOOO CON SOLO UNA LLAMADA A FUNCION"
-    centrarEnPantalla "$(imprimirTabla $fila)"
+    centrarEnPantalla "$(imprimirTabla $fila)" | tee register.txt
     read -r -p "Pulsa enter para avanzar"
   done
 }
