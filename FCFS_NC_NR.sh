@@ -373,8 +373,8 @@ function centrarEnPantalla() {
 function main() {
   # Variables de titulos y mensaje, con función de máxima personalización
   local introduccion=("FCFS" "Memoria No Continua" "Memoria No Reubicable" " " "Iván Ruiz Gázquez" "Jorge El Javas")
-  local error=("⛔ Tiene pelos")
-  local acierto=("✔ Pa eso están Ramón")
+  local error=("☒ Tiene pelos")
+  local acierto=("☑ Pa eso están Ramón")
   local advertencia=("⚠ Huele a coño")
 
   # Elegimos el estilo de los marcos en el programa
