@@ -373,9 +373,9 @@ function centrarEnPantalla() {
 function main() {
   # Variables de titulos y mensaje, con función de máxima personalización
   local introduccion=("FCFS" "Memoria No Continua" "Memoria No Reubicable" " " "Iván Ruiz Gázquez" "Jorge El Javas")
-  local error=("⛔ Ha ocurrido un error, siguiente destino: Gulag")
-  local acierto=("☢ HULK aplastaaaa")
-  local advertencia=("⚠ Ten cuiao mijo con el Miguelito y el sitio ese que vais, la mota o eso")
+  local error=("⛔ Tiene pelos")
+  local acierto=("✔ Pa eso están Ramón")
+  local advertencia=("⚠ Huele a coño")
 
   # Elegimos el estilo de los marcos en el programa
   asignarEstiloGeneral "2"
@@ -385,13 +385,13 @@ function main() {
   read -r -p "Pulsa enter para avanzar"
 
   # Imprime mensaje error
-  centrarEnPantalla "$(imprimirCuadro "200" "error" "${error[@]}")" | tee resultado.fcfs
+  centrarEnPantalla "$(imprimirCuadro "100" "error" "${error[@]}")" | tee resultado.fcfs
 
   # Imprime mensaje acierto
-  centrarEnPantalla "$(imprimirCuadro "200" "acierto" "${acierto[@]}")" | tee resultado.fcfs
+  centrarEnPantalla "$(imprimirCuadro "100" "acierto" "${acierto[@]}")" | tee resultado.fcfs
 
   # Imprime mensaje advertencia
-  centrarEnPantalla "$(imprimirCuadro "200" "advertencia" "${advertencia[@]}")" | tee resultado.fcfs
+  centrarEnPantalla "$(imprimirCuadro "100" "advertencia" "${advertencia[@]}")" | tee resultado.fcfs
 
   # Asigna los valores al array de datos a usar en la tabla y las memorias
   asignarValores
