@@ -2,13 +2,13 @@
 
 # Variables globales
 # ----------------------------------
-estiloGeneral # Estilo de los marcos
+declare estiloGeneral # Estilo de los marcos
 
 # Crea un array con valores aleatorio para fase desarrollo
 # ----------------------------------
 declare -A array
-NUM_COL=6
-NUM_FIL=10
+declare NUM_COL=6
+declare NUM_FIL=10
 function asignarValores() {
   for ((i = 1; i <= NUM_COL; i++)); do
     for ((j = 1; j <= NUM_FIL; j++)); do
@@ -364,7 +364,7 @@ function main() {
   # Ir imprimiendo las filas de la tabla según metemos los datos
   for ((fila = 1; fila <= NUM_FIL; fila++)); do
     clear
-    centrarEnPantalla "$(imprimirTabla $fila)" | tee register.txt # Importante hacer el cat del archivo de salida en la terminal, para ver los colores.
+    centrarEnPantalla "$(imprimirTabla $fila)" | tee -a register.txt # Importante hacer el cat del archivo de salida en la terminal, para ver los colores.
     read -r -p "Pulsa enter para avanzar"
   done
 }
