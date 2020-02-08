@@ -155,7 +155,7 @@ function imprimirIntroduccion() {
   # Imprime los titulos de la practica
   # ----------------------------------
   function imprimirTitulos() {
-    titulos=("FCFS" "Memoria No Continua" "Memoria No Reubicable")
+    titulos=("FCFS" "Memoria No Continua" "Memoria No Reubicable" " " "Iván Ruiz Gázquez" "Jorge El Javas")
     local longitudArray # Para centrar en la tabla
 
     for ((i = 0; i < ${#titulos[@]}; i++)); do
@@ -356,7 +356,7 @@ function main() {
   asignarEstiloGeneral "2"
 
   # Imprime introducción
-  centrarEnPantalla "$(imprimirIntroduccion)" | tee register.txt
+  centrarEnPantalla "$(imprimirIntroduccion)" | tee resultado.fcfs
   read -r -p "Pulsa enter para avanzar"
 
   # Asigna los valores al array de datos a usar en la tabla y las memorias
@@ -365,7 +365,7 @@ function main() {
   # Ir imprimiendo las filas de la tabla según metemos los datos
   for ((fila = 1; fila <= NUM_FIL; fila++)); do
     clear
-    centrarEnPantalla "$(imprimirTabla $fila)" | tee -a register.txt # Importante hacer el cat del archivo de salida en la terminal, para ver los colores.
+    centrarEnPantalla "$(imprimirTabla $fila)" | tee -a resultado.fcfs # Importante hacer el cat del archivo de salida en la terminal, para ver los colores.
     read -r -p "Pulsa enter para avanzar"
   done
 }
