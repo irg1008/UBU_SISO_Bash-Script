@@ -89,6 +89,7 @@ function calcularLongitud() {
 }
 
 # Almacen de los estilos de las tablas con sus códigos ASCII
+# @param Numero de estilo
 # ----------------------------------
 function asignarEstiloGeneral() {
   local estilo1=("═" "╔" "╠" "╚" "╦" "╬" "╩" "╗" "╣" "╝" "║")
