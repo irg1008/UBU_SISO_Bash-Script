@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Variables globales
+# ----------------------------------
+estiloGeneral # Estilo de los marcos
+
 # Crea un array con valores aleatorio para fase desarrollo
 # ----------------------------------
 declare -A array
@@ -84,9 +88,112 @@ function calcularLongitud() {
   echo ${#elementoArray}
 }
 
+# Almacen de los estilos de las tablas con sus códigos ASCII
+# ----------------------------------
+function asignarEstiloGeneral() {
+  local estilo1=("═" "╔" "╠" "╚" "╦" "╬" "╩" "╗" "╣" "╝" "║")
+  local estilo2=("─" "╭" "├" "╰" "┬" "┼" "┴" "╮" "┤" "╯" "│")
+  local estilo3=("━" "┏" "┣" "┗" "┳" "╋" "┻" "┓" "┫" "┛" "┃")
+
+  case "$1" in
+  1)
+    estiloGeneral=("${estilo1[@]}")
+    ;;
+  2)
+    estiloGeneral=("${estilo2[@]}")
+    ;;
+  3)
+    estiloGeneral=("${estilo3[@]}")
+    ;;
+  *)
+    estiloGeneral=("${estilo3[@]}")
+    ;;
+  esac
+}
+
+# Imprime la introduccion del programa
+# ----------------------------------
+function imprimirIntroduccion() {
+  local estiloIntro
+  local titulos
+  local encTabla
+  local pieTabla
+  local anchoCelda
+  local colorIntro
+
+  # Asigna un estilo a la tabla, de doble linea, linea basica,
+  # esquinas redondeadas, etc...
+  # ----------------------------------
+  function asignarEstiloDeIntro() {
+    local simboloHorizontal
+
+    estiloIntro=("${estiloGeneral[@]}")
+
+    for ((i = 1; i <= anchoCelda; i++)); do
+      simboloHorizontal+=${estiloIntro[0]}
+    done
+
+    encTabla=${estiloIntro[1]}$simboloHorizontal
+    pieTabla=${estiloIntro[3]}$simboloHorizontal
+
+    encTabla+=${estiloIntro[7]}
+    pieTabla+=${estiloIntro[9]}
+  }
+
+  # Asigna el color principal de la introduccion
+  function asignaColorIntro() {
+    colorIntro=$(cc Neg random)
+  }
+
+  # Asigna el ancho de la celda
+  # ----------------------------------
+  function asignarAncho() {
+    anchoCelda="50"
+  }
+
+  # Imprime los titulos de la practica
+  # ----------------------------------
+  function imprimirTitulos() {
+    titulos=("FCFS" "Memoria No Continua" "Memoria No Reubicable")
+    local longitudArray # Para centrar en la tabla
+
+    for ((i = 0; i < ${#titulos[@]}; i++)); do
+      longitudArray=$(calcularLongitud "${titulos[$i]}")
+      printf "$colorIntro%s" ""
+      printf "${estiloIntro[10]}%-*s" "$((anchoCelda / 2 - longitudArray / 2))" ""
+      printf "%s" "${titulos[$i]}" ""
+      printf "%*s${estiloIntro[10]}" "$((anchoCelda / 2 - (longitudArray + 1) / 2))" ""
+      printf "$(fc)\n%s" ""
+    done
+  }
+
+  # Imprime la tabla de introduccion
+  # ----------------------------------
+  function imprimirIntro() {
+    local longitudArray
+  
+    # Encabezado
+    printf "$colorIntro%s" ""
+    printf "%s" "$encTabla"
+    printf "$(fc)\n%s" ""
+
+    # Fila de titulos
+    imprimirTitulos
+
+    # Fila de pie
+    printf "$colorIntro%s" ""
+    printf "%s" "$pieTabla"
+    printf "$(fc)\n%s" ""
+  }
+
+  asignaColorIntro
+  asignarAncho
+  asignarEstiloDeIntro
+  imprimirIntro
+}
+
 # Imprime una tabla según el tamaño del array de datos
 # @param numeroFilasImprimir
-# @param numeroTabulaciones
 # ----------------------------------
 function imprimirTabla() {
   local titulos
@@ -138,7 +245,7 @@ function imprimirTabla() {
   # desde el indice
   # ----------------------------------
   function asignarAnchoYFilasMostrar() {
-    anchoCelda="20"
+    anchoCelda="12"
     filasImprimir="$1"
 
     if [ "$filasImprimir" -gt "$NUM_FIL" ]; then
@@ -150,12 +257,9 @@ function imprimirTabla() {
   # esquinas redondeadas, etc...
   # ----------------------------------
   function asignarEstiloDeTabla() {
-    #local estiloTabla1=("═" "╔" "╠" "╚" "╦" "╬" "╩" "╗" "╣" "╝" "║")
-    local estiloTabla2=("─" "╭" "├" "╰" "┬" "┼" "┴" "╮" "┤" "╯" "│")
-    #local estiloTabla3=("━" "┏" "┣" "┗" "┳" "╋" "┻" "┓" "┫" "┛" "┃")
     local simboloHorizontal
 
-    estiloTabla=("${estiloTabla2[@]}")
+    estiloTabla=("${estiloGeneral[@]}")
 
     for ((i = 1; i <= anchoCelda; i++)); do
       simboloHorizontal+=${estiloTabla[0]}
@@ -227,6 +331,7 @@ function imprimirTabla() {
 # Centra en pantalla el valor pasado, si es un string, divide por saltos de
 # linea y coloca cada linea en el centro
 # @param string a centrar
+# ----------------------------------
 function centrarEnPantalla() {
   local string
   local termwidth
@@ -246,11 +351,20 @@ function centrarEnPantalla() {
 # Main
 # ----------------------------------
 function main() {
+  # Elegimos el estilo de los marcos en el programa
+  asignarEstiloGeneral "2"
+
+  # Imprime introducción
+  centrarEnPantalla "$(imprimirIntroduccion)" | tee register.txt
+  read -r -p "Pulsa enter para avanzar"
+
+  # Asigna los valores al array de datos a usar en la tabla y las memorias
   asignarValores
+
+  # Ir imprimiendo las filas de la tabla según metemos los datos
   for ((fila = 1; fila <= NUM_FIL; fila++)); do
     clear
-    centrarEnPantalla "TÍTULO DE LA TABLA CENTRADOOOO CON SOLO UNA LLAMADA A FUNCION"
-    centrarEnPantalla "$(imprimirTabla $fila)" | tee register.txt
+    centrarEnPantalla "$(imprimirTabla $fila)" | tee register.txt # Importante hacer el cat del archivo de salida en la terminal, para ver los colores.
     read -r -p "Pulsa enter para avanzar"
   done
 }
