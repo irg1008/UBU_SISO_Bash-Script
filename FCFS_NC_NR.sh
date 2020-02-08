@@ -63,19 +63,29 @@ function cc() {
     ;;
   esac
 
-  if [ "$2" == "random" ]; then
+  case "$2" in
+  random)
     salida+="$(generarColor fg_negro);$(generarColor bg)m"
-  elif [ "$2" == "default" ]; then
+    ;;
+  default)
     salida+="$(($(generarColor fg_negro) + 7));$(generarColor bg_negro)m"
-  elif [ "$2" == "error" ]; then
+    ;;
+  error)
     salida+="$(($(generarColor fg_negro) + 7));$(($(generarColor bg_negro) + 1))m"
-  elif [ "$2" == "error" ]; then
-    salida+="$(($(generarColor fg_negro) + 7));$(($(generarColor bg_negro) + 1))m"
-  elif [ "$2" == "0" ]; then
+    ;;
+  acierto)
+    salida+="$(($(generarColor fg_negro)));$(($(generarColor bg_negro) + 2))m"
+    ;;
+  advertencia)
+    salida+="$(($(generarColor fg_negro)));$(($(generarColor bg_negro) + 3))m"
+    ;;
+  0)
     salida+="$(generarColor fg);$(generarColor bg_negro)m"
-  elif [ "$2" -gt "0" ]; then
+    ;;
+  *)
     salida+="$(generarColor fg_negro);$(($(generarColor bg_negro) + 1 + $(($2 % 7))))m"
-  fi
+    ;;
+  esac
 
   echo "$salida"
 }
@@ -151,11 +161,7 @@ function imprimirCuadro() {
 
   # Asigna el color principal de la introduccion
   function asignacolor() {
-    if [ "$1" == "randomColor" ]; then
-      color=$(cc Neg random)
-    elif [ "$1" == "errorColor" ];then
-      color=$(cc Neg error)
-    fi
+    color=$(cc Neg "$1")
   }
 
   # Asigna el ancho de la celda
@@ -367,17 +373,25 @@ function centrarEnPantalla() {
 function main() {
   # Variables de titulos y mensaje, con función de máxima personalización
   local introduccion=("FCFS" "Memoria No Continua" "Memoria No Reubicable" " " "Iván Ruiz Gázquez" "Jorge El Javas")
-  local error=("" "☭ Ha ocurrido un error, siguiente destino: Gulag" "")
+  local error=("⛔ Ha ocurrido un error, siguiente destino: Gulag")
+  local acierto=("☢ HULK aplastaaaa")
+  local advertencia=("⚠ Ten cuiao mijo con el Miguelito y el sitio ese que vais, la mota o eso")
 
   # Elegimos el estilo de los marcos en el programa
   asignarEstiloGeneral "2"
 
   # Imprime introducción
-  centrarEnPantalla "$(imprimirCuadro "50" "randomColor" "${introduccion[@]}")" | tee resultado.fcfs
+  centrarEnPantalla "$(imprimirCuadro "50" "random" "${introduccion[@]}")" | tee resultado.fcfs
   read -r -p "Pulsa enter para avanzar"
 
   # Imprime mensaje error
-  centrarEnPantalla "$(imprimirCuadro "200" "errorColor" "${error[@]}")" | tee resultado.fcfs
+  centrarEnPantalla "$(imprimirCuadro "200" "error" "${error[@]}")" | tee resultado.fcfs
+
+  # Imprime mensaje acierto
+  centrarEnPantalla "$(imprimirCuadro "200" "acierto" "${acierto[@]}")" | tee resultado.fcfs
+
+  # Imprime mensaje advertencia
+  centrarEnPantalla "$(imprimirCuadro "200" "advertencia" "${advertencia[@]}")" | tee resultado.fcfs
 
   # Asigna los valores al array de datos a usar en la tabla y las memorias
   asignarValores
