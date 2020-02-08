@@ -24,12 +24,14 @@ function asignarValores() {
 # Devuelve la expresión completa de color, pasándole los parámetros
 # que queremos en orden
 # @param tipoEspecial (Negrita=Neg, Subrayado=Sub, Normal=Nor, Parpadeo=Par)
-# @param random (valor random, ruleta o default de sistema)
+# @param random (valor random, default,  error, acierto, fg aleatorio sobre bg negro
+# olista de colores en orden)
 # ----------------------------------
 function cc() {
 
   # Devuelve un color de letra si se pide explicitamente,
   # o un color de fondo si no se pide
+  # 0=N; 1=R; 2=G; 3=O; 4=B; 5=P; 6=C; 7=W
   # ----------------------------------
   function generarColor() {
     if [ "$1" == "fg" ]; then
@@ -65,9 +67,13 @@ function cc() {
     salida+="$(generarColor fg_negro);$(generarColor bg)m"
   elif [ "$2" == "default" ]; then
     salida+="$(($(generarColor fg_negro) + 7));$(generarColor bg_negro)m"
+  elif [ "$2" == "error" ]; then
+    salida+="$(($(generarColor fg_negro) + 7));$(($(generarColor bg_negro) + 1))m"
+  elif [ "$2" == "error" ]; then
+    salida+="$(($(generarColor fg_negro) + 7));$(($(generarColor bg_negro) + 1))m"
   elif [ "$2" == "0" ]; then
     salida+="$(generarColor fg);$(generarColor bg_negro)m"
-  else
+  elif [ "$2" -gt "0" ]; then
     salida+="$(generarColor fg_negro);$(($(generarColor bg_negro) + 1 + $(($2 % 7))))m"
   fi
 
@@ -113,14 +119,16 @@ function asignarEstiloGeneral() {
 }
 
 # Imprime la introduccion del programa
+# @param Array del contenido del cuadro
+# @param Ancho del cuadro
 # ----------------------------------
-function imprimirIntroduccion() {
-  local estiloIntro
+function imprimirCuadro() {
+  local estilo
   local titulos
   local encTabla
   local pieTabla
   local anchoCelda
-  local colorIntro
+  local color
 
   # Asigna un estilo a la tabla, de doble linea, linea basica,
   # esquinas redondeadas, etc...
@@ -128,69 +136,74 @@ function imprimirIntroduccion() {
   function asignarEstiloDeIntro() {
     local simboloHorizontal
 
-    estiloIntro=("${estiloGeneral[@]}")
+    estilo=("${estiloGeneral[@]}")
 
     for ((i = 1; i <= anchoCelda; i++)); do
-      simboloHorizontal+=${estiloIntro[0]}
+      simboloHorizontal+=${estilo[0]}
     done
 
-    encTabla=${estiloIntro[1]}$simboloHorizontal
-    pieTabla=${estiloIntro[3]}$simboloHorizontal
+    encTabla=${estilo[1]}$simboloHorizontal
+    pieTabla=${estilo[3]}$simboloHorizontal
 
-    encTabla+=${estiloIntro[7]}
-    pieTabla+=${estiloIntro[9]}
+    encTabla+=${estilo[7]}
+    pieTabla+=${estilo[9]}
   }
 
   # Asigna el color principal de la introduccion
-  function asignaColorIntro() {
-    colorIntro=$(cc Neg random)
+  function asignacolor() {
+    if [ "$1" == "randomColor" ]; then
+      color=$(cc Neg random)
+    elif [ "$1" == "errorColor" ];then
+      color=$(cc Neg error)
+    fi
   }
 
   # Asigna el ancho de la celda
   # ----------------------------------
   function asignarAncho() {
-    anchoCelda="50"
+    anchoCelda="$1"
   }
 
-  # Imprime los titulos de la practica
+  # Imprime los elementos del array
   # ----------------------------------
   function imprimirTitulos() {
-    titulos=("FCFS" "Memoria No Continua" "Memoria No Reubicable" " " "Iván Ruiz Gázquez" "Jorge El Javas")
+
+    IFS=$'\n' titulos=($@)
     local longitudArray # Para centrar en la tabla
 
-    for ((i = 0; i < ${#titulos[@]}; i++)); do
+    for ((i = 2; i < ${#titulos[@]}; i++)); do
       longitudArray=$(calcularLongitud "${titulos[$i]}")
-      printf "$colorIntro%s" ""
-      printf "${estiloIntro[10]}%-*s" "$((anchoCelda / 2 - longitudArray / 2))" ""
+      printf "$color%s" ""
+      printf "${estilo[10]}%-*s" "$((anchoCelda / 2 - longitudArray / 2))" ""
       printf "%s" "${titulos[$i]}" ""
-      printf "%*s${estiloIntro[10]}" "$((anchoCelda / 2 - (longitudArray + 1) / 2))" ""
+      printf "%*s${estilo[10]}" "$((anchoCelda / 2 - (longitudArray + 1) / 2))" ""
       printf "$(fc)\n%s" ""
     done
   }
 
   # Imprime la tabla de introduccion
   # ----------------------------------
-  function imprimirIntro() {
+  function imprimir() {
     local longitudArray
-  
+
     # Encabezado
-    printf "$colorIntro%s" ""
+    printf "$color%s" ""
     printf "%s" "$encTabla"
     printf "$(fc)\n%s" ""
 
     # Fila de titulos
-    imprimirTitulos
+    imprimirTitulos "$@"
 
     # Fila de pie
-    printf "$colorIntro%s" ""
+    printf "$color%s" ""
     printf "%s" "$pieTabla"
     printf "$(fc)\n%s" ""
   }
 
-  asignaColorIntro
-  asignarAncho
+  asignarAncho "$1"
+  asignacolor "$2"
   asignarEstiloDeIntro
-  imprimirIntro
+  imprimir "$@"
 }
 
 # Imprime una tabla según el tamaño del array de datos
@@ -352,12 +365,19 @@ function centrarEnPantalla() {
 # Main
 # ----------------------------------
 function main() {
+  # Variables de titulos y mensaje, con función de máxima personalización
+  local introduccion=("FCFS" "Memoria No Continua" "Memoria No Reubicable" " " "Iván Ruiz Gázquez" "Jorge El Javas")
+  local error=("" "☭ Ha ocurrido un error, siguiente destino: Gulag" "")
+
   # Elegimos el estilo de los marcos en el programa
   asignarEstiloGeneral "2"
 
   # Imprime introducción
-  centrarEnPantalla "$(imprimirIntroduccion)" | tee resultado.fcfs
+  centrarEnPantalla "$(imprimirCuadro "50" "randomColor" "${introduccion[@]}")" | tee resultado.fcfs
   read -r -p "Pulsa enter para avanzar"
+
+  # Imprime mensaje error
+  centrarEnPantalla "$(imprimirCuadro "200" "errorColor" "${error[@]}")" | tee resultado.fcfs
 
   # Asigna los valores al array de datos a usar en la tabla y las memorias
   asignarValores
