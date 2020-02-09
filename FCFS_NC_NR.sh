@@ -376,22 +376,23 @@ function main() {
   local error=("☒ Tiene pelos")
   local acierto=("☑ Pa eso están Ramón")
   local advertencia=("⚠ Huele a coño")
+  local archivoSalida="res.log"
 
   # Elegimos el estilo de los marcos en el programa
   asignarEstiloGeneral "2"
 
   # Imprime introducción
-  centrarEnPantalla "$(imprimirCuadro "50" "random" "${introduccion[@]}")" | tee resultado.fcfs
+  centrarEnPantalla "$(imprimirCuadro "50" "random" "${introduccion[@]}")" | tee -a $archivoSalida
   read -r -p "Pulsa enter para avanzar"
 
   # Imprime mensaje error
-  centrarEnPantalla "$(imprimirCuadro "100" "error" "${error[@]}")" | tee resultado.fcfs
+  centrarEnPantalla "$(imprimirCuadro "100" "error" "${error[@]}")" | tee -a $archivoSalida
 
   # Imprime mensaje acierto
-  centrarEnPantalla "$(imprimirCuadro "100" "acierto" "${acierto[@]}")" | tee resultado.fcfs
+  centrarEnPantalla "$(imprimirCuadro "100" "acierto" "${acierto[@]}")" | tee -a $archivoSalida
 
   # Imprime mensaje advertencia
-  centrarEnPantalla "$(imprimirCuadro "100" "advertencia" "${advertencia[@]}")" | tee resultado.fcfs
+  centrarEnPantalla "$(imprimirCuadro "100" "advertencia" "${advertencia[@]}")" | tee -a $archivoSalida
 
   # Asigna los valores al array de datos a usar en la tabla y las memorias
   asignarValores
@@ -399,7 +400,7 @@ function main() {
   # Ir imprimiendo las filas de la tabla según metemos los datos
   for ((fila = 1; fila <= NUM_FIL; fila++)); do
     clear
-    centrarEnPantalla "$(imprimirTabla $fila)" | tee -a resultado.fcfs # Importante hacer el cat del archivo de salida en la terminal, para ver los colores.
+    centrarEnPantalla "$(imprimirTabla $fila)" | tee -a $archivoSalida # Importante hacer el cat del archivo de salida en la terminal, para ver los colores.
     read -r -p "Pulsa enter para avanzar"
   done
 }
