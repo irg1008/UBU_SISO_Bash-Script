@@ -7,7 +7,7 @@ declare estiloGeneral # Estilo de los marcos
 # Crea un array con valores aleatorio para fase desarrollo
 # ----------------------------------
 declare -A array
-declare NUM_COL=6
+declare NUM_COL=5
 declare NUM_FIL=10
 function asignarValores() {
   for ((i = 1; i <= NUM_COL; i++)); do
@@ -143,7 +143,7 @@ function imprimirCuadro() {
   # Asigna un estilo a la tabla, de doble linea, linea basica,
   # esquinas redondeadas, etc...
   # ----------------------------------
-  function asignarEstiloDeIntro() {
+  function asignarEstilo() {
     local simboloHorizontal
 
     estilo=("${estiloGeneral[@]}")
@@ -208,7 +208,7 @@ function imprimirCuadro() {
 
   asignarAncho "$1"
   asignacolor "$2"
-  asignarEstiloDeIntro
+  asignarEstilo
   imprimir "$@"
 }
 
@@ -222,6 +222,7 @@ function imprimirTabla() {
   local estiloTabla
   local anchoCelda
   local filasImprimir
+  local columnasImprimir
   local encTabla
   local interTabla
   local pieTabla
@@ -247,11 +248,11 @@ function imprimirTabla() {
   # Imprime los titulos de las columnas de datos
   # ----------------------------------
   function imprimirTitulos() {
-    titulos=("NumFila" "Datos "{A..Z})
+    titulos=("Proceso" "Llegada" "Ejecución" "Espera" "Respuesta")
 
     local longitudArray # Para centrar en la tabla
 
-    for ((i = 0; i < NUM_COL; i++)); do
+    for ((i = 0; i < columnasImprimir; i++)); do
       longitudArray=$(calcularLongitud "${titulos[$i]}")
       printf "${estiloTabla[10]}%-*s" "$((anchoCelda / 2 - longitudArray / 2))" ""
       printf "%s" "${titulos[$i]}" ""
@@ -264,12 +265,17 @@ function imprimirTabla() {
   # Asigna el ancho de la celda y el numero de filas a mostrar
   # desde el indice
   # ----------------------------------
-  function asignarAnchoYFilasMostrar() {
+  function asignarAnchoYFilasYColumnas() {
     anchoCelda="12"
     filasImprimir="$1"
+    columnasImprimir="$2"
 
     if [ "$filasImprimir" -gt "$NUM_FIL" ]; then
       filasImprimir=$NUM_FIL
+    fi
+
+    if [ "$columnasImprimir" -gt "$NUM_COL" ]; then
+      columnasImprimir=$NUM_COL
     fi
   }
 
@@ -289,7 +295,7 @@ function imprimirTabla() {
     interTabla=${estiloTabla[2]}$simboloHorizontal
     pieTabla=${estiloTabla[3]}$simboloHorizontal
 
-    for ((i = 1; i < NUM_COL; i++)); do
+    for ((i = 1; i < columnasImprimir; i++)); do
       encTabla+=${estiloTabla[4]}$simboloHorizontal
       interTabla+=${estiloTabla[5]}$simboloHorizontal
       pieTabla+=${estiloTabla[6]}$simboloHorizontal
@@ -322,7 +328,7 @@ function imprimirTabla() {
       printf "%s" "$interTabla"
       printf "$(fc)\n%s" ""
       printf "${coloresTabla[$k]}%s" ""
-      for ((j = 1; j <= NUM_COL; j++)); do
+      for ((j = 1; j <= columnasImprimir; j++)); do
         # Celda
         longitudArray=$(calcularLongitud "${array[$j, $k]}")
         printf "${estiloTabla[10]}%-*s" "$((anchoCelda / 2 - longitudArray / 2))" ""
@@ -343,7 +349,7 @@ function imprimirTabla() {
   # Main de impresion
   # ----------------------------------
   guardarColoresDeTabla
-  asignarAnchoYFilasMostrar "$1"
+  asignarAnchoYFilasYColumnas "$1" "$2"
   asignarEstiloDeTabla
   imprimir
 }
@@ -376,7 +382,8 @@ function main() {
   local error=("☒ Tiene pelos")
   local acierto=("☑ Pa eso están Ramón")
   local advertencia=("⚠ Huele a coño")
-  local archivoSalida="res.log"
+  local archivoSalida="res.log" # Importante hacer el cat del archivo de salida en la terminal, para ver los colores.
+  local archivoEntrada="data.csv"
 
   # Elegimos el estilo de los marcos en el programa
   asignarEstiloGeneral "2"
@@ -400,9 +407,12 @@ function main() {
   # Ir imprimiendo las filas de la tabla según metemos los datos
   for ((fila = 1; fila <= NUM_FIL; fila++)); do
     clear
-    centrarEnPantalla "$(imprimirTabla $fila)" | tee -a $archivoSalida # Importante hacer el cat del archivo de salida en la terminal, para ver los colores.
+    centrarEnPantalla "$(imprimirTabla $fila "3")" | tee -a $archivoSalida
     read -r -p "Pulsa enter para avanzar"
   done
+
+  # Saca el resultado - TODO -> Algoritmo y uso de memoria medinate enter, calculo de tiempo medio, etc
+  centrarEnPantalla "$(imprimirTabla $fila "6")" | tee -a $archivoSalida
 }
 
 main
