@@ -430,36 +430,54 @@ function centrarEnPantalla() {
 # @param parametro a leer del config
 # ----------------------------------
 function extraerDeConfig() {
+  local salida
 
   # Lee el config y devuelve la linea solicitada
   # ----------------------------------
   function leeConfig() {
-    grep -o '".*"' "$configFile" | sed 's/"//g' | head -"$1" | tail -1 #| tr -d ,
+    grep -o '".*"' "$configFile" | sed 's/"//g' | head -"$1" | tail -1 | tr -d ","
   }
 
-  case "$1" in
-  introduccion)
-    salida=$(leeConfig "1")
-    salida+=$(leeConfig "2")
-    ;;
-  error)
-    salida=$(leeConfig "3")
-    ;;
-  acierto)
-    salida=$(leeConfig "4")
-    ;;
-  advertencia)
-    salida=$(leeConfig "5")
-    ;;
-  archivoSalida)
-    salida=$(leeConfig "6")
-    ;;
-  archivoEntrada)
-    salida=$(leeConfig "7")
-    ;;
-  esac
+  # Lee el config si es un array
+  # ----------------------------------
+  function leeConfigArray() {
+    grep -o '".*"' "$configFile" | head -"$1" | tail -1 | tr -d ","
+  }
 
-  echo "$salida"
+  if [ "$1" == "introduccion" ]; then
+    local salidaArray
+    salida="$(leeConfigArray "1")"
+    salida+=" "
+    salida+="$(leeConfigArray "2")"
+
+    declare -a "salidaArray=( $(echo "$salida" | tr '`$<>' '????') )"
+    for ((i = 0; i < ${#salidaArray[@]}; i++)); do
+      echo "${salidaArray[$i]}"
+      if [ $((${#salidaArray[@]} / 2)) == "$i" ]; then
+        echo " "
+      fi
+    done
+  else
+    case "$1" in
+    error)
+      salida=$(leeConfig "3")
+      ;;
+    acierto)
+      salida=$(leeConfig "4")
+      ;;
+    advertencia)
+      salida=$(leeConfig "5")
+      ;;
+    archivoSalida)
+      salida=$(leeConfig "6")
+      ;;
+    archivoEntrada)
+      salida=$(leeConfig "7")
+      ;;
+    esac
+
+    echo "$salida"
+  fi
 }
 
 # Main
