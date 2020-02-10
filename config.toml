@@ -3,9 +3,9 @@ Titulo = ["FCFS", "Memoria No Continua", "Memoria No Reubicable"]
 Autor = ["Jorge Ruiz", "Ivan Ruiz"]
 
 [mensajes]
-error = "☒ Tiene pelos ☒"
-acierto = "☑ Pa eso están Ramón ☑"
-advertencia = "⚠ Huele a coño ⚠"
+error = "☒ Ha ocurrido un error ☒"
+acierto = "☑ Todo correcto ☑"
+advertencia = "⚠ Hay algún problema, resumiendo ⚠"
 
 [archivos]
 archivoSalida = "res.log" # Abrir con el comando cat en la terminal para correcta muestra

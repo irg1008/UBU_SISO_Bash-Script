@@ -435,7 +435,7 @@ function extraerDeConfig() {
   # Lee el config y devuelve la linea solicitada
   # ----------------------------------
   function leeConfig() {
-    grep -o '".*"' "$configFile" | sed 's/"//g' | head -"$1" | tail -1 | tr -d ","
+    grep -o '".*"' "$configFile" | sed 's/"//g' | head -"$1" | tail -1
   }
 
   # Lee el config si es un array
@@ -503,7 +503,7 @@ function main() {
 
   # Asignamos los tamaños de tabla tras saber datos a estudiar y número de procesos que quiere
   NUM_COL=5  # Fijo pues son los datos que se calculan, se puede cambiar esto si se implementan mas calculos
-  NUM_FIL=10 # Fijo para desarrollo, cambiara con las distintas entradas de datos
+  NUM_FIL=6 # Fijo para desarrollo, cambiara con las distintas entradas de datos
 
   # Elegimos el estilo de los marcos en el programa
   asignarEstiloGeneral "2"
@@ -522,10 +522,10 @@ function main() {
   centrarEnPantalla "$(imprimirCuadro "100" "advertencia" "$advertencia")" | sacarHaciaArchivo "$archivoSalida" -a
 
   # Asigna los valores al array con datos aleatorios
-  # asignarValoresAleatorios "$NUM_FIL"
+  asignarValoresAleatorios "$NUM_FIL"
 
   # Asigna los valores desde el archivo
-  asignarDesdeArchivo "$archivoEntrada"
+  # asignarDesdeArchivo "$archivoEntrada"
 
   # Asigna los datos del array de forma manual -> TODO
 
