@@ -3,22 +3,53 @@
 # Variables globales
 # ----------------------------------
 declare estiloGeneral # Estilo de los marcos
-
-# Crea un array con valores aleatorio para fase desarrollo
-# ----------------------------------
 declare -A array
-declare NUM_COL=5
-declare NUM_FIL=10
-function asignarValores() {
+declare NUM_COL
+declare NUM_FIL
+
+# Crea un array con valores aleatorio para fase desarrollo o entrada
+# de datos automatica, (ni manual ni por archivo)
+# @param Numero de filas a generar de manera aleatorio (num. proceos)
+# ----------------------------------
+function asignarValoresAleatorios() {
+  filasAGenerar="$1"
+
   for ((i = 1; i <= NUM_COL; i++)); do
-    for ((j = 1; j <= NUM_FIL; j++)); do
+    for ((j = 1; j <= filasAGenerar; j++)); do
       if [ $i == "1" ]; then
-        array[$i, $j]="Fila "${j}
+        array[$i, $j]="P"${j}
       else
         array[$i, $j]=$((RANDOM % 20))
       fi
     done
   done
+}
+
+# Devuelve los datos del archivo de entrada en un array
+# ----------------------------------
+function asignarDesdeArchivo() {
+  local archivo
+  archivo="$1"
+
+  # Separador
+  IFS=','
+
+  # Si hay algun error
+  [ ! -f "$archivo" ] && {
+    centrarEnPantalla "$(imprimirCuadro "100" "error" "Archivo no encontrado")" | tee -a "$archivoSalida"
+    exit 99
+  }
+
+  # Leer todas las linea sy guardar los datos por columnas en el array
+  i="0"
+  while read -r proceso llegada ejecucion; do
+    if [ $i -ge "1" ]; then
+      array[1, $i]=$proceso
+      array[2, $i]=$llegada
+      array[3, $i]=$ejecucion
+    fi
+    ((i++))
+  done <"$archivo"
 }
 
 # Devuelve la expresión completa de color, pasándole los parámetros
@@ -379,40 +410,58 @@ function centrarEnPantalla() {
 function main() {
   # Variables de titulos y mensaje, con función de máxima personalización
   local introduccion=("FCFS" "Memoria No Continua" "Memoria No Reubicable" " " "Iván Ruiz Gázquez" "Jorge El Javas")
-  local error=("☒ Tiene pelos")
-  local acierto=("☑ Pa eso están Ramón")
-  local advertencia=("⚠ Huele a coño")
+  local error=("☒ Tiene pelos ☒")
+  local acierto=("☑ Pa eso están Ramón ☑")
+  local advertencia=("⚠ Huele a coño ⚠")
   local archivoSalida="res.log" # Importante hacer el cat del archivo de salida en la terminal, para ver los colores.
-  local archivoEntrada="data.csv"
+  local archivoEntrada="./data.csv"
+
+  # Asignamos los tamaños de tabla tras saber datos a estudiar y número de procesos que quiere
+  NUM_COL=5 # Fijo pues son los datos que se calculan, se puede cambiar esto si se implementan mas calculos
+  NUM_FIL=10 # Fijo para desarrollo, cambiara con las distintas entradas de datos
 
   # Elegimos el estilo de los marcos en el programa
   asignarEstiloGeneral "2"
 
   # Imprime introducción
-  centrarEnPantalla "$(imprimirCuadro "50" "random" "${introduccion[@]}")" | tee -a $archivoSalida
+  centrarEnPantalla "$(imprimirCuadro "50" "random" "${introduccion[@]}")" | tee "$archivoSalida"
   read -r -p "Pulsa enter para avanzar"
 
   # Imprime mensaje error
-  centrarEnPantalla "$(imprimirCuadro "100" "error" "${error[@]}")" | tee -a $archivoSalida
+  centrarEnPantalla "$(imprimirCuadro "100" "error" "${error[@]}")" | tee -a "$archivoSalida"
 
   # Imprime mensaje acierto
-  centrarEnPantalla "$(imprimirCuadro "100" "acierto" "${acierto[@]}")" | tee -a $archivoSalida
+  centrarEnPantalla "$(imprimirCuadro "100" "acierto" "${acierto[@]}")" | tee -a "$archivoSalida"
 
   # Imprime mensaje advertencia
-  centrarEnPantalla "$(imprimirCuadro "100" "advertencia" "${advertencia[@]}")" | tee -a $archivoSalida
+  centrarEnPantalla "$(imprimirCuadro "100" "advertencia" "${advertencia[@]}")" | tee -a "$archivoSalida"
 
-  # Asigna los valores al array de datos a usar en la tabla y las memorias
-  asignarValores
+  # Asigna los valores al array con datos aleatorios
+  asignarValoresAleatorios "$NUM_FIL"
+
+  # Asigna los valores desde el archivo
+  #asignarDesdeArchivo "$archivoEntrada"
+
+  # Asigna los datos del array de forma manual -> TODO
 
   # Ir imprimiendo las filas de la tabla según metemos los datos
   for ((fila = 1; fila <= NUM_FIL; fila++)); do
     clear
-    centrarEnPantalla "$(imprimirTabla $fila "3")" | tee -a $archivoSalida
+    centrarEnPantalla "$(imprimirTabla $fila "3")" | tee -a "$archivoSalida"
     read -r -p "Pulsa enter para avanzar"
   done
 
   # Saca el resultado - TODO -> Algoritmo y uso de memoria medinate enter, calculo de tiempo medio, etc
-  centrarEnPantalla "$(imprimirTabla $fila "6")" | tee -a $archivoSalida
+  centrarEnPantalla "$(imprimirTabla "$NUM_FIL" "6")" | tee -a "$archivoSalida"
 }
 
 main
+
+
+# 1: Preguntar si quiere los datos de entrada por teclado, archivo o aleatorios, usando un menú junto a la introducción
+# 2.a: Si los quiere por teclado, comenzamos a introducirlos imprimiendo la tabla con cada dato
+# 2.b: Si los quiere de forma aleatoria, preguntamos cuantos procesos quiere generar
+# 3: Preguntamos si quiere tiempo real o acumulado
+# 4: Mostramos la tabla resultado en instante uno, asi como el uso de memoria
+# 5: Avanzamos hasta que acaba el ultimo instante
+# 6: Mostramos resumen y preguntamos si quiere ver el informe generado del ejercicio
