@@ -26,6 +26,7 @@ function asignarValoresAleatorios() {
 }
 
 # Saca la información del comando que acompaña
+# @param "-a" para append
 # ----------------------------------
 function sacarHaciaArchivo() {
   local archivo
@@ -453,7 +454,7 @@ function extraerDeConfig() {
     declare -a "salidaArray=( $(echo "$salida" | tr '`$<>' '????') )"
     for ((i = 0; i < ${#salidaArray[@]}; i++)); do
       echo "${salidaArray[$i]}"
-      if [ $((${#salidaArray[@]} / 2)) == "$i" ]; then
+      if [ "$i" == "2" ] || [ "$i" == "4" ]; then
         echo " "
       fi
     done
@@ -502,14 +503,14 @@ function main() {
   archivoEntrada=$(extraerDeConfig "archivoEntrada")
 
   # Asignamos los tamaños de tabla tras saber datos a estudiar y número de procesos que quiere
-  NUM_COL=5  # Fijo pues son los datos que se calculan, se puede cambiar esto si se implementan mas calculos
+  NUM_COL=5 # Fijo pues son los datos que se calculan, se puede cambiar esto si se implementan mas calculos
   NUM_FIL=6 # Fijo para desarrollo, cambiara con las distintas entradas de datos
 
   # Elegimos el estilo de los marcos en el programa
   asignarEstiloGeneral "2"
 
   # Imprime introducción
-  centrarEnPantalla "$(imprimirCuadro "50" "random" "$introduccion")" | sacarHaciaArchivo "$archivoSalida"
+  centrarEnPantalla "$(imprimirCuadro "50" "0" "$introduccion")" | sacarHaciaArchivo "$archivoSalida"
   read -r -p "Pulsa enter para avanzar"
 
   # Imprime mensaje error
@@ -525,7 +526,7 @@ function main() {
   asignarValoresAleatorios "$NUM_FIL"
 
   # Asigna los valores desde el archivo
-  # asignarDesdeArchivo "$archivoEntrada"
+  asignarDesdeArchivo "$archivoEntrada"
 
   # Asigna los datos del array de forma manual -> TODO
 

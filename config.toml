@@ -1,11 +1,11 @@
 [introduccion]
-Titulo = ["FCFS", "Memoria No Continua", "Memoria No Reubicable"]
+Titulo = ["FCFS", "Memoria No Continua", "Memoria No Reubicable", "Sistemas Operativos", "2019-2020"]
 Autor = ["Jorge Ruiz", "Ivan Ruiz"]
 
 [mensajes]
-error = "☒ Ha ocurrido un error ☒"
-acierto = "☑ Todo correcto ☑"
-advertencia = "⚠ Hay algún problema, resumiendo ⚠"
+errorGeneral = "☒ Ha ocurrido un error, saliendo de la rama actual ☒"
+aciertoGeneral = "☑ Todo correcto, continuando ☑"
+advertenciaGeneral = "⚠ Hay algún problema, resumiendo ejecucion ⚠"
 
 [archivos]
 archivoSalida = "res.log" # Abrir con el comando cat en la terminal para correcta muestra
