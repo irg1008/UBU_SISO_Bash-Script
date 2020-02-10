@@ -542,10 +542,10 @@ function main() {
 
 main
 
-# 1: Preguntar si quiere los datos de entrada por teclado, archivo o aleatorios, usando un menú junto a la introducción
-# 2.a: Si los quiere por teclado, comenzamos a introducirlos imprimiendo la tabla con cada dato
-# 2.b: Si los quiere de forma aleatoria, preguntamos cuantos procesos quiere generar
-# 3: Preguntamos si quiere tiempo real o acumulado
-# 4: Mostramos la tabla resultado en instante uno, asi como el uso de memoria
-# 5: Avanzamos hasta que acaba el ultimo instante
-# 6: Mostramos resumen y preguntamos si quiere ver el informe generado del ejercicio
+# 1: Preguntar si quiere los datos de entrada por teclado, archivo o aleatorios, usando un menú junto a la introducción.
+# 2.a: Si los quiere por teclado, comenzamos a introducirlos imprimiendo la tabla con cada dato.
+# 2.b: Si los quiere de forma aleatoria, preguntamos cuantos procesos quiere generar.
+# 3: Preguntamos si quiere tiempo real o acumulado.
+# 4: Mostramos la tabla resultado en instante uno, asi como el uso de memoria.
+# 5: Avanzamos hasta que acaba el ultimo instante.
+# 6: Mostramos resumen y preguntamos si quiere ver el informe generado del ejercicio.
