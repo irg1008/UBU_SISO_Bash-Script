@@ -25,11 +25,20 @@ function asignarValoresAleatorios() {
   done
 }
 
+# Saca la información del comando que acompaña
+# ----------------------------------
+function sacarHaciaArchivo() {
+  local archivo
+  archivo="$(dirname $0)"
+  archivo+="/$1"
+}
+
 # Devuelve los datos del archivo de entrada en un array
 # ----------------------------------
 function asignarDesdeArchivo() {
   local archivo
-  archivo="$1"
+  archivo="$(dirname $0)"
+  archivo+="/$1"
 
   # Separador
   IFS=','
@@ -41,6 +50,7 @@ function asignarDesdeArchivo() {
   }
 
   # Leer todas las lineas y guardar los datos por columnas en el array
+  local i
   i="0"
   while read -r proceso llegada ejecucion; do
     if [ $i -ge "1" ]; then
@@ -414,10 +424,10 @@ function main() {
   local acierto=("☑ Pa eso están Ramón ☑")
   local advertencia=("⚠ Huele a coño ⚠")
   local archivoSalida="res.log" # Importante hacer el cat del archivo de salida en la terminal, para ver los colores.
-  local archivoEntrada="./data.csv"
+  local archivoEntrada="data.csv"
 
   # Asignamos los tamaños de tabla tras saber datos a estudiar y número de procesos que quiere
-  NUM_COL=5 # Fijo pues son los datos que se calculan, se puede cambiar esto si se implementan mas calculos
+  NUM_COL=5  # Fijo pues son los datos que se calculan, se puede cambiar esto si se implementan mas calculos
   NUM_FIL=10 # Fijo para desarrollo, cambiara con las distintas entradas de datos
 
   # Elegimos el estilo de los marcos en el programa
@@ -437,10 +447,10 @@ function main() {
   centrarEnPantalla "$(imprimirCuadro "100" "advertencia" "${advertencia[@]}")" | tee -a "$archivoSalida"
 
   # Asigna los valores al array con datos aleatorios
-  asignarValoresAleatorios "$NUM_FIL"
+  # asignarValoresAleatorios "$NUM_FIL"
 
   # Asigna los valores desde el archivo
-  #asignarDesdeArchivo "$archivoEntrada"
+  asignarDesdeArchivo "$archivoEntrada"
 
   # Asigna los datos del array de forma manual -> TODO
 
@@ -456,7 +466,6 @@ function main() {
 }
 
 main
-
 
 # 1: Preguntar si quiere los datos de entrada por teclado, archivo o aleatorios, usando un menú junto a la introducción
 # 2.a: Si los quiere por teclado, comenzamos a introducirlos imprimiendo la tabla con cada dato
