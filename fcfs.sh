@@ -40,7 +40,7 @@ function asignarDesdeArchivo() {
     exit 99
   }
 
-  # Leer todas las linea sy guardar los datos por columnas en el array
+  # Leer todas las lineas y guardar los datos por columnas en el array
   i="0"
   while read -r proceso llegada ejecucion; do
     if [ $i -ge "1" ]; then
