@@ -29,23 +29,29 @@ function asignarValoresAleatorios() {
 # ----------------------------------
 function sacarHaciaArchivo() {
   local archivo
-  archivo="$(dirname $0)"
+  archivo=$(dirname "$0")
   archivo+="/$1"
+
+  if [ "$2" == "-a" ]; then
+    tee -a "$archivo"
+  else
+    tee "$archivo"
+  fi
 }
 
 # Devuelve los datos del archivo de entrada en un array
 # ----------------------------------
 function asignarDesdeArchivo() {
   local archivo
-  archivo="$(dirname $0)"
+  archivo=$(dirname "$0")
   archivo+="/$1"
 
   # Separador
-  IFS=','
+  IFS=","
 
   # Si hay algun error
   [ ! -f "$archivo" ] && {
-    centrarEnPantalla "$(imprimirCuadro "100" "error" "Archivo no encontrado")" | tee -a "$archivoSalida"
+    centrarEnPantalla "$(imprimirCuadro "100" "error" "Archivo no encontrado")" | sacarHaciaArchivo "$archivoSalida" -a
     exit 99
   }
 
@@ -60,6 +66,11 @@ function asignarDesdeArchivo() {
     fi
     ((i++))
   done <"$archivo"
+
+  # Lee la ultima fila
+  array[1, $i]=$proceso
+  array[2, $i]=$llegada
+  array[3, $i]=$ejecucion
 }
 
 # Devuelve la expresión completa de color, pasándole los parámetros
@@ -415,16 +426,62 @@ function centrarEnPantalla() {
   done
 }
 
+# Devuelve los datos extraidos del archivo de configuracion
+# @param parametro a leer del config
+# ----------------------------------
+function extraerDeConfig() {
+
+  # Lee el config y devuelve la linea solicitada
+  # ----------------------------------
+  function leeConfig() {
+    grep -o '".*"' "$configFile" | sed 's/"//g' | head -"$1" | tail -1 #| tr -d ,
+  }
+
+  case "$1" in
+  introduccion)
+    salida=$(leeConfig "1")
+    salida+=$(leeConfig "2")
+    ;;
+  error)
+    salida=$(leeConfig "3")
+    ;;
+  acierto)
+    salida=$(leeConfig "4")
+    ;;
+  advertencia)
+    salida=$(leeConfig "5")
+    ;;
+  archivoSalida)
+    salida=$(leeConfig "6")
+    ;;
+  archivoEntrada)
+    salida=$(leeConfig "7")
+    ;;
+  esac
+
+  echo "$salida"
+}
+
 # Main
 # ----------------------------------
 function main() {
   # Variables de titulos y mensaje, con función de máxima personalización
-  local introduccion=("FCFS" "Memoria No Continua" "Memoria No Reubicable" " " "Iván Ruiz Gázquez" "Jorge El Javas")
-  local error=("☒ Tiene pelos ☒")
-  local acierto=("☑ Pa eso están Ramón ☑")
-  local advertencia=("⚠ Huele a coño ⚠")
-  local archivoSalida="res.log" # Importante hacer el cat del archivo de salida en la terminal, para ver los colores.
-  local archivoEntrada="data.csv"
+  local configFile
+  configFile=$(dirname "$0")
+  configFile+="/config.toml"
+
+  local introduccion
+  introduccion=$(extraerDeConfig "introduccion")
+  local error
+  error=$(extraerDeConfig "error")
+  local acierto
+  acierto=$(extraerDeConfig "acierto")
+  local advertencia
+  advertencia=$(extraerDeConfig "advertencia")
+  local archivoSalida
+  archivoSalida=$(extraerDeConfig "archivoSalida")
+  local archivoEntrada
+  archivoEntrada=$(extraerDeConfig "archivoEntrada")
 
   # Asignamos los tamaños de tabla tras saber datos a estudiar y número de procesos que quiere
   NUM_COL=5  # Fijo pues son los datos que se calculan, se puede cambiar esto si se implementan mas calculos
@@ -434,17 +491,17 @@ function main() {
   asignarEstiloGeneral "2"
 
   # Imprime introducción
-  centrarEnPantalla "$(imprimirCuadro "50" "random" "${introduccion[@]}")" | tee "$archivoSalida"
+  centrarEnPantalla "$(imprimirCuadro "50" "random" "$introduccion")" | sacarHaciaArchivo "$archivoSalida"
   read -r -p "Pulsa enter para avanzar"
 
   # Imprime mensaje error
-  centrarEnPantalla "$(imprimirCuadro "100" "error" "${error[@]}")" | tee -a "$archivoSalida"
+  centrarEnPantalla "$(imprimirCuadro "100" "error" "$error")" | sacarHaciaArchivo "$archivoSalida" -a
 
   # Imprime mensaje acierto
-  centrarEnPantalla "$(imprimirCuadro "100" "acierto" "${acierto[@]}")" | tee -a "$archivoSalida"
+  centrarEnPantalla "$(imprimirCuadro "100" "acierto" "$acierto")" | sacarHaciaArchivo "$archivoSalida" -a
 
   # Imprime mensaje advertencia
-  centrarEnPantalla "$(imprimirCuadro "100" "advertencia" "${advertencia[@]}")" | tee -a "$archivoSalida"
+  centrarEnPantalla "$(imprimirCuadro "100" "advertencia" "$advertencia")" | sacarHaciaArchivo "$archivoSalida" -a
 
   # Asigna los valores al array con datos aleatorios
   # asignarValoresAleatorios "$NUM_FIL"
@@ -457,12 +514,12 @@ function main() {
   # Ir imprimiendo las filas de la tabla según metemos los datos
   for ((fila = 1; fila <= NUM_FIL; fila++)); do
     clear
-    centrarEnPantalla "$(imprimirTabla $fila "3")" | tee -a "$archivoSalida"
+    centrarEnPantalla "$(imprimirTabla $fila "3")" | sacarHaciaArchivo "$archivoSalida" -a
     read -r -p "Pulsa enter para avanzar"
   done
 
   # Saca el resultado - TODO -> Algoritmo y uso de memoria medinate enter, calculo de tiempo medio, etc
-  centrarEnPantalla "$(imprimirTabla "$NUM_FIL" "6")" | tee -a "$archivoSalida"
+  centrarEnPantalla "$(imprimirTabla "$NUM_FIL" "6")" | sacarHaciaArchivo "$archivoSalida" -a
 }
 
 main

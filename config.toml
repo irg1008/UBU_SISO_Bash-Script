@@ -1,0 +1,12 @@
+[introduccion]
+Titulo = ["FCFS", "Memoria No Continua", "Memoria No Reubicable"]
+Autor = ["Jorge Ruiz", "Ivan Ruiz"]
+
+[mensajes]
+error = "☒ Tiene pelos ☒"
+acierto = "☑ Pa eso están Ramón ☑"
+advertencia = "⚠ Huele a coño ⚠"
+
+[archivos]
+archivoSalida = "res.log" # Abrir con el comando cat en la terminal para correcta muestra
+archivoEntrada = "data.csv" # No cambiar si no se cambia el nombre del archivo o rellenar nuevo archivo con mismo formato
