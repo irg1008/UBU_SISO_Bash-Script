@@ -418,7 +418,8 @@ function asignarManual() {
     local nombre
 
     read -r -p "Nombre del proceso $1: " nombre
-    array[$1, 1]="$nombre"
+    array[1, $1]="$nombre"
+    clear
     centrarEnPantalla "$(imprimirTabla "$1" "3")"
   }
 
@@ -428,7 +429,8 @@ function asignarManual() {
     local llegada
 
     read -r -p "Llegada del proceso $1: " llegada
-    array[$1, 2]="$llegada"
+    array[2, $1]="$llegada"
+    clear
     centrarEnPantalla "$(imprimirTabla "$1" "3")"
   }
 
@@ -438,22 +440,25 @@ function asignarManual() {
     local ejecucion
 
     read -r -p "Tiempo ejecución proceso $1: " ejecucion
-    array[$1, 3]="$ejecucion"
+    array[3, $1]="$ejecucion"
+    clear
     centrarEnPantalla "$(imprimirTabla "$1" "3")"
   }
 
-  # omprueba si queremos introducir más procesos
+  # Comprueba si queremos introducir más procesos
   # ----------------------------------
   function comprobarSiMasProcesos() {
     local temp
 
     read -r -p "¿Quieres introducir otro proceso?: [S/N]" temp
-    while [ "$temp" != "S" ] | [ "$temp" != "s" ] | [ "$temp" != "N" ] | [ "$temp" != "n" ]; do
+
+    while [[ ! "$temp" =~ ^([sS][iI]|[sS]|[nN][oO]|[nN])$ ]]; do
       centrarEnPantalla "$(imprimirCuadro "80" "error" "Entrada de datos errónea")"
       read -r -p "¿Quieres introducir otro proceso?: [S/N]" temp
-      if [ "$temp" == "N" ] || [ "$temp" == "n" ]; then
+
+      if [[ $temp =~ [nN][oO]|[nN] ]]; then
         masProcesos="false"
-      elif [ "$temp" == "S" ] || [ "$temp" == "s" ]; then
+      elif [[ $temp =~ [sS][iI]|[sS] ]]; then
         ((NUM_FIL++))
       fi
     done
@@ -565,7 +570,6 @@ function main() {
 
   # Asignamos los tamaños de tabla tras saber datos a estudiar y número de procesos que quiere
   NUM_COL=5 # Fijo pues son los datos que se calculan, se puede cambiar esto si se implementan mas calculos
-  NUM_FIL
 
   # Elegimos el estilo de los marcos en el programa
   asignarEstiloGeneral "2"
