@@ -419,21 +419,24 @@ function asignarManual() {
     case "$columna" in
     1)
       read -r -p "Nombre del proceso $i: " temp
-      array[$i, 1]=$temp
+      # array[$i, 1]=$temp
+      #echo $temp
       ;;
     2)
       read -r -p "Llegada del proceso $i: " temp
-      array[$i, 2]=$temp
+      #array[$i, 2]=$temp
+      echo $temp
       ;;
     3)
       read -r -p "Tiempo de ejecución del proceso $i: " temp
-      array[$i, 3]=$temp
+      #array[$i, 3]=$temp
+      echo $temp
       ;;
     esac
 
     clear
     ((columna++))
-    if [ "$columna" == "3" ]; then
+    if [ "$columna" == "4" ]; then
       columna="1"
     fi
     centrarEnPantalla "$(imprimirTabla "$i" "3")"
