@@ -16,7 +16,7 @@ function asignarValoresAleatorios() {
 
   for ((i = 1; i <= NUM_COL; i++)); do
     for ((j = 1; j <= filasAGenerar; j++)); do
-      if [ $i == "1" ]; then
+      if [ "$i" == "1" ]; then
         array[$i, $j]="P"${j}
       else
         array[$i, $j]=$((RANDOM % 20))
@@ -533,7 +533,7 @@ function main() {
   # Ir imprimiendo las filas de la tabla según metemos los datos
   for ((fila = 1; fila <= NUM_FIL; fila++)); do
     clear
-    centrarEnPantalla "$(imprimirTabla $fila "3")" | sacarHaciaArchivo "$archivoSalida" -a
+    centrarEnPantalla "$(imprimirTabla "$fila" "3")" | sacarHaciaArchivo "$archivoSalida" -a
     read -r -p "Pulsa enter para avanzar"
   done
 
