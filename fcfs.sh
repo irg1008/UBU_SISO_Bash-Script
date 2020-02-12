@@ -410,36 +410,61 @@ function imprimirTabla() {
 # Asigna valores en el array de forma manual
 # ----------------------------------
 function asignarManual() {
-  local temp
-  local columna
-  columna="1"
-  read -r -p "¿Cuántos procesos quieres?: " NUM_FIL
+  local masProcesos
 
-  for ((i = 1; i <= NUM_FIL; i++)); do
-    case "$columna" in
-    1)
-      read -r -p "Nombre del proceso $i: " temp
-      # array[$i, 1]=$temp
-      #echo $temp
-      ;;
-    2)
-      read -r -p "Llegada del proceso $i: " temp
-      #array[$i, 2]=$temp
-      echo $temp
-      ;;
-    3)
-      read -r -p "Tiempo de ejecución del proceso $i: " temp
-      #array[$i, 3]=$temp
-      echo $temp
-      ;;
-    esac
+  # Guarda el nombre del proceso i
+  # ----------------------------------
+  function guardarNombreDelProceso() {
+    local nombre
 
-    clear
-    ((columna++))
-    if [ "$columna" == "4" ]; then
-      columna="1"
-    fi
-    centrarEnPantalla "$(imprimirTabla "$i" "3")"
+    read -r -p "Nombre del proceso $1: " nombre
+    array[$1, 1]="$nombre"
+    centrarEnPantalla "$(imprimirTabla "$1" "3")"
+  }
+
+  # Guarda el tiempo de llegada del proceso i
+  # ----------------------------------
+  function guardarLlegadaProceso() {
+    local llegada
+
+    read -r -p "Llegada del proceso $1: " llegada
+    array[$1, 2]="$llegada"
+    centrarEnPantalla "$(imprimirTabla "$1" "3")"
+  }
+
+  # Guarda el tiempo de ejecucion del proceso i
+  # ----------------------------------
+  function guardarTiempoEjecucion() {
+    local ejecucion
+
+    read -r -p "Tiempo ejecución proceso $1: " ejecucion
+    array[$1, 3]="$ejecucion"
+    centrarEnPantalla "$(imprimirTabla "$1" "3")"
+  }
+
+  # omprueba si queremos introducir más procesos
+  # ----------------------------------
+  function comprobarSiMasProcesos() {
+    local temp
+
+    read -r -p "¿Quieres introducir otro proceso?: [S/N]" temp
+    while [ "$temp" != "S" ] | [ "$temp" != "s" ] | [ "$temp" != "N" ] | [ "$temp" != "n" ]; do
+      centrarEnPantalla "$(imprimirCuadro "80" "error" "Entrada de datos errónea")"
+      read -r -p "¿Quieres introducir otro proceso?: [S/N]" temp
+      if [ "$temp" == "N" ] || [ "$temp" == "n" ]; then
+        masProcesos="false"
+      elif [ "$temp" == "S" ] || [ "$temp" == "s" ]; then
+        ((NUM_FIL++))
+      fi
+    done
+  }
+
+  NUM_FIL="1"
+  while [ "$masProcesos" != "false" ]; do
+    guardarNombreDelProceso "$NUM_FIL"
+    guardarLlegadaProceso "$NUM_FIL"
+    guardarTiempoEjecucion "$NUM_FIL"
+    comprobarSiMasProcesos
   done
 }
 
@@ -540,7 +565,7 @@ function main() {
 
   # Asignamos los tamaños de tabla tras saber datos a estudiar y número de procesos que quiere
   NUM_COL=5 # Fijo pues son los datos que se calculan, se puede cambiar esto si se implementan mas calculos
-  NUM_FIL=6 # Fijo para desarrollo, cambiara con las distintas entradas de datos
+  NUM_FIL
 
   # Elegimos el estilo de los marcos en el programa
   asignarEstiloGeneral "2"
@@ -560,7 +585,7 @@ function main() {
 
   # Meter las tres asignaciones en una funcion que pregunte como lo quiere dentro de un marco
   # Asigna los valores al array con datos aleatorios
-  # asignarValoresAleatorios "$NUM_FIL"
+  # asignarValoresAleatorios "10" # Cambiar al crear entrada
 
   # Asigna los valores desde el archivo
   # asignarDesdeArchivo "$archivoEntrada"
