@@ -190,7 +190,7 @@ function imprimirCuadro() {
   local titulos
   local encTabla
   local pieTabla
-  local anchoCelda
+  local anchoCuadro
   local color
 
   # Asigna un estilo a la tabla, de doble linea, linea basica,
@@ -201,7 +201,7 @@ function imprimirCuadro() {
 
     estilo=("${estiloGeneral[@]}")
 
-    for ((i = 1; i <= anchoCelda; i++)); do
+    for ((i = 1; i <= anchoCuadro; i++)); do
       simboloHorizontal+=${estilo[0]}
     done
 
@@ -220,7 +220,7 @@ function imprimirCuadro() {
   # Asigna el ancho de la celda
   # ----------------------------------
   function asignarAncho() {
-    anchoCelda="$1"
+    anchoCuadro="$1"
   }
 
   # Imprime los elementos del array
@@ -233,9 +233,9 @@ function imprimirCuadro() {
     for ((i = 2; i < ${#titulos[@]}; i++)); do
       longitudArray=$(calcularLongitud "${titulos[$i]}")
       printf "$color%s" ""
-      printf "${estilo[10]}%-*s" "$((anchoCelda / 2 - longitudArray / 2))" ""
+      printf "${estilo[10]}%-*s" "$((anchoCuadro / 2 - longitudArray / 2))" ""
       printf "%s" "${titulos[$i]}" ""
-      printf "%*s${estilo[10]}" "$((anchoCelda / 2 - (longitudArray + 1) / 2))" ""
+      printf "%*s${estilo[10]}" "$((anchoCuadro / 2 - (longitudArray + 1) / 2))" ""
       printf "$(fc)\n%s" ""
     done
   }
@@ -319,9 +319,19 @@ function imprimirTabla() {
   # desde el indice
   # ----------------------------------
   function asignarAnchoYFilasYColumnas() {
-    anchoCelda="12"
+    local longitudElemento
     filasImprimir="$1"
     columnasImprimir="$2"
+    anchoCelda="12"
+
+    for ((i = 1; i <= NUM_COL; i++)); do
+      for ((j = 1; j <= NUM_FIL; j++)); do
+        longitudElemento=$(calcularLongitud "${array[$i, $j]}")
+        if [[ "$anchoCelda" -lt "$longitudElemento" ]]; then
+          anchoCelda="$longitudElemento"
+        fi
+      done
+    done
 
     if [ "$filasImprimir" -gt "$NUM_FIL" ]; then
       filasImprimir=$NUM_FIL
@@ -412,6 +422,12 @@ function imprimirTabla() {
 function asignarManual() {
   local masProcesos
 
+  # Comprueba si la entrada pasada es un entero
+  # ----------------------------------
+  function entradaEsEntero() {
+    echo "hola"
+  }
+
   # Guarda el nombre del proceso i
   # ----------------------------------
   function guardarNombreDelProceso() {
@@ -455,13 +471,13 @@ function asignarManual() {
     while [[ ! "$temp" =~ ^([sS][iI]|[sS]|[nN][oO]|[nN])$ ]]; do
       centrarEnPantalla "$(imprimirCuadro "80" "error" "Entrada de datos errónea")"
       read -r -p "¿Quieres introducir otro proceso?: [S/N]" temp
-
-      if [[ $temp =~ [nN][oO]|[nN] ]]; then
-        masProcesos="false"
-      elif [[ $temp =~ [sS][iI]|[sS] ]]; then
-        ((NUM_FIL++))
-      fi
     done
+
+    if [[ $temp =~ [nN][oO]|[nN] ]]; then
+      masProcesos="false"
+    elif [[ $temp =~ [sS][iI]|[sS] ]]; then
+      ((NUM_FIL++))
+    fi
   }
 
   NUM_FIL="1"
