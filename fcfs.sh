@@ -407,6 +407,39 @@ function imprimirTabla() {
   imprimir
 }
 
+# Asigna valores en el array de forma manual
+# ----------------------------------
+function asignarManual() {
+  local temp
+  local columna
+  columna="1"
+  read -r -p "¿Cuántos procesos quieres?: " NUM_FIL
+
+  for ((i = 1; i <= NUM_FIL; i++)); do
+    case "$columna" in
+    1)
+      read -r -p "Nombre del proceso $i: " temp
+      array[$i, 1]=$temp
+      ;;
+    2)
+      read -r -p "Llegada del proceso $i: " temp
+      array[$i, 2]=$temp
+      ;;
+    3)
+      read -r -p "Tiempo de ejecución del proceso $i: " temp
+      array[$i, 3]=$temp
+      ;;
+    esac
+
+    clear
+    ((columna++))
+    if [ "$columna" == "3" ]; then
+      columna="1"
+    fi
+    centrarEnPantalla "$(imprimirTabla "$i" "3")"
+  done
+}
+
 # Centra en pantalla el valor pasado, si es un string, divide por saltos de
 # linea y coloca cada linea en el centro
 # @param string a centrar
@@ -522,11 +555,15 @@ function main() {
   # Imprime mensaje advertencia
   centrarEnPantalla "$(imprimirCuadro "100" "advertencia" "$advertencia")" | sacarHaciaArchivo "$archivoSalida" -a
 
+  # Meter las tres asignaciones en una funcion que pregunte como lo quiere dentro de un marco
   # Asigna los valores al array con datos aleatorios
-  asignarValoresAleatorios "$NUM_FIL"
+  # asignarValoresAleatorios "$NUM_FIL"
 
   # Asigna los valores desde el archivo
-  asignarDesdeArchivo "$archivoEntrada"
+  # asignarDesdeArchivo "$archivoEntrada"
+
+  # Asigna manual
+  asignarManual
 
   # Asigna los datos del array de forma manual -> TODO
 
