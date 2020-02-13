@@ -53,7 +53,7 @@ function asignarDesdeArchivo() {
   # Si hay algun error
   [ ! -f "$archivo" ] && {
     centrarEnPantalla "$(imprimirCuadro "100" "error" "Archivo no encontrado")" | sacarHaciaArchivo "$archivoSalida" -a
-    exit 99 # TODO cambiar por llamada a menú principal
+    elegirTipoDeEntrada "$archivoEntrada"
   }
 
   # Leer todas las lineas y guardar los datos por columnas en el array
@@ -261,6 +261,8 @@ function imprimirCuadro() {
     printf "$(fc)\n%s" ""
   }
 
+  # Main de cuadro
+  # ----------------------------------
   asignarAncho "$1"
   asignacolor "$2"
   asignarEstilo
@@ -419,6 +421,7 @@ function imprimirTabla() {
   guardarColoresDeTabla
   asignarAnchoYFilasYColumnas "$1" "$2"
   asignarEstiloDeTabla
+  printf "\n\n"
   imprimir
 }
 
@@ -435,7 +438,7 @@ function asignarManual() {
     fi
   }
 
-  # Comprueba si la entrada pasada es un string valido TODO
+  # Comprueba si la entrada pasada es un string valido
   # ----------------------------------
   function entradaEsStringValido() {
     if [[ "$1" =~ [A-Za-z] ]]; then
@@ -448,7 +451,6 @@ function asignarManual() {
   function comienzoPregunta() {
     clear
     centrarEnPantalla "$(imprimirCuadro "50" "6" "$2")"
-    echo ""
     centrarEnPantalla "$(imprimirTabla "$1" "3")"
   }
 
@@ -505,7 +507,7 @@ function asignarManual() {
   function comprobarSiMasProcesos() {
     local temp
 
-    comienzoPregunta "$1" "¿Quieres introducir otro proceso? [S/N]: "
+    comienzoPregunta "$1" "¿Quieres introducir otro proceso? [S/N]"
     read -r -p "-> " temp
 
     while [[ ! "$temp" =~ ^([sS][iI]|[sS]|[nN][oO]|[nN])$ ]]; do
@@ -520,6 +522,8 @@ function asignarManual() {
     fi
   }
 
+  # Main de la asignación manual
+  # ----------------------------------
   NUM_FIL="1"
   while [ "$masProcesos" != "false" ]; do
     guardarNombreDelProceso "$NUM_FIL"
@@ -538,6 +542,8 @@ function centrarEnPantalla() {
   local termwidth
   local padding
   local longitudElemento
+
+  echo ""
 
   IFS=$'\n' string=($1)
   termwidth="$(tput cols)"
@@ -617,7 +623,6 @@ function elegirTipoDeEntrada() {
     "4.- Ayuda"
     "0.- Salir"
   )
-  echo ""
   centrarEnPantalla "$(imprimirCuadro "50" "0" "${opcionesEntrada[@]}")" | sacarHaciaArchivo "$archivoSalida" -a
   read -r -p "-> " tipo
 
@@ -626,16 +631,26 @@ function elegirTipoDeEntrada() {
     read -r -p "-> " tipo
   done
 
+  # Funcion que imprime el tipo de asignacion al archivo,
+  # para posterior conocimiento
+  # ----------------------------------
+  function guardaTipoEnArchivo() {
+    centrarEnPantalla "$(imprimirCuadro "50" "6" "Asignación de datos $1")" >>"$archivoSalida"
+  }
+
   case "$tipo" in
   1)
+    guardaTipoEnArchivo "manual"
     asignarManual
     ;;
   2)
+    guardaTipoEnArchivo "automática desde archivo"
     asignarDesdeArchivo "$1"
     ;;
   3)
+    guardaTipoEnArchivo "aleatoria"
     clear
-    centrarEnPantalla "$(imprimirCuadro "50" "6" "¿Cuántos valores aleatorios quieres generar?")"
+    centrarEnPantalla "$(imprimirCuadro "50" "6" "¿Cuántos valores aleatorios quieres generar?")" | sacarHaciaArchivo "$archivoSalida" -a
     read -r -p "-> " numValAleatorios
     asignarValoresAleatorios "$numValAleatorios"
     ;;
@@ -643,10 +658,10 @@ function elegirTipoDeEntrada() {
     imprimirAyuda
     ;;
   0)
+    centrarEnPantalla "$(imprimirCuadro "50" "6" "Ha salido del programa mediante el menú de opciones")" >>"$archivoSalida"
     exit 99
     ;;
   *)
-    echo ""
     centrarEnPantalla "$(imprimirCuadro "100" "error" "Ha ocurrido algún tipo de error")" | sacarHaciaArchivo "$archivoSalida" -a
     exit 99
     ;;
@@ -662,6 +677,8 @@ function imprimirAyuda() {
 # Main
 # ----------------------------------
 function main() {
+  # Asignacion variables
+  # ------------------------------------------------
   # Variables de titulos y mensajes
   local configFile
   local introduccion
@@ -684,46 +701,34 @@ function main() {
   # Elegimos el estilo de los marcos en el programa
   asignarEstiloGeneral "2"
 
-
   # Introduccion
   # ------------------------------------------------
   # Imprime introducción
-  echo ""
   centrarEnPantalla "$(imprimirCuadro "50" "0" "$introduccion")" | sacarHaciaArchivo "$archivoSalida"
   # Imprime mensaje advertencia
-  echo ""
   centrarEnPantalla "$(imprimirCuadro "100" "advertencia" "$advertencia")" | sacarHaciaArchivo "$archivoSalida" -a
   # Imprime mensaje error
-  echo ""
   centrarEnPantalla "$(imprimirCuadro "100" "error" "$error")" | sacarHaciaArchivo "$archivoSalida" -a
-
-
 
   # Elección menú y tipo de tiempo
   # ------------------------------------------------
   elegirTipoDeEntrada "$archivoEntrada"
   # Pide el tipo de tiempo que se quiere
-  # elegirTipoDeTiempo
-
-
 
   # Ejecuta Algoritmo
   # ------------------------------------------------
   # Comienza la ejecucion del algoritmo según el tiempo pasado
-  clear
-  centrarEnPantalla "$(imprimirCuadro "100" "acierto" "$acierto")" | sacarHaciaArchivo "$archivoSalida" -a
-
   # Ir imprimiendo las filas y los tiempos según pase el tiempo
   for ((fila = 1; fila <= NUM_FIL; fila++)); do
     clear
+    centrarEnPantalla "$(imprimirCuadro "100" "acierto" "$acierto")" | sacarHaciaArchivo "$archivoSalida" -a
     # Saca el resultado - TODO -> Algoritmo y uso de memoria medinate enter, calculo de tiempo medio, etc Uso de memoria
     centrarEnPantalla "$(imprimirTabla "$fila" "6")" | sacarHaciaArchivo "$archivoSalida" -a
-    echo ""
     read -r -p "$(centrarEnPantalla "$(imprimirCuadro "50" "default" "Pulsa enter para avanzar")")"
   done
 
-  # Menu final de práctica control
-  echo ""
+  # Menu final de práctica control TODO cambiar por otro
+  elegirTipoDeEntrada "$archivoEntrada"
 }
 
 main
