@@ -623,6 +623,9 @@ function elegirTipoDeEntrada() {
     "4.- Ayuda"
     "0.- Salir"
   )
+
+  clear
+  centrarEnPantalla "$(imprimirCuadro "50" "default" "MENÚ PRINCIPAL")" | sacarHaciaArchivo "$archivoSalida" -a
   centrarEnPantalla "$(imprimirCuadro "50" "0" "${opcionesEntrada[@]}")" | sacarHaciaArchivo "$archivoSalida" -a
   read -r -p "-> " tipo
 
@@ -671,15 +674,24 @@ function elegirTipoDeEntrada() {
 # Ayuda del algoritmo
 # ----------------------------------
 function imprimirAyuda() {
-  elegirTipoDeEntrada
+  local ayuda
+  ayuda=(
+    "El algoritmo de FCFS según necesidades con memoria no continua y no reubicable funciona tal que...
+    Se pueden insertar los valores desde...
+    Puedes elegir tiempo de... que hará...
+    Si tienes alguna duda más consulta el manual externo"
+  )
+
+  clear
+  centrarEnPantalla "$(imprimirCuadro "50" "default" "AYUDA")" | sacarHaciaArchivo "$archivoSalida" -a
+  centrarEnPantalla "$(imprimirCuadro "150" "random" "${ayuda[@]}")" | sacarHaciaArchivo "$archivoSalida" -a
+  read -r -p "$(centrarEnPantalla "$(imprimirCuadro "50" "default" "Pulsa intro para salir")")"
+  elegirTipoDeEntrada "$archivoEntrada"
 }
 
 # Main
 # ----------------------------------
 function main() {
-  # Asignacion variables
-  # ------------------------------------------------
-  # Variables de titulos y mensajes
   local configFile
   local introduccion
   local error
@@ -687,48 +699,68 @@ function main() {
   local advertencia
   local archivoSalida
   local archivoEntrada
+
   # Extraccion de variables del archivo de config
-  configFile=$(dirname "$0")
-  configFile+="/config.toml"
-  introduccion=$(extraerDeConfig "introduccion")
-  error=$(extraerDeConfig "error")
-  acierto=$(extraerDeConfig "acierto")
-  advertencia=$(extraerDeConfig "advertencia")
-  archivoSalida=$(extraerDeConfig "archivoSalida")
-  archivoEntrada=$(extraerDeConfig "archivoEntrada")
-  # Máximo y fijo pues son los datos que se calculan, se puede cambiar esto si se implementan mas calculos o para otros algoritmos
-  NUM_COL=5
-  # Elegimos el estilo de los marcos en el programa
-  asignarEstiloGeneral "2"
+  # ------------------------------------------------
+  function asignaciones() {
+    configFile=$(dirname "$0")
+    configFile+="/config.toml"
+    introduccion=$(extraerDeConfig "introduccion")
+    error=$(extraerDeConfig "error")
+    acierto=$(extraerDeConfig "acierto")
+    advertencia=$(extraerDeConfig "advertencia")
+    archivoSalida=$(extraerDeConfig "archivoSalida")
+    archivoEntrada=$(extraerDeConfig "archivoEntrada")
+    # Máximo y fijo pues son los datos que se calculan, se puede cambiar esto si se implementan mas calculos o para otros algoritmos
+    NUM_COL=5
+    # Elegimos el estilo de los marcos en el programa
+    asignarEstiloGeneral "2"
+  }
 
   # Introduccion
   # ------------------------------------------------
-  # Imprime introducción
-  centrarEnPantalla "$(imprimirCuadro "50" "0" "$introduccion")" | sacarHaciaArchivo "$archivoSalida"
-  # Imprime mensaje advertencia
-  centrarEnPantalla "$(imprimirCuadro "100" "advertencia" "$advertencia")" | sacarHaciaArchivo "$archivoSalida" -a
-  # Imprime mensaje error
-  centrarEnPantalla "$(imprimirCuadro "100" "error" "$error")" | sacarHaciaArchivo "$archivoSalida" -a
+  function introduccion() {
+    # Imprime introducción
+    centrarEnPantalla "$(imprimirCuadro "50" "0" "$introduccion")" | sacarHaciaArchivo "$archivoSalida"
+    # Imprime mensaje advertencia
+    centrarEnPantalla "$(imprimirCuadro "100" "advertencia" "$advertencia")" | sacarHaciaArchivo "$archivoSalida" -a
+    # Imprime mensaje error
+    centrarEnPantalla "$(imprimirCuadro "100" "error" "$error")" | sacarHaciaArchivo "$archivoSalida" -a
+    # Pulsar tecla para avanzar al menu
+    read -r -p "$(centrarEnPantalla "$(imprimirCuadro "50" "default" "Pulsa intro para avanzar")")"
+  }
+  # ------------------------------------------------
 
   # Elección menú y tipo de tiempo
   # ------------------------------------------------
-  elegirTipoDeEntrada "$archivoEntrada"
-  # Pide el tipo de tiempo que se quiere
+  function menu() {
+    elegirTipoDeEntrada "$archivoEntrada"
+    # Pide el tipo de tiempo que se quiere
+  }
 
   # Ejecuta Algoritmo
   # ------------------------------------------------
-  # Comienza la ejecucion del algoritmo según el tiempo pasado
-  # Ir imprimiendo las filas y los tiempos según pase el tiempo
-  for ((fila = 1; fila <= NUM_FIL; fila++)); do
-    clear
-    centrarEnPantalla "$(imprimirCuadro "100" "acierto" "$acierto")" | sacarHaciaArchivo "$archivoSalida" -a
-    # Saca el resultado - TODO -> Algoritmo y uso de memoria medinate enter, calculo de tiempo medio, etc Uso de memoria
-    centrarEnPantalla "$(imprimirTabla "$fila" "6")" | sacarHaciaArchivo "$archivoSalida" -a
-    read -r -p "$(centrarEnPantalla "$(imprimirCuadro "50" "default" "Pulsa enter para avanzar")")"
-  done
+  function algoritmo() {
+    # Comienza la ejecucion del algoritmo según el tiempo pasado
+    # Ir imprimiendo las filas y los tiempos según pase el tiempo
+    for ((fila = 1; fila <= NUM_FIL; fila++)); do
+      clear
+      centrarEnPantalla "$(imprimirCuadro "100" "acierto" "$acierto")" | sacarHaciaArchivo "$archivoSalida" -a
+      # Saca el resultado - TODO -> Algoritmo y uso de memoria medinate enter, calculo de tiempo medio, etc Uso de memoria
+      centrarEnPantalla "$(imprimirTabla "$fila" "6")" | sacarHaciaArchivo "$archivoSalida" -a
+      read -r -p "$(centrarEnPantalla "$(imprimirCuadro "50" "default" "Pulsa intro para avanzar")")"
+    done
 
-  # Menu final de práctica control TODO cambiar por otro
-  elegirTipoDeEntrada "$archivoEntrada"
+    # Menu final de práctica control TODO cambiar por menu funcional que vuelva a ejecutar el programa, ahora solo sale porque no llama a nada, ¿usar un if y volver a llamar al main?, o algo parecido
+    elegirTipoDeEntrada "$archivoEntrada"
+  }
+
+  # Main de main xD
+  # ------------------------------------------------
+  asignaciones
+  introduccion
+  menu
+  algoritmo
 }
 
 main
