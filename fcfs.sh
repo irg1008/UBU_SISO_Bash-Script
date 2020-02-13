@@ -297,7 +297,7 @@ function imprimirTabla() {
     else
       colorEncabezado=$(cc Neg default)
       for ((i = 1; i <= NUM_FIL; i++)); do
-        coloresTabla[$i]=$(cc Neg "$i")
+        coloresTabla[$i]=$(cc Neg "$((i + 4))")
       done
     fi
   }
@@ -699,6 +699,7 @@ function main() {
   local advertencia
   local archivoSalida
   local archivoEntrada
+  local salirDePractica
 
   # Extraccion de variables del archivo de config
   # ------------------------------------------------
@@ -750,17 +751,36 @@ function main() {
       centrarEnPantalla "$(imprimirTabla "$fila" "6")" | sacarHaciaArchivo "$archivoSalida" -a
       read -r -p "$(centrarEnPantalla "$(imprimirCuadro "50" "default" "Pulsa intro para avanzar")")"
     done
+  }
 
-    # Menu final de práctica control TODO cambiar por menu funcional que vuelva a ejecutar el programa, ahora solo sale porque no llama a nada, ¿usar un if y volver a llamar al main?, o algo parecido
-    elegirTipoDeEntrada "$archivoEntrada"
+  # Pregunta al usuario si quiere salir del programa
+  # ------------------------------------------------
+  function preguntarSiQuiereSalir() {
+    local temp
+
+    clear
+    centrarEnPantalla "$(imprimirCuadro "50" "default" "¿Quieres volver a ejecutar el algoritmo? [S/N]")"
+    read -r -p "-> " temp
+
+    while [[ ! "$temp" =~ ^([sS][iI]|[sS]|[nN][oO]|[nN])$ ]]; do
+      centrarEnPantalla "$(imprimirCuadro "80" "error" "Entrada de datos errónea")"
+      read -r -p "-> " temp
+    done
+
+    if [[ $temp =~ [nN][oO]|[nN] ]]; then
+      salirDePractica="true"
+    fi
   }
 
   # Main de main xD
   # ------------------------------------------------
   asignaciones
   introduccion
-  menu
-  algoritmo
+  while [[ "$salirDePractica" != "true" ]]; do
+    menu
+    algoritmo
+    preguntarSiQuiereSalir
+  done
 }
 
 main
