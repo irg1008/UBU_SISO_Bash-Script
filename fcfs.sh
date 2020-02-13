@@ -12,10 +12,10 @@ declare NUM_FIL
 # @param Numero de filas a generar de manera aleatorio (num. proceos)
 # ----------------------------------
 function asignarValoresAleatorios() {
-  filasAGenerar="$1"
+  NUM_FIL="$1"
 
   for ((i = 1; i <= NUM_COL; i++)); do
-    for ((j = 1; j <= filasAGenerar; j++)); do
+    for ((j = 1; j <= NUM_FIL; j++)); do
       if [ "$i" == "1" ]; then
         array[$i, $j]="P"${j}
       else
@@ -53,7 +53,7 @@ function asignarDesdeArchivo() {
   # Si hay algun error
   [ ! -f "$archivo" ] && {
     centrarEnPantalla "$(imprimirCuadro "100" "error" "Archivo no encontrado")" | sacarHaciaArchivo "$archivoSalida" -a
-    exit 99
+    exit 99 # TODO cambiar por llamada a menú principal
   }
 
   # Leer todas las lineas y guardar los datos por columnas en el array
@@ -72,6 +72,8 @@ function asignarDesdeArchivo() {
   array[1, $i]=$proceso
   array[2, $i]=$llegada
   array[3, $i]=$ejecucion
+
+  NUM_FIL="$i"
 }
 
 # Devuelve la expresión completa de color, pasándole los parámetros
@@ -329,6 +331,9 @@ function imprimirTabla() {
         longitudElemento=$(calcularLongitud "${array[$i, $j]}")
         if [[ "$anchoCelda" -lt "$longitudElemento" ]]; then
           anchoCelda="$longitudElemento"
+          if [ "$((anchoCelda % 2))" == "1" ]; then
+            ((anchoCelda++))
+          fi
         fi
       done
     done
@@ -425,7 +430,26 @@ function asignarManual() {
   # Comprueba si la entrada pasada es un entero
   # ----------------------------------
   function entradaEsEntero() {
-    echo "hola"
+    if [[ "$1" =~ ^[0-9]+$ ]]; then
+      echo "true"
+    fi
+  }
+
+  # Comprueba si la entrada pasada es un string valido TODO
+  # ----------------------------------
+  function entradaEsStringValido() {
+    if [[ "$1" =~ [A-Za-z] ]]; then
+      echo "true"
+    fi
+  }
+
+  # Imprime tabla limpia
+  # ----------------------------------
+  function comienzoPregunta() {
+    clear
+    centrarEnPantalla "$(imprimirCuadro "50" "6" "$2")"
+    echo ""
+    centrarEnPantalla "$(imprimirTabla "$1" "3")"
   }
 
   # Guarda el nombre del proceso i
@@ -433,10 +457,15 @@ function asignarManual() {
   function guardarNombreDelProceso() {
     local nombre
 
-    read -r -p "Nombre del proceso $1: " nombre
+    comienzoPregunta "$1" "Nombre del proceso $1"
+    read -r -p "-> " nombre
+
+    while [[ $(entradaEsStringValido "$nombre") != "true" ]]; do
+      centrarEnPantalla "$(imprimirCuadro "80" "error" "Nombre del proceso erróneo, al menos una letra")"
+      read -r -p "-> " nombre
+    done
+
     array[1, $1]="$nombre"
-    clear
-    centrarEnPantalla "$(imprimirTabla "$1" "3")"
   }
 
   # Guarda el tiempo de llegada del proceso i
@@ -444,10 +473,15 @@ function asignarManual() {
   function guardarLlegadaProceso() {
     local llegada
 
-    read -r -p "Llegada del proceso $1: " llegada
+    comienzoPregunta "$1" "Llegada del proceso $1"
+    read -r -p "-> " llegada
+
+    while [[ $(entradaEsEntero "$llegada") != "true" ]]; do
+      centrarEnPantalla "$(imprimirCuadro "80" "error" "Valor de llegada del proceso no válido, debe ser entero")"
+      read -r -p "-> " llegada
+    done
+
     array[2, $1]="$llegada"
-    clear
-    centrarEnPantalla "$(imprimirTabla "$1" "3")"
   }
 
   # Guarda el tiempo de ejecucion del proceso i
@@ -455,10 +489,15 @@ function asignarManual() {
   function guardarTiempoEjecucion() {
     local ejecucion
 
-    read -r -p "Tiempo ejecución proceso $1: " ejecucion
+    comienzoPregunta "$1" "Tiempo ejecución proceso $1"
+    read -r -p "-> " ejecucion
+
+    while [[ $(entradaEsEntero "$ejecucion") != "true" ]]; do
+      centrarEnPantalla "$(imprimirCuadro "80" "error" "Valor de tiempo de ejecución no válido, debe ser entero")"
+      read -r -p "-> " ejecucion
+    done
+
     array[3, $1]="$ejecucion"
-    clear
-    centrarEnPantalla "$(imprimirTabla "$1" "3")"
   }
 
   # Comprueba si queremos introducir más procesos
@@ -466,11 +505,12 @@ function asignarManual() {
   function comprobarSiMasProcesos() {
     local temp
 
-    read -r -p "¿Quieres introducir otro proceso?: [S/N]" temp
+    comienzoPregunta "$1" "¿Quieres introducir otro proceso? [S/N]: "
+    read -r -p "-> " temp
 
     while [[ ! "$temp" =~ ^([sS][iI]|[sS]|[nN][oO]|[nN])$ ]]; do
       centrarEnPantalla "$(imprimirCuadro "80" "error" "Entrada de datos errónea")"
-      read -r -p "¿Quieres introducir otro proceso?: [S/N]" temp
+      read -r -p "-> " temp
     done
 
     if [[ $temp =~ [nN][oO]|[nN] ]]; then
@@ -485,7 +525,7 @@ function asignarManual() {
     guardarNombreDelProceso "$NUM_FIL"
     guardarLlegadaProceso "$NUM_FIL"
     guardarTiempoEjecucion "$NUM_FIL"
-    comprobarSiMasProcesos
+    comprobarSiMasProcesos "$NUM_FIL"
   done
 }
 
@@ -563,75 +603,127 @@ function extraerDeConfig() {
   fi
 }
 
+# Funcion para elegir el tipo de entrada de datos
+# @param archivo externo para la opcion de archivo
+# ----------------------------------
+function elegirTipoDeEntrada() {
+  local tipo
+  local numValAleatorios
+  local opcionesEntrada
+  opcionesEntrada=(
+    "1.- Entrada manual por teclado"
+    "2.- Entrada automática por archivo"
+    "3.- Entrada automática con valores aleatorios"
+    "4.- Ayuda"
+    "0.- Salir"
+  )
+  echo ""
+  centrarEnPantalla "$(imprimirCuadro "50" "0" "${opcionesEntrada[@]}")" | sacarHaciaArchivo "$archivoSalida" -a
+  read -r -p "-> " tipo
+
+  while [[ ! "$tipo" =~ ^[0-4]+$ ]]; do
+    centrarEnPantalla "$(imprimirCuadro "80" "error" "Inserta un valor numérico entre 0 y 4")"
+    read -r -p "-> " tipo
+  done
+
+  case "$tipo" in
+  1)
+    asignarManual
+    ;;
+  2)
+    asignarDesdeArchivo "$1"
+    ;;
+  3)
+    clear
+    centrarEnPantalla "$(imprimirCuadro "50" "6" "¿Cuántos valores aleatorios quieres generar?")"
+    read -r -p "-> " numValAleatorios
+    asignarValoresAleatorios "$numValAleatorios"
+    ;;
+  4)
+    imprimirAyuda
+    ;;
+  0)
+    exit 99
+    ;;
+  *)
+    echo ""
+    centrarEnPantalla "$(imprimirCuadro "100" "error" "Ha ocurrido algún tipo de error")" | sacarHaciaArchivo "$archivoSalida" -a
+    exit 99
+    ;;
+  esac
+}
+
+# Ayuda del algoritmo
+# ----------------------------------
+function imprimirAyuda() {
+  elegirTipoDeEntrada
+}
+
 # Main
 # ----------------------------------
 function main() {
-  # Variables de titulos y mensaje, con función de máxima personalización
+  # Variables de titulos y mensajes
   local configFile
+  local introduccion
+  local error
+  local acierto
+  local advertencia
+  local archivoSalida
+  local archivoEntrada
+  # Extraccion de variables del archivo de config
   configFile=$(dirname "$0")
   configFile+="/config.toml"
-
-  local introduccion
   introduccion=$(extraerDeConfig "introduccion")
-  local error
   error=$(extraerDeConfig "error")
-  local acierto
   acierto=$(extraerDeConfig "acierto")
-  local advertencia
   advertencia=$(extraerDeConfig "advertencia")
-  local archivoSalida
   archivoSalida=$(extraerDeConfig "archivoSalida")
-  local archivoEntrada
   archivoEntrada=$(extraerDeConfig "archivoEntrada")
-
-  # Asignamos los tamaños de tabla tras saber datos a estudiar y número de procesos que quiere
-  NUM_COL=5 # Fijo pues son los datos que se calculan, se puede cambiar esto si se implementan mas calculos
-
+  # Máximo y fijo pues son los datos que se calculan, se puede cambiar esto si se implementan mas calculos o para otros algoritmos
+  NUM_COL=5
   # Elegimos el estilo de los marcos en el programa
   asignarEstiloGeneral "2"
 
-  # Imprime introducción
-  centrarEnPantalla "$(imprimirCuadro "50" "0" "$introduccion")" | sacarHaciaArchivo "$archivoSalida"
-  read -r -p "Pulsa enter para avanzar"
 
+  # Introduccion
+  # ------------------------------------------------
+  # Imprime introducción
+  echo ""
+  centrarEnPantalla "$(imprimirCuadro "50" "0" "$introduccion")" | sacarHaciaArchivo "$archivoSalida"
+  # Imprime mensaje advertencia
+  echo ""
+  centrarEnPantalla "$(imprimirCuadro "100" "advertencia" "$advertencia")" | sacarHaciaArchivo "$archivoSalida" -a
   # Imprime mensaje error
+  echo ""
   centrarEnPantalla "$(imprimirCuadro "100" "error" "$error")" | sacarHaciaArchivo "$archivoSalida" -a
 
-  # Imprime mensaje acierto
+
+
+  # Elección menú y tipo de tiempo
+  # ------------------------------------------------
+  elegirTipoDeEntrada "$archivoEntrada"
+  # Pide el tipo de tiempo que se quiere
+  # elegirTipoDeTiempo
+
+
+
+  # Ejecuta Algoritmo
+  # ------------------------------------------------
+  # Comienza la ejecucion del algoritmo según el tiempo pasado
+  clear
   centrarEnPantalla "$(imprimirCuadro "100" "acierto" "$acierto")" | sacarHaciaArchivo "$archivoSalida" -a
 
-  # Imprime mensaje advertencia
-  centrarEnPantalla "$(imprimirCuadro "100" "advertencia" "$advertencia")" | sacarHaciaArchivo "$archivoSalida" -a
-
-  # Meter las tres asignaciones en una funcion que pregunte como lo quiere dentro de un marco
-  # Asigna los valores al array con datos aleatorios
-  # asignarValoresAleatorios "10" # Cambiar al crear entrada
-
-  # Asigna los valores desde el archivo
-  # asignarDesdeArchivo "$archivoEntrada"
-
-  # Asigna manual
-  asignarManual
-
-  # Asigna los datos del array de forma manual -> TODO
-
-  # Ir imprimiendo las filas de la tabla según metemos los datos
+  # Ir imprimiendo las filas y los tiempos según pase el tiempo
   for ((fila = 1; fila <= NUM_FIL; fila++)); do
     clear
-    centrarEnPantalla "$(imprimirTabla "$fila" "3")" | sacarHaciaArchivo "$archivoSalida" -a
-    read -r -p "Pulsa enter para avanzar"
+    # Saca el resultado - TODO -> Algoritmo y uso de memoria medinate enter, calculo de tiempo medio, etc Uso de memoria
+    centrarEnPantalla "$(imprimirTabla "$fila" "6")" | sacarHaciaArchivo "$archivoSalida" -a
+    echo ""
+    read -r -p "$(centrarEnPantalla "$(imprimirCuadro "50" "default" "Pulsa enter para avanzar")")"
   done
 
-  # Saca el resultado - TODO -> Algoritmo y uso de memoria medinate enter, calculo de tiempo medio, etc
-  centrarEnPantalla "$(imprimirTabla "$NUM_FIL" "6")" | sacarHaciaArchivo "$archivoSalida" -a
+  # Menu final de práctica control
+  echo ""
 }
 
 main
-
-# 1: Preguntar si quiere los datos de entrada por teclado, archivo o aleatorios, usando un menú junto a la introducción.
-# 2.a: Si los quiere por teclado, comenzamos a introducirlos imprimiendo la tabla con cada dato.
-# 2.b: Si los quiere de forma aleatoria, preguntamos cuantos procesos quiere generar.
-# 3: Preguntamos si quiere tiempo real o acumulado.
-# 4: Mostramos la tabla resultado en instante uno, asi como el uso de memoria.
-# 5: Avanzamos hasta que acaba el ultimo instante.
-# 6: Mostramos resumen y preguntamos si quiere ver el informe generado del ejercicio.

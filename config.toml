@@ -3,9 +3,9 @@ Titulo = ["FCFS", "Memoria No Continua", "Memoria No Reubicable", "Sistemas Oper
 Autor = ["Jorge Ruiz", "Ivan Ruiz"]
 
 [mensajes]
-errorGeneral = "☒ Ha ocurrido un error, saliendo de la rama actual ☒"
-aciertoGeneral = "☑ Todo correcto, continuando ☑"
-advertenciaGeneral = "⚠ Hay algún problema, resumiendo ejecucion ⚠"
+errorGeneral = "☒ Si ves un mensaje como este, es que has introducido mal los datos o hay un problema ☒"
+aciertoGeneral = "☑ Todo correcto, ejecutando algoritmo ☑"
+advertenciaGeneral = "⚠ Si tiene algún problema con el algoritmo, vea la opción de ayuda en el menú inferior ⚠"
 
 [archivos]
 archivoSalida = "res.log" # Abrir con el comando cat en la terminal para correcta muestra
