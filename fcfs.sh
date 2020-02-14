@@ -2,7 +2,7 @@
 
 # Variables globales
 # ----------------------------------
-declare estiloGeneral # Estilo de los marcos
+declare estiloGeneral
 declare -A array
 declare NUM_COL
 declare NUM_FIL
@@ -53,6 +53,7 @@ function asignarDesdeArchivo() {
   # Si hay algun error
   [ ! -f "$archivo" ] && {
     centrarEnPantalla "$(imprimirCuadro "100" "error" "Archivo no encontrado")" | sacarHaciaArchivo "$archivoSalida" -a
+    read -r -p "$(centrarEnPantalla "$(imprimirCuadro "50" "default" "Pulsa intro para avanzar")")"
     elegirTipoDeEntrada "$archivoEntrada"
   }
 
@@ -462,8 +463,20 @@ function asignarManual() {
     comienzoPregunta "$1" "Nombre del proceso $1"
     read -r -p "-> " nombre
 
-    while [[ $(entradaEsStringValido "$nombre") != "true" ]]; do
-      centrarEnPantalla "$(imprimirCuadro "80" "error" "Nombre del proceso erróneo, al menos una letra")"
+    # Comprueba si el nombre esta repetido
+    function estaRepetido() {
+      local nombreRepetido="false"
+      for ((i = 0; i < NUM_FIL; i++)); do
+        if [ "$nombre" == "${array[1, $i]}" ]; then
+          nombreRepetido="true"
+        fi
+      done
+
+      echo "$nombreRepetido"
+    }
+
+    while [[ $(entradaEsStringValido "$nombre") != "true" ]] || [[ "$(estaRepetido)" == "true" ]]; do
+      centrarEnPantalla "$(imprimirCuadro "80" "error" "Nombre del proceso erróneo, al menos una letra y no repetido")"
       read -r -p "-> " nombre
     done
 
@@ -721,6 +734,7 @@ function main() {
   # Introduccion
   # ------------------------------------------------
   function introduccion() {
+    clear
     # Imprime introducción
     centrarEnPantalla "$(imprimirCuadro "50" "0" "$introduccion")" | sacarHaciaArchivo "$archivoSalida"
     # Imprime mensaje advertencia
@@ -753,7 +767,27 @@ function main() {
     done
   }
 
-  # Pregunta al usuario si quiere salir del programa
+    # Pregunta al usuario si quiere salir del programa
+  # ------------------------------------------------
+  function preguntarSiQuiereInforme() {
+    local temp
+
+    clear
+    centrarEnPantalla "$(imprimirCuadro "50" "default" "¿Quieres ver el informe? [S/N]")"
+    read -r -p "-> " temp
+
+    while [[ ! "$temp" =~ ^([sS][iI]|[sS]|[nN][oO]|[nN])$ ]]; do
+      centrarEnPantalla "$(imprimirCuadro "80" "error" "Entrada de datos errónea")"
+      read -r -p "-> " temp
+    done
+
+    if [[ $temp =~ [sS][iI]|[sS] ]]; then
+      cat "$archivoSalida"
+      read -r -p "$(centrarEnPantalla "$(imprimirCuadro "50" "default" "Pulsa intro para avanzar")")"
+    fi
+  }
+
+  # Pregunta al usuario si quiere sacar el informe
   # ------------------------------------------------
   function preguntarSiQuiereSalir() {
     local temp
@@ -769,6 +803,7 @@ function main() {
 
     if [[ $temp =~ [nN][oO]|[nN] ]]; then
       salirDePractica="true"
+      centrarEnPantalla "$(imprimirCuadro "50" "random" "¡Gracias por usar nuestro algoritmo! ¡Hasta luego!")" | sacarHaciaArchivo "$archivoSalida"
     fi
   }
 
@@ -779,6 +814,7 @@ function main() {
   while [[ "$salirDePractica" != "true" ]]; do
     menu
     algoritmo
+    preguntarSiQuiereInforme
     preguntarSiQuiereSalir
   done
 }
