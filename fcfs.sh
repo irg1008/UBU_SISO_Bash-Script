@@ -792,12 +792,6 @@ function main() {
   function preguntarSiQuiereSalir() {
     local temp
 
-    # Vacia el array de datos para repetir el algoritmo
-    # ------------------------------------------------
-    function vaciarArray() {
-      array=()
-    }
-
     clear
     centrarEnPantalla "$(imprimirCuadro "50" "default" "¿Quieres volver a ejecutar el algoritmo? [S/N]")"
     read -r -p "-> " temp
@@ -811,7 +805,7 @@ function main() {
       salirDePractica="true"
       centrarEnPantalla "$(imprimirCuadro "50" "random" "¡Gracias por usar nuestro algoritmo! ¡Hasta luego!")" | sacarHaciaArchivo "$archivoSalida"
     elif [[ "$temp" =~ [sS][iI]|[sS] ]]; then
-      vaciarArray
+      array=()
     fi
   }
 
