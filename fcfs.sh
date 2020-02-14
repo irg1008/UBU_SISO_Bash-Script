@@ -1,12 +1,5 @@
 #!/bin/bash
 
-# Variables globales
-# ----------------------------------
-declare estiloGeneral
-declare -A array
-declare NUM_COL
-declare NUM_FIL
-
 # Crea un array con valores aleatorio para fase desarrollo o entrada
 # de datos automatica, (ni manual ni por archivo)
 # @param Numero de filas a generar de manera aleatorio (num. proceos)
@@ -705,32 +698,49 @@ function imprimirAyuda() {
 # Elige el tipo de tiempo del algoritmo
 # ----------------------------------
 function elegirTipoDeTiempo() {
-  local tipo
+  local tiempo
   local tipoTiempo
   tipoTiempo=(
     "1.- Tiempo Real
     2.- Tiempo Acumulado"
   )
+
   clear
   centrarEnPantalla "$(imprimirCuadro "50" "default" "TIPO DE TIEMPO")" | sacarHaciaArchivo "$archivoSalida" -a
   centrarEnPantalla "$(imprimirCuadro "50" "0" "${tipoTiempo[@]}")" | sacarHaciaArchivo "$archivoSalida" -a
-  read -r -p "-> " tipo
+  read -r -p "-> " tiempo
 
-  while [[ ! "$tipo" =~ ^[1-2]+$ ]]; do
+  while [[ ! "$tiempo" =~ ^[1-2]+$ ]]; do
     centrarEnPantalla "$(imprimirCuadro "80" "error" "Inserta un valor numérico entre 1 y 2")"
-    read -r -p "-> " tipo
+    read -r -p "-> " tiempo
   done
 
-  if [[ "$tipo" == "1" ]];then
-    echo "real"  
-  elif [[ "$tipo"  == "2" ]];then
-    echo "acumulado"
-  fi
+  case "$tiempo" in
+  1)
+    tipoDeTiempo="real"
+    ;;
+  2)
+    tipoDeTiempo="acumulado"
+    ;;
+  *)
+    centrarEnPantalla "$(imprimirCuadro "100" "error" "Ha ocurrido algún tipo de error")" | sacarHaciaArchivo "$archivoSalida" -a
+    exit 99
+    ;;
+  esac
 }
 
 # Main
 # ----------------------------------
 function main() {
+  # Variables globales
+  # ----------------------------------
+  declare estiloGeneral
+  declare tipoDeTiempo
+  declare -A array
+  declare NUM_COL
+  declare NUM_FIL
+  # Variables locales
+  # ----------------------------------
   local configFile
   local introduccion
   local error
@@ -739,7 +749,6 @@ function main() {
   local archivoSalida
   local archivoEntrada
   local salirDePractica
-  local tipoDeTiempo
 
   # Extraccion de variables del archivo de config
   # ------------------------------------------------
@@ -777,13 +786,14 @@ function main() {
   # ------------------------------------------------
   function menu() {
     elegirTipoDeEntrada "$archivoEntrada"
-    tipoDeTiempo="$(elegirTipoDeTiempo)"
-    echo "$tipoDeTiempo"
+    elegirTipoDeTiempo
   }
 
   # Ejecuta Algoritmo
   # ------------------------------------------------
   function algoritmo() {
+    # usar el tipo de tiempo, borrar linea
+    echo "$tipoDeTiempo" >> res.log
     # Comienza la ejecucion del algoritmo según el tiempo pasado
     # Ir imprimiendo las filas y los tiempos según pase el tiempo
     for ((fila = 1; fila <= NUM_FIL; fila++)); do
