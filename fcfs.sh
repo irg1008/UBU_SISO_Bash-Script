@@ -627,7 +627,6 @@ function extraerDeConfig() {
 # ----------------------------------
 function elegirTipoDeEntrada() {
   local tipo
-  local numValAleatorios
   local opcionesEntrada
   opcionesEntrada=(
     "1.- Entrada manual por teclado"
@@ -664,6 +663,7 @@ function elegirTipoDeEntrada() {
     asignarDesdeArchivo "$1"
     ;;
   3)
+    local numValAleatorios
     guardaTipoEnArchivo "aleatoria"
     clear
     centrarEnPantalla "$(imprimirCuadro "50" "6" "¿Cuántos valores aleatorios quieres generar?")" | sacarHaciaArchivo "$archivoSalida" -a
@@ -702,6 +702,32 @@ function imprimirAyuda() {
   elegirTipoDeEntrada "$archivoEntrada"
 }
 
+# Elige el tipo de tiempo del algoritmo
+# ----------------------------------
+function elegirTipoDeTiempo() {
+  local tipo
+  local tipoTiempo
+  tipoTiempo=(
+    "1.- Tiempo Real
+    2.- Tiempo Acumulado"
+  )
+  clear
+  centrarEnPantalla "$(imprimirCuadro "50" "default" "TIPO DE TIEMPO")" | sacarHaciaArchivo "$archivoSalida" -a
+  centrarEnPantalla "$(imprimirCuadro "50" "0" "${tipoTiempo[@]}")" | sacarHaciaArchivo "$archivoSalida" -a
+  read -r -p "-> " tipo
+
+  while [[ ! "$tipo" =~ ^[1-2]+$ ]]; do
+    centrarEnPantalla "$(imprimirCuadro "80" "error" "Inserta un valor numérico entre 1 y 2")"
+    read -r -p "-> " tipo
+  done
+
+  if [[ "$tipo" == "1" ]];then
+    echo "real"  
+  elif [[ "$tipo"  == "2" ]];then
+    echo "acumulado"
+  fi
+}
+
 # Main
 # ----------------------------------
 function main() {
@@ -713,6 +739,7 @@ function main() {
   local archivoSalida
   local archivoEntrada
   local salirDePractica
+  local tipoDeTiempo
 
   # Extraccion de variables del archivo de config
   # ------------------------------------------------
@@ -750,7 +777,8 @@ function main() {
   # ------------------------------------------------
   function menu() {
     elegirTipoDeEntrada "$archivoEntrada"
-    # Pide el tipo de tiempo que se quiere
+    tipoDeTiempo="$(elegirTipoDeTiempo)"
+    echo "$tipoDeTiempo"
   }
 
   # Ejecuta Algoritmo
@@ -822,3 +850,5 @@ function main() {
 }
 
 main
+
+# TODO -> Limpiar los clears a una funcion de intro para avanzar
