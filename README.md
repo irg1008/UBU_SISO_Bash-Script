@@ -1,6 +1,6 @@
 <p align="center">
   <a href="" rel="noopener">
- <img width=200px height=200px src="https://i.imgur.com/cOBcLTw.mp4" alt="Project logo"></a>
+ <img width=200px height=200px src="https://i.imgur.com/4AiXzf8.jpg" alt="Project logo"></a>
 </p>
 
 <h3 align="center">FCFS - Según Necesidades - No Memoria Continua - No Memoria Reubicable</h3>
