@@ -5,7 +5,18 @@
 # @param Numero de filas a generar de manera aleatorio (num. proceos)
 # ----------------------------------
 function asignarValoresAleatorios() {
-  NUM_FIL="$1"
+  local numValAleatorios
+
+  clear
+  centrarEnPantalla "$(imprimirCuadro "50" "6" "¿Cuántos valores aleatorios quieres generar?")" | sacarHaciaArchivo "$archivoSalida" -a
+  read -r -p "-> " numValAleatorios
+
+  while [[ ! "$numValAleatorios" =~ ^[1-999]+$ ]]; do
+    centrarEnPantalla "$(imprimirCuadro "80" "error" "Inserta un valor numérico entre 1 y 1000, recomendamos menos de 30")"
+    read -r -p "-> " numValAleatorios
+  done
+
+  NUM_FIL=$numValAleatorios
 
   for ((i = 1; i <= NUM_COL; i++)); do
     for ((j = 1; j <= NUM_FIL; j++)); do
@@ -656,12 +667,8 @@ function elegirTipoDeEntrada() {
     asignarDesdeArchivo "$1"
     ;;
   3)
-    local numValAleatorios
     guardaTipoEnArchivo "aleatoria"
-    clear
-    centrarEnPantalla "$(imprimirCuadro "50" "6" "¿Cuántos valores aleatorios quieres generar?")" | sacarHaciaArchivo "$archivoSalida" -a
-    read -r -p "-> " numValAleatorios
-    asignarValoresAleatorios "$numValAleatorios"
+    asignarValoresAleatorios
     ;;
   4)
     imprimirAyuda
@@ -793,7 +800,7 @@ function main() {
   # ------------------------------------------------
   function algoritmo() {
     # usar el tipo de tiempo, borrar linea
-    echo "$tipoDeTiempo" >> res.log
+    echo "$tipoDeTiempo" >>res.log
     # Comienza la ejecucion del algoritmo según el tiempo pasado
     # Ir imprimiendo las filas y los tiempos según pase el tiempo
     for ((fila = 1; fila <= NUM_FIL; fila++)); do
