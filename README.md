@@ -4,7 +4,6 @@
   <a href="" rel="noopener">
  <img width=200px height=200px src="https://i.imgur.com/4AiXzf8.jpg" alt="Project logo"></a>
 </p>
->>>>>>> e24bb4e0be8e75d55f1ac1e1e73bad5d57d4fa89
 
 ## Table of Contents
 
