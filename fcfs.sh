@@ -11,8 +11,8 @@ function asignarValoresAleatorios() {
   centrarEnPantalla "$(imprimirCuadro "50" "6" "¿Cuántos valores aleatorios quieres generar?")" | sacarHaciaArchivo "$archivoSalida" -a
   read -r -p "-> " numValAleatorios
 
-  while [[ ! "$numValAleatorios" =~ ^[1-999]+$ ]]; do
-    centrarEnPantalla "$(imprimirCuadro "80" "error" "Inserta un valor numérico entre 1 y 1000, recomendamos menos de 30")"
+  while [[ ! "$numValAleatorios" =~ ^[0-9]+$ || "$numValAleatorios" -lt "1" || "$numValAleatorios" -gt "100" ]]; do
+    centrarEnPantalla "$(imprimirCuadro "80" "error" "Inserta un valor numérico entre 1 y 100, recomendamos menos de 30")"
     read -r -p "-> " numValAleatorios
   done
 
@@ -848,10 +848,37 @@ function main() {
 
     if [[ $temp =~ [nN][oO]|[nN] ]]; then
       salirDePractica="true"
-      centrarEnPantalla "$(imprimirCuadro "50" "random" "¡Gracias por usar nuestro algoritmo! ¡Hasta luego!")" | sacarHaciaArchivo "$archivoSalida"
+      centrarEnPantalla "$(imprimirCuadro "100" "acierto" "¡Gracias por usar nuestro algoritmo! Visita nuestro repo aquí abajo")" | sacarHaciaArchivo "$archivoSalida"
     elif [[ "$temp" =~ [sS][iI]|[sS] ]]; then
       array=()
     fi
+  }
+
+  # Saca spam
+  # ------------------------------------------------
+  function imprimirSpam() {
+    local spam
+    spam="
+ ▄▄▄▄▄▄▄   ▄ ▄▄▄▄   ▄▄  ▄▄ ▄▄▄▄▄▄▄
+ █ ▄▄▄ █ ▀ ▀ ▄█▀█▀ █ ▀▄█▄▀ █ ▄▄▄ █
+ █ ███ █ ▀█▀ ▀ ▀█▄▀ █▄▄█▄  █ ███ █
+ █▄▄▄▄▄█ █▀▄▀█ ▄ ▄ ▄ ▄ ▄ ▄ █▄▄▄▄▄█
+ ▄▄▄▄▄ ▄▄▄█▀█  ▀ █▄█▀▄▀█ ▄▄ ▄ ▄ ▄ 
+ ▀▄▄ ▀▄▄▄▄ █ ▀███▄█▀▀█▄ ▀▄ ▀▄▄▄▀█▀
+ █▀██ ▄▄ ▄▄▄ █▀▄█ ▄ ▀ ▀█ ▄█▀▄█▄▀  
+ █▄█ █ ▄ ██▄▄▄  ▀▀  ▀█▀▀  ▄██▄  █▀
+ ▄▄▀▄██▄▄█▄▀█  ▀ ▀▄▀▀▄▀█  █▀█▄ ▀▄ 
+  ▀▄▀▄█▄█ █▀ ▀███ ▄▄▀█ ▄▀▄▄█  █ █▀
+ ▄▄▄  ▀▄█ █▀ █▀▄ ▀▄▀▄▀▀██▄▀  ▄ ▀▄ 
+ █ █  █▄▄▀██▄▄  ▄█ ▀▀ █▀▀ ▄█▄ █ █▀
+ █ ▄███▄▀█ ▄█  ▀█ ▄ ▄ ▀  █████▀▀ ▄
+ ▄▄▄▄▄▄▄ █▀█ ▀██▄▀ ▀▀█▄▄▄█ ▄ ██▀▄▀
+ █ ▄▄▄ █ ▄█▄ █▀▄▄█▄▄▀▄▀█▀█▄▄▄█▀▀█▀
+ █ ███ █ █ █▄▄  ▄██▀▀█▀ ▄▄▀▄▀▀▄▄▀▀
+ █▄▄▄▄▄█ █▄▄█  ▀▀     ▀▄█▄▄▀▀ █▀▄ 
+    "
+
+    centrarEnPantalla "$(imprimirCuadro "38" "0" "$spam")" | sacarHaciaArchivo "$archivoSalida"
   }
 
   # Main de main xD
@@ -864,6 +891,7 @@ function main() {
     preguntarSiQuiereInforme
     preguntarSiQuiereSalir
   done
+  imprimirSpam
 }
 
 main
