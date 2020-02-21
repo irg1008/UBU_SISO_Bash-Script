@@ -440,7 +440,55 @@ function elegirTipoDeTiempo() {
 }
 
 ######################## 3. ALGORITMO
-# TODO -> Implementar
+# Imprime el uso de la memoria según los procesos en ella
+# ----------------------------------
+function imprimirMemoria() {
+  local colorVacio
+  local -A coloresMemoria
+  local procesosEnMemoria
+
+  # Asigna el número de procesos en memoria
+  # ----------------------------------
+  function asignarNumProcesos() {
+    procesosEnMemoria="6"
+  }
+
+  # Guarda los colores aleatorio de la memoria
+  # ----------------------------------
+  function asignarColores() {
+    colorVacio="$(cc Neg error)"
+    for ((i = 1; i <= procesosEnMemoria; i++)); do
+      coloresMemoria[$i]=$(cc Neg "$((i + 4))")
+    done
+  }
+
+  # Imprime cuadro de memoria
+  # ----------------------------------
+  function imprimir() {
+    # TODO -> Entender como hacer esto bien
+    for ((i = 1; i <= procesosEnMemoria; i++)); do
+      printf "${coloresMemoria[$i]}%s$(fc)" " P${i} "
+    done
+    printf "$colorVacio%s$(fc)" " Vacio "
+  }
+
+  # Main de cuadro de memoria
+  # ----------------------------------
+  asignarNumProcesos
+  asignarColores
+  imprimir
+}
+
+# Calcula el numero de instantes que tendrá el programa
+calcularNumInstantes() {
+  local -i num
+
+  for ((i=1; i<=NUM_FIL; i++));do
+    num+=${array[3, $i]}
+  done
+
+  echo "$num"
+}
 
 ######################## 4. OTRAS FUNCIONES UTILES USADAS EN TODO EL PROGRAMA
 
@@ -795,45 +843,6 @@ function imprimirTabla() {
   imprimir
 }
 
-# Imprime el uso de la memoria según los procesos en ella
-# ----------------------------------
-function imprimirMemoria() {
-  local colorVacio
-  local -A coloresMemoria
-  local procesosEnMemoria
-
-  # Asigna el número de procesos en memoria
-  # ----------------------------------
-  function asignarNumProcesos() {
-    procesosEnMemoria="6"
-  }
-
-  # Guarda los colores aleatorio de la memoria
-  # ----------------------------------
-  function asignarColores() {
-    colorVacio="$(cc Neg error)"
-    for ((i = 1; i <= procesosEnMemoria; i++)); do
-      coloresMemoria[$i]=$(cc Neg "$((i + 4))")
-    done
-  }
-
-  # Imprime cuadro de memoria
-  # ----------------------------------
-  function imprimir() {
-    # TODO -> Entender como hacer esto bien
-    for ((i = 1; i <= procesosEnMemoria; i++)); do
-      printf "${coloresMemoria[$i]}%s$(fc)" " P${i} "
-    done
-    printf "$colorVacio%s$(fc)" " Vacio "
-  }
-
-  # Main de cuadro de memoria
-  # ----------------------------------
-  asignarNumProcesos
-  asignarColores
-  imprimir
-}
-
 # Ordena el array según tiempo de llegada para mostrar la tabla
 # ------------------------------------------------
 function ordenarArray() {
@@ -967,7 +976,6 @@ function main() {
   # ------------------------------------------------
 
   # Ejecuta Algoritmo
-  # TODO -> Algoritmo y uso de memoria medinate enter, calculo de tiempo medio, etc Uso de memoria
   # ------------------------------------------------
   function algoritmo() {
     # Imprime una cabecera muy simple
@@ -986,7 +994,8 @@ function main() {
     # Funcion que calcula el algoritmo como tal
     # ------------------------------------------------
     function calcularDatos() {
-    echo "$tipoDeTiempo" >>res.log
+      # TODO -> Llamar a las funciones externas de forma ordenada
+      echo "$tipoDeTiempo" >>res.log
     }
 
     # Imprime el dibujo de la tabla
@@ -1013,9 +1022,9 @@ function main() {
 
     # Main de las llamadas de la parte de calculo de algoritmo
     # ------------------------------------------------
-    # TODO: Cambiar el 10 por la suma de los procesos para calcular el numero de instantes
     ordenarArray
-    for ((instante = 0; instante <= 10; instante++)); do
+    calcularNumInstantes
+    for ((instante = 0; instante <= $(calcularNumInstantes); instante++)); do
       cabecera
       calcularSigIns "$instante"
       calcularDatos # Funcion del algoritmo como tal
@@ -1114,5 +1123,3 @@ function main() {
 }
 
 main
-
-# TODO: Orden de llegada en la tabla, al mostrar la tabla en la parte de algoritmo
