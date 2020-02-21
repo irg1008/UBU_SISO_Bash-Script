@@ -157,9 +157,11 @@ function asignarManual() {
   local masProcesos
 
   # Comprueba si la entrada pasada es un entero
+  # @param Numero a comprobar
+  # @param Minimo entero válido
   # ----------------------------------
   function entradaEsEntero() {
-    if [[ "$1" =~ ^[0-9]+$ ]]; then
+    if [[ "$1" =~ ^[$2-9]+$ ]]; then
       echo "true"
     fi
   }
@@ -177,7 +179,19 @@ function asignarManual() {
   function comienzoPregunta() {
     clear
     centrarEnPantalla "$(imprimirCuadro "50" "6" "$2")"
-    centrarEnPantalla "$(imprimirTabla "$1" "3")"
+    centrarEnPantalla "$(imprimirTabla "$1" "4")"
+  }
+
+  # Guarda el tamaño de la memoria
+  # ----------------------------------
+  function tamMemoria() {
+    centrarEnPantalla "$(imprimirCuadro "50" "6" "Tamaño de la memoria")"
+    read -r -p "-> " TAM_MEM
+
+    while [[ $(entradaEsEntero "$TAM_MEM" "1") != "true" ]]; do
+      centrarEnPantalla "$(imprimirCuadro "80" "error" "Valor de tamaño de memoria no válido, mayor que 0")"
+      read -r -p "-> " TAM_MEM
+    done
   }
 
   # Guarda el nombre del proceso i
@@ -216,8 +230,8 @@ function asignarManual() {
     comienzoPregunta "$1" "Llegada del proceso $1"
     read -r -p "-> " llegada
 
-    while [[ $(entradaEsEntero "$llegada") != "true" ]]; do
-      centrarEnPantalla "$(imprimirCuadro "80" "error" "Valor de llegada del proceso no válido, debe ser entero")"
+    while [[ $(entradaEsEntero "$llegada" "0") != "true" ]]; do
+      centrarEnPantalla "$(imprimirCuadro "80" "error" "Valor de llegada del proceso no válido, entero 0 o mayor")"
       read -r -p "-> " llegada
     done
 
@@ -232,12 +246,28 @@ function asignarManual() {
     comienzoPregunta "$1" "Tiempo ejecución proceso $1"
     read -r -p "-> " ejecucion
 
-    while [[ $(entradaEsEntero "$ejecucion") != "true" ]]; do
-      centrarEnPantalla "$(imprimirCuadro "80" "error" "Valor de tiempo de ejecución no válido, debe ser entero")"
+    while [[ $(entradaEsEntero "$ejecucion" "1") != "true" ]]; do
+      centrarEnPantalla "$(imprimirCuadro "80" "error" "Valor de tiempo de ejecución no válido, entero mayor que 0")"
       read -r -p "-> " ejecucion
     done
 
     array[3, $1]="$ejecucion"
+  }
+
+  # Guarda el tiempo de ejecucion del proceso i
+  # ----------------------------------
+  function guardarTamMemoria() {
+    local tam
+
+    comienzoPregunta "$1" "Tamaño del proceso $1"
+    read -r -p "-> " tam
+
+    while [[ $(entradaEsEntero "$tam" "1") != "true" ]]; do
+      centrarEnPantalla "$(imprimirCuadro "80" "error" "Valor de tiempo de tamaño no válido, entero mayor que 0")"
+      read -r -p "-> " tam
+    done
+
+    array[4, $1]="$tam"
   }
 
   # Comprueba si queremos introducir más procesos
@@ -263,10 +293,12 @@ function asignarManual() {
   # Main de la asignación manual
   # ----------------------------------
   NUM_FIL="1"
+  tamMemoria
   while [ "$masProcesos" != "false" ]; do
     guardarNombreDelProceso "$NUM_FIL"
     guardarLlegadaProceso "$NUM_FIL"
     guardarTiempoEjecucion "$NUM_FIL"
+    guardarTamMemoria "$NUM_FIL"
     comprobarSiMasProcesos "$NUM_FIL"
   done
 }
@@ -278,9 +310,6 @@ function asignarDesdeArchivo() {
   archivo=$(dirname "$0")
   archivo+="/$1"
 
-  # Separador
-  IFS=","
-
   # Si hay algun error
   [ ! -f "$archivo" ] && {
     centrarEnPantalla "$(imprimirCuadro "100" "error" "Archivo no encontrado")" | sacarHaciaArchivo "$archivoSalida" -a
@@ -289,23 +318,33 @@ function asignarDesdeArchivo() {
   }
 
   # Leer todas las lineas y guardar los datos por columnas en el array
+  # Valor -1 para saltarnos la primera linea
   local i
-  i="0"
-  while read -r proceso llegada ejecucion; do
-    if [ $i -ge "1" ]; then
+  i="-1"
+
+  # Separador para leer datos
+  IFS=","
+
+  while read -r proceso llegada ejecucion tam; do
+
+    if [ "$i" == "-1" ]; then
+      TAM_MEM="$(cut -d "=" -f 2 <<<"$proceso")"
+    elif [ "$i" -ge "1" ]; then
       array[1, $i]=$proceso
       array[2, $i]=$llegada
       array[3, $i]=$ejecucion
+      array[4, $i]=$tam
     fi
     ((i++))
   done <"$archivo"
 
-  # Lee la ultima fila
+  # Leemos ultima linea
   array[1, $i]=$proceso
   array[2, $i]=$llegada
   array[3, $i]=$ejecucion
+  array[4, $i]=$tam
 
-  NUM_FIL="$i"
+  NUM_FIL="$((i))"
 }
 
 # Crea un array con valores aleatorio para fase desarrollo o entrada
@@ -314,6 +353,9 @@ function asignarDesdeArchivo() {
 # ----------------------------------
 function asignarValoresAleatorios() {
   local numValAleatorios
+
+  # Tamaño de memoria aleatorio
+  TAM_MEM=$(((RANDOM % 20) + 1))
 
   clear
   centrarEnPantalla "$(imprimirCuadro "50" "6" "¿Cuántos valores aleatorios quieres generar?")" | sacarHaciaArchivo "$archivoSalida" -a
@@ -329,11 +371,17 @@ function asignarValoresAleatorios() {
   # Solo ponemos aleatorios los 4 primeros atributos, que son los que meteria el usuario por teclado
   for ((i = 1; i <= 4; i++)); do
     for ((j = 1; j <= NUM_FIL; j++)); do
-      if [ "$i" == "1" ]; then
+      case "$i" in
+      1)
         array[$i, $j]="P"${j}
-      else
-        array[$i, $j]=$((RANDOM % 20))
-      fi
+        ;;
+      2)
+        array[$i, $j]=$((RANDOM % 20)) # 0-20
+        ;;
+      *)
+        array[$i, $j]=$(((RANDOM % 20) + 1)) # 1-20
+        ;;
+      esac
     done
   done
 }
@@ -605,7 +653,6 @@ function imprimirTabla() {
   # ----------------------------------
   function asignarTitulosYNumCol() {
     titulos=("Proceso" "Llegada" "Ejecución" "Tamaño" "Estado" "Respuesta" "Espera" "Restante")
-    NUM_COL="${#titulos[@]}"
   }
 
   # Guarda los colores aleatorio de la tabla
@@ -787,6 +834,43 @@ function imprimirMemoria() {
   imprimir
 }
 
+# Ordena el array según tiempo de llegada para mostrar la tabla
+# ------------------------------------------------
+function ordenarArray() {
+
+  # Funcion que mueve la fila completa por la siguiente
+  # ------------------------------------------------
+  function moverFilaCompleta() {
+    local temp
+
+    for ((col = 1; col <= NUM_COL; col++)); do
+      temp="${array[$col, $1]}"
+      array[$col, $1]="${array[$col, $(($1 + 1))]}"
+      array[$col, $(($1 + 1))]="$temp"
+    done
+  }
+
+  # Ejecuta el algoritmo burbuja
+  # ------------------------------------------------
+  function burbuja() {
+    local tempOrigen
+    local tempDestino
+
+    for ((i = 1; i <= NUM_FIL; i++)); do
+      for ((j = 1; j < NUM_FIL; j++)); do
+        tempOrigen="${array[2, $j]}"
+        tempDestino="${array[2, $((j + 1))]}"
+
+        if [ "$tempOrigen" -gt "$tempDestino" ]; then
+          moverFilaCompleta "$j"
+        fi
+      done
+    done
+  }
+
+  burbuja
+}
+
 # Centra en pantalla el valor pasado, si es un string, divide por saltos de
 # linea y coloca cada linea en el centro
 # @param string a centrar
@@ -829,6 +913,7 @@ function main() {
   declare -A array
   declare NUM_COL
   declare NUM_FIL
+  declare TAM_MEM
   # Variables locales
   # ----------------------------------
   local configFile
@@ -853,6 +938,9 @@ function main() {
     archivoEntrada=$(extraerDeConfig "archivoEntrada")
     # Elegimos el estilo de los marcos en el programa
     asignarEstiloGeneral "2"
+    # Asignamos el valor al numero de columnas, o titulos de la tabla. TODO-> mejorar esto asignando automaticamente
+    NUM_COL="8"
+    # $((${#array[@]} / NUM_FIL))
   }
   # ------------------------------------------------
 
@@ -870,7 +958,7 @@ function main() {
   }
   # ------------------------------------------------
 
-  # Elección menú y tipo de tiempo
+  # Elección menú, entrada de datos y tipo de tiempo
   # ------------------------------------------------
   function menu() {
     elegirTipoDeEntrada "$archivoEntrada"
@@ -895,14 +983,14 @@ function main() {
     # Calcula los siguientes datos a mostrar
     # ------------------------------------------------
     function calcularSigIns() {
-      echo ""
+      centrarEnPantalla "$(imprimirCuadro "100" "3" "Instante $1 - Tamaño de memoria: $TAM_MEM")" | sacarHaciaArchivo "$archivoSalida" -a
     }
 
     # Imprime el dibujo de la tabla
     # ------------------------------------------------
     function mainImprimirTabla() {
       centrarEnPantalla "$(imprimirCuadro "25" "default" "TABLA DE PROCESOS")" | sacarHaciaArchivo "$archivoSalida" -a
-      centrarEnPantalla "$(imprimirTabla "$1" "10")" | sacarHaciaArchivo "$archivoSalida" -a
+      centrarEnPantalla "$(imprimirTabla "$NUM_FIL" "10")" | sacarHaciaArchivo "$archivoSalida" -a
     }
 
     # Imprime la linea de tiempo
@@ -922,10 +1010,12 @@ function main() {
 
     # Main de las llamadas de la parte de calculo de algoritmo
     # ------------------------------------------------
-    for ((fila = 1; fila <= NUM_FIL; fila++)); do
-      calcularSigIns
+    # TODO: Cambiar el 10 por la suma de los procesos para calcular el numero de instantes
+    ordenarArray
+    for ((instante = 0; instante <= 10; instante++)); do
       cabecera
-      mainImprimirTabla "$fila"
+      calcularSigIns "$instante"
+      mainImprimirTabla
       imprimirLineaTiempo
       mainImprimirMemoria
       avanzarAlgoritmo
@@ -1020,3 +1110,5 @@ function main() {
 }
 
 main
+
+# TODO: Orden de llegada en la tabla, al mostrar la tabla en la parte de algoritmo
