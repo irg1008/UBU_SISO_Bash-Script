@@ -1,47 +1,274 @@
 #!/bin/bash
 
-# Crea un array con valores aleatorio para fase desarrollo o entrada
-# de datos automatica, (ni manual ni por archivo)
-# @param Numero de filas a generar de manera aleatorio (num. proceos)
+# @title: FCFS - Según Necesidades - Memoria No Continua - Memoria No Reubicable
+# @author: Iván Ruiz Gázquez <a>ivanaluubu@gmail.com</a>
+# @version: 2019-2020
+#
+# El código se ha hecho de la forma más óptima para que la revisión del
+# mismo sea lo más sencilla prosible, lo único que hay que hacer es ir bajando en las
+# llamadas de las funciones para cambiar lo que se quiera. Se observará entonces que
+# hay muchas variables que cambian la estética, como el tipo de marco, colores, etc.
+# Esto es para testeo de distintas opciones pero si se quiere cambiar, se deja a gusto
+# del siguiente programador :)
+# pd:no hay variables globales, yihaaa!
+
+######################## 1. ASIGNACION DE DATOS
+
+# Almacen de los estilos de las tablas con sus códigos ASCII
+# @param Numero de estilo
 # ----------------------------------
-function asignarValoresAleatorios() {
-  local numValAleatorios
+function asignarEstiloGeneral() {
+  local estilo1=("═" "╔" "╠" "╚" "╦" "╬" "╩" "╗" "╣" "╝" "║")
+  local estilo2=("─" "╭" "├" "╰" "┬" "┼" "┴" "╮" "┤" "╯" "│")
+  local estilo3=("━" "┏" "┣" "┗" "┳" "╋" "┻" "┓" "┫" "┛" "┃")
 
-  clear
-  centrarEnPantalla "$(imprimirCuadro "50" "6" "¿Cuántos valores aleatorios quieres generar?")" | sacarHaciaArchivo "$archivoSalida" -a
-  read -r -p "-> " numValAleatorios
-
-  while [[ ! "$numValAleatorios" =~ ^[0-9]+$ || "$numValAleatorios" -lt "1" || "$numValAleatorios" -gt "100" ]]; do
-    centrarEnPantalla "$(imprimirCuadro "80" "error" "Inserta un valor numérico entre 1 y 100, recomendamos menos de 30")"
-    read -r -p "-> " numValAleatorios
-  done
-
-  NUM_FIL=$numValAleatorios
-
-  for ((i = 1; i <= NUM_COL; i++)); do
-    for ((j = 1; j <= NUM_FIL; j++)); do
-      if [ "$i" == "1" ]; then
-        array[$i, $j]="P"${j}
-      else
-        array[$i, $j]=$((RANDOM % 20))
-      fi
-    done
-  done
+  case "$1" in
+  1)
+    estiloGeneral=("${estilo1[@]}")
+    ;;
+  2)
+    estiloGeneral=("${estilo2[@]}")
+    ;;
+  3)
+    estiloGeneral=("${estilo3[@]}")
+    ;;
+  *)
+    estiloGeneral=("${estilo3[@]}")
+    ;;
+  esac
 }
 
-# Saca la información del comando que acompaña
-# @param "-a" para append
+# Devuelve los datos extraidos del archivo de configuracion
+# @param parametro a leer del config
 # ----------------------------------
-function sacarHaciaArchivo() {
-  local archivo
-  archivo=$(dirname "$0")
-  archivo+="/$1"
+function extraerDeConfig() {
+  local salida
 
-  if [ "$2" == "-a" ]; then
-    tee -a "$archivo"
+  # Lee el config y devuelve la linea solicitada
+  # ----------------------------------
+  function leeConfig() {
+    grep -o '".*"' "$configFile" | sed 's/"//g' | head -"$1" | tail -1
+  }
+
+  # Lee el config si es un array
+  # ----------------------------------
+  function leeConfigArray() {
+    grep -o '".*"' "$configFile" | head -"$1" | tail -1 | tr -d ","
+  }
+
+  if [ "$1" == "introduccion" ]; then
+    local salidaArray
+    salida="$(leeConfigArray "1")"
+    salida+=" "
+    salida+="$(leeConfigArray "2")"
+
+    declare -a "salidaArray=( $(echo "$salida" | tr '`$<>' '????') )"
+    for ((i = 0; i < ${#salidaArray[@]}; i++)); do
+      echo "${salidaArray[$i]}"
+      if [ "$i" == "2" ] || [ "$i" == "4" ]; then
+        echo " "
+      fi
+    done
   else
-    tee "$archivo"
+    case "$1" in
+    error)
+      salida=$(leeConfig "3")
+      ;;
+    acierto)
+      salida=$(leeConfig "4")
+      ;;
+    advertencia)
+      salida=$(leeConfig "5")
+      ;;
+    archivoSalida)
+      salida=$(leeConfig "6")
+      ;;
+    archivoEntrada)
+      salida=$(leeConfig "7")
+      ;;
+    esac
+
+    echo "$salida"
   fi
+}
+
+######################## 2. MENU Y ENTRADA DE DATOS
+
+# Funcion para elegir el tipo de entrada de datos
+# @param archivo externo para la opcion de archivo
+# ----------------------------------
+function elegirTipoDeEntrada() {
+  local tipo
+  local opcionesEntrada
+  opcionesEntrada=(
+    "1.- Entrada manual por teclado"
+    "2.- Entrada automática por archivo"
+    "3.- Entrada automática con valores aleatorios"
+    "4.- Ayuda"
+    "0.- Salir"
+  )
+
+  centrarEnPantalla "$(imprimirCuadro "50" "default" "MENÚ PRINCIPAL")" | sacarHaciaArchivo "$archivoSalida" -a
+  centrarEnPantalla "$(imprimirCuadro "50" "0" "${opcionesEntrada[@]}")" | sacarHaciaArchivo "$archivoSalida" -a
+  read -r -p "-> " tipo
+
+  while [[ ! "$tipo" =~ ^[0-4]+$ ]]; do
+    centrarEnPantalla "$(imprimirCuadro "80" "error" "Inserta un valor numérico entre 0 y 4")"
+    read -r -p "-> " tipo
+  done
+
+  # Funcion que imprime el tipo de asignacion al archivo,
+  # para posterior conocimiento
+  # ----------------------------------
+  function guardaTipoEnArchivo() {
+    centrarEnPantalla "$(imprimirCuadro "50" "6" "Asignación de datos $1")" >>"$archivoSalida"
+  }
+
+  case "$tipo" in
+  1)
+    guardaTipoEnArchivo "manual"
+    asignarManual
+    ;;
+  2)
+    guardaTipoEnArchivo "automática desde archivo"
+    asignarDesdeArchivo "$1"
+    ;;
+  3)
+    guardaTipoEnArchivo "aleatoria"
+    asignarValoresAleatorios
+    ;;
+  4)
+    imprimirAyuda
+    ;;
+  0)
+    centrarEnPantalla "$(imprimirCuadro "60" "advertencia" "Ha salido del programa mediante el menú de opciones")" | sacarHaciaArchivo "$archivoSalida"
+    exit 99
+    ;;
+  *)
+    centrarEnPantalla "$(imprimirCuadro "100" "error" "Ha ocurrido algún tipo de error")" | sacarHaciaArchivo "$archivoSalida" -a
+    exit 99
+    ;;
+  esac
+}
+
+# Asigna valores en el array de forma manual
+# ----------------------------------
+function asignarManual() {
+  local masProcesos
+
+  # Comprueba si la entrada pasada es un entero
+  # ----------------------------------
+  function entradaEsEntero() {
+    if [[ "$1" =~ ^[0-9]+$ ]]; then
+      echo "true"
+    fi
+  }
+
+  # Comprueba si la entrada pasada es un string valido
+  # ----------------------------------
+  function entradaEsStringValido() {
+    if [[ "$1" =~ [A-Za-z] ]]; then
+      echo "true"
+    fi
+  }
+
+  # Imprime tabla limpia
+  # ----------------------------------
+  function comienzoPregunta() {
+    clear
+    centrarEnPantalla "$(imprimirCuadro "50" "6" "$2")"
+    centrarEnPantalla "$(imprimirTabla "$1" "3")"
+  }
+
+  # Guarda el nombre del proceso i
+  # ----------------------------------
+  function guardarNombreDelProceso() {
+    local nombre
+
+    comienzoPregunta "$1" "Nombre del proceso $1"
+    read -r -p "-> " nombre
+
+    # Comprueba si el nombre esta repetido
+    function estaRepetido() {
+      local nombreRepetido="false"
+      for ((i = 0; i < NUM_FIL; i++)); do
+        if [ "$nombre" == "${array[1, $i]}" ]; then
+          nombreRepetido="true"
+        fi
+      done
+
+      echo "$nombreRepetido"
+    }
+
+    while [[ $(entradaEsStringValido "$nombre") != "true" ]] || [[ "$(estaRepetido)" == "true" ]]; do
+      centrarEnPantalla "$(imprimirCuadro "80" "error" "Nombre del proceso erróneo, al menos una letra y no repetido")"
+      read -r -p "-> " nombre
+    done
+
+    array[1, $1]="$nombre"
+  }
+
+  # Guarda el tiempo de llegada del proceso i
+  # ----------------------------------
+  function guardarLlegadaProceso() {
+    local llegada
+
+    comienzoPregunta "$1" "Llegada del proceso $1"
+    read -r -p "-> " llegada
+
+    while [[ $(entradaEsEntero "$llegada") != "true" ]]; do
+      centrarEnPantalla "$(imprimirCuadro "80" "error" "Valor de llegada del proceso no válido, debe ser entero")"
+      read -r -p "-> " llegada
+    done
+
+    array[2, $1]="$llegada"
+  }
+
+  # Guarda el tiempo de ejecucion del proceso i
+  # ----------------------------------
+  function guardarTiempoEjecucion() {
+    local ejecucion
+
+    comienzoPregunta "$1" "Tiempo ejecución proceso $1"
+    read -r -p "-> " ejecucion
+
+    while [[ $(entradaEsEntero "$ejecucion") != "true" ]]; do
+      centrarEnPantalla "$(imprimirCuadro "80" "error" "Valor de tiempo de ejecución no válido, debe ser entero")"
+      read -r -p "-> " ejecucion
+    done
+
+    array[3, $1]="$ejecucion"
+  }
+
+  # Comprueba si queremos introducir más procesos
+  # ----------------------------------
+  function comprobarSiMasProcesos() {
+    local temp
+
+    comienzoPregunta "$1" "¿Quieres introducir otro proceso? [S/N]"
+    read -r -p "-> " temp
+
+    while [[ ! "$temp" =~ ^([sS][iI]|[sS]|[nN][oO]|[nN])$ ]]; do
+      centrarEnPantalla "$(imprimirCuadro "80" "error" "Entrada de datos errónea")"
+      read -r -p "-> " temp
+    done
+
+    if [[ $temp =~ [nN][oO]|[nN] ]]; then
+      masProcesos="false"
+    elif [[ $temp =~ [sS][iI]|[sS] ]]; then
+      ((NUM_FIL++))
+    fi
+  }
+
+  # Main de la asignación manual
+  # ----------------------------------
+  NUM_FIL="1"
+  while [ "$masProcesos" != "false" ]; do
+    guardarNombreDelProceso "$NUM_FIL"
+    guardarLlegadaProceso "$NUM_FIL"
+    guardarTiempoEjecucion "$NUM_FIL"
+    comprobarSiMasProcesos "$NUM_FIL"
+  done
 }
 
 # Devuelve los datos del archivo de entrada en un array
@@ -57,7 +284,7 @@ function asignarDesdeArchivo() {
   # Si hay algun error
   [ ! -f "$archivo" ] && {
     centrarEnPantalla "$(imprimirCuadro "100" "error" "Archivo no encontrado")" | sacarHaciaArchivo "$archivoSalida" -a
-    read -r -p "$(centrarEnPantalla "$(imprimirCuadro "50" "default" "Pulsa intro para avanzar")")"
+    avanzarAlgoritmo
     elegirTipoDeEntrada "$archivoEntrada"
   }
 
@@ -79,6 +306,107 @@ function asignarDesdeArchivo() {
   array[3, $i]=$ejecucion
 
   NUM_FIL="$i"
+}
+
+# Crea un array con valores aleatorio para fase desarrollo o entrada
+# de datos automatica, (ni manual ni por archivo)
+# @param Numero de filas a generar de manera aleatorio (num. proceos)
+# ----------------------------------
+function asignarValoresAleatorios() {
+  local numValAleatorios
+
+  centrarEnPantalla "$(imprimirCuadro "50" "6" "¿Cuántos valores aleatorios quieres generar?")" | sacarHaciaArchivo "$archivoSalida" -a
+  read -r -p "-> " numValAleatorios
+
+  while [[ ! "$numValAleatorios" =~ ^[0-9]+$ || "$numValAleatorios" -lt "1" || "$numValAleatorios" -gt "100" ]]; do
+    centrarEnPantalla "$(imprimirCuadro "80" "error" "Inserta un valor numérico entre 1 y 100, recomendamos menos de 30")"
+    read -r -p "-> " numValAleatorios
+  done
+
+  NUM_FIL=$numValAleatorios
+
+  for ((i = 1; i <= NUM_COL; i++)); do
+    for ((j = 1; j <= NUM_FIL; j++)); do
+      if [ "$i" == "1" ]; then
+        array[$i, $j]="P"${j}
+      else
+        array[$i, $j]=$((RANDOM % 20))
+      fi
+    done
+  done
+}
+
+# Ayuda del algoritmo
+# ----------------------------------
+function imprimirAyuda() {
+  local ayuda
+  ayuda=(
+    "El algoritmo de FCFS según necesidades con memoria no continua y no reubicable funciona tal que...
+    Se pueden insertar los valores desde...
+    Puedes elegir tiempo de... que hará...
+    Si tienes alguna duda más consulta el manual externo"
+  )
+
+  clear
+  centrarEnPantalla "$(imprimirCuadro "50" "default" "AYUDA")" | sacarHaciaArchivo "$archivoSalida" -a
+  centrarEnPantalla "$(imprimirCuadro "150" "random" "${ayuda[@]}")" | sacarHaciaArchivo "$archivoSalida" -a
+  read -r -p "$(centrarEnPantalla "$(imprimirCuadro "50" "default" "Pulsa intro para volver al menú")")"
+  clear
+  elegirTipoDeEntrada "$archivoEntrada"
+}
+
+# Elige el tipo de tiempo del algoritmo
+# ----------------------------------
+function elegirTipoDeTiempo() {
+  local tiempo
+  local tipoTiempo
+  tipoTiempo=(
+    "1.- Tiempo Real
+    2.- Tiempo Acumulado"
+  )
+
+  clear
+  centrarEnPantalla "$(imprimirCuadro "50" "default" "TIPO DE TIEMPO")" | sacarHaciaArchivo "$archivoSalida" -a
+  centrarEnPantalla "$(imprimirCuadro "50" "0" "${tipoTiempo[@]}")" | sacarHaciaArchivo "$archivoSalida" -a
+  read -r -p "-> " tiempo
+
+  while [[ ! "$tiempo" =~ ^[1-2]+$ ]]; do
+    centrarEnPantalla "$(imprimirCuadro "80" "error" "Inserta un valor numérico entre 1 y 2")"
+    read -r -p "-> " tiempo
+  done
+
+  case "$tiempo" in
+  1)
+    tipoDeTiempo="real"
+    ;;
+  2)
+    tipoDeTiempo="acumulado"
+    ;;
+  *)
+    centrarEnPantalla "$(imprimirCuadro "100" "error" "Ha ocurrido algún tipo de error")" | sacarHaciaArchivo "$archivoSalida" -a
+    exit 99
+    ;;
+  esac
+}
+
+######################## 3. ALGORITMO
+# TODO -> Implementar
+
+######################## 4. OTRAS FUNCIONES UTILES USADAS EN TODO EL PROGRAMA
+
+# Saca la información del comando que acompaña
+# @param "-a" para append
+# ----------------------------------
+function sacarHaciaArchivo() {
+  local archivo
+  archivo=$(dirname "$0")
+  archivo+="/$1"
+
+  if [ "$2" == "-a" ]; then
+    tee -a "$archivo"
+  else
+    tee "$archivo"
+  fi
 }
 
 # Devuelve la expresión completa de color, pasándole los parámetros
@@ -162,30 +490,6 @@ function calcularLongitud() {
   local elementoArray # Elemento a ser centrado
   elementoArray=$1
   echo ${#elementoArray}
-}
-
-# Almacen de los estilos de las tablas con sus códigos ASCII
-# @param Numero de estilo
-# ----------------------------------
-function asignarEstiloGeneral() {
-  local estilo1=("═" "╔" "╠" "╚" "╦" "╬" "╩" "╗" "╣" "╝" "║")
-  local estilo2=("─" "╭" "├" "╰" "┬" "┼" "┴" "╮" "┤" "╯" "│")
-  local estilo3=("━" "┏" "┣" "┗" "┳" "╋" "┻" "┓" "┫" "┛" "┃")
-
-  case "$1" in
-  1)
-    estiloGeneral=("${estilo1[@]}")
-    ;;
-  2)
-    estiloGeneral=("${estilo2[@]}")
-    ;;
-  3)
-    estiloGeneral=("${estilo3[@]}")
-    ;;
-  *)
-    estiloGeneral=("${estilo3[@]}")
-    ;;
-  esac
 }
 
 # Imprime la introduccion del programa
@@ -430,126 +734,6 @@ function imprimirTabla() {
   imprimir
 }
 
-# Asigna valores en el array de forma manual
-# ----------------------------------
-function asignarManual() {
-  local masProcesos
-
-  # Comprueba si la entrada pasada es un entero
-  # ----------------------------------
-  function entradaEsEntero() {
-    if [[ "$1" =~ ^[0-9]+$ ]]; then
-      echo "true"
-    fi
-  }
-
-  # Comprueba si la entrada pasada es un string valido
-  # ----------------------------------
-  function entradaEsStringValido() {
-    if [[ "$1" =~ [A-Za-z] ]]; then
-      echo "true"
-    fi
-  }
-
-  # Imprime tabla limpia
-  # ----------------------------------
-  function comienzoPregunta() {
-    clear
-    centrarEnPantalla "$(imprimirCuadro "50" "6" "$2")"
-    centrarEnPantalla "$(imprimirTabla "$1" "3")"
-  }
-
-  # Guarda el nombre del proceso i
-  # ----------------------------------
-  function guardarNombreDelProceso() {
-    local nombre
-
-    comienzoPregunta "$1" "Nombre del proceso $1"
-    read -r -p "-> " nombre
-
-    # Comprueba si el nombre esta repetido
-    function estaRepetido() {
-      local nombreRepetido="false"
-      for ((i = 0; i < NUM_FIL; i++)); do
-        if [ "$nombre" == "${array[1, $i]}" ]; then
-          nombreRepetido="true"
-        fi
-      done
-
-      echo "$nombreRepetido"
-    }
-
-    while [[ $(entradaEsStringValido "$nombre") != "true" ]] || [[ "$(estaRepetido)" == "true" ]]; do
-      centrarEnPantalla "$(imprimirCuadro "80" "error" "Nombre del proceso erróneo, al menos una letra y no repetido")"
-      read -r -p "-> " nombre
-    done
-
-    array[1, $1]="$nombre"
-  }
-
-  # Guarda el tiempo de llegada del proceso i
-  # ----------------------------------
-  function guardarLlegadaProceso() {
-    local llegada
-
-    comienzoPregunta "$1" "Llegada del proceso $1"
-    read -r -p "-> " llegada
-
-    while [[ $(entradaEsEntero "$llegada") != "true" ]]; do
-      centrarEnPantalla "$(imprimirCuadro "80" "error" "Valor de llegada del proceso no válido, debe ser entero")"
-      read -r -p "-> " llegada
-    done
-
-    array[2, $1]="$llegada"
-  }
-
-  # Guarda el tiempo de ejecucion del proceso i
-  # ----------------------------------
-  function guardarTiempoEjecucion() {
-    local ejecucion
-
-    comienzoPregunta "$1" "Tiempo ejecución proceso $1"
-    read -r -p "-> " ejecucion
-
-    while [[ $(entradaEsEntero "$ejecucion") != "true" ]]; do
-      centrarEnPantalla "$(imprimirCuadro "80" "error" "Valor de tiempo de ejecución no válido, debe ser entero")"
-      read -r -p "-> " ejecucion
-    done
-
-    array[3, $1]="$ejecucion"
-  }
-
-  # Comprueba si queremos introducir más procesos
-  # ----------------------------------
-  function comprobarSiMasProcesos() {
-    local temp
-
-    comienzoPregunta "$1" "¿Quieres introducir otro proceso? [S/N]"
-    read -r -p "-> " temp
-
-    while [[ ! "$temp" =~ ^([sS][iI]|[sS]|[nN][oO]|[nN])$ ]]; do
-      centrarEnPantalla "$(imprimirCuadro "80" "error" "Entrada de datos errónea")"
-      read -r -p "-> " temp
-    done
-
-    if [[ $temp =~ [nN][oO]|[nN] ]]; then
-      masProcesos="false"
-    elif [[ $temp =~ [sS][iI]|[sS] ]]; then
-      ((NUM_FIL++))
-    fi
-  }
-
-  # Main de la asignación manual
-  # ----------------------------------
-  NUM_FIL="1"
-  while [ "$masProcesos" != "false" ]; do
-    guardarNombreDelProceso "$NUM_FIL"
-    guardarLlegadaProceso "$NUM_FIL"
-    guardarTiempoEjecucion "$NUM_FIL"
-    comprobarSiMasProcesos "$NUM_FIL"
-  done
-}
-
 # Centra en pantalla el valor pasado, si es un string, divide por saltos de
 # linea y coloca cada linea en el centro
 # @param string a centrar
@@ -572,174 +756,19 @@ function centrarEnPantalla() {
   done
 }
 
-# Devuelve los datos extraidos del archivo de configuracion
-# @param parametro a leer del config
+# Funcion basica de avance de algoritmo
 # ----------------------------------
-function extraerDeConfig() {
-  local salida
-
-  # Lee el config y devuelve la linea solicitada
-  # ----------------------------------
-  function leeConfig() {
-    grep -o '".*"' "$configFile" | sed 's/"//g' | head -"$1" | tail -1
-  }
-
-  # Lee el config si es un array
-  # ----------------------------------
-  function leeConfigArray() {
-    grep -o '".*"' "$configFile" | head -"$1" | tail -1 | tr -d ","
-  }
-
-  if [ "$1" == "introduccion" ]; then
-    local salidaArray
-    salida="$(leeConfigArray "1")"
-    salida+=" "
-    salida+="$(leeConfigArray "2")"
-
-    declare -a "salidaArray=( $(echo "$salida" | tr '`$<>' '????') )"
-    for ((i = 0; i < ${#salidaArray[@]}; i++)); do
-      echo "${salidaArray[$i]}"
-      if [ "$i" == "2" ] || [ "$i" == "4" ]; then
-        echo " "
-      fi
-    done
-  else
-    case "$1" in
-    error)
-      salida=$(leeConfig "3")
-      ;;
-    acierto)
-      salida=$(leeConfig "4")
-      ;;
-    advertencia)
-      salida=$(leeConfig "5")
-      ;;
-    archivoSalida)
-      salida=$(leeConfig "6")
-      ;;
-    archivoEntrada)
-      salida=$(leeConfig "7")
-      ;;
-    esac
-
-    echo "$salida"
-  fi
-}
-
-# Funcion para elegir el tipo de entrada de datos
-# @param archivo externo para la opcion de archivo
-# ----------------------------------
-function elegirTipoDeEntrada() {
-  local tipo
-  local opcionesEntrada
-  opcionesEntrada=(
-    "1.- Entrada manual por teclado"
-    "2.- Entrada automática por archivo"
-    "3.- Entrada automática con valores aleatorios"
-    "4.- Ayuda"
-    "0.- Salir"
-  )
-
+function avanzarAlgoritmo() {
+  # Pulsar tecla para avanzar al menu
+  read -r -p "$(centrarEnPantalla "$(imprimirCuadro "50" "default" "Pulsa intro para avanzar")")"
   clear
-  centrarEnPantalla "$(imprimirCuadro "50" "default" "MENÚ PRINCIPAL")" | sacarHaciaArchivo "$archivoSalida" -a
-  centrarEnPantalla "$(imprimirCuadro "50" "0" "${opcionesEntrada[@]}")" | sacarHaciaArchivo "$archivoSalida" -a
-  read -r -p "-> " tipo
-
-  while [[ ! "$tipo" =~ ^[0-4]+$ ]]; do
-    centrarEnPantalla "$(imprimirCuadro "80" "error" "Inserta un valor numérico entre 0 y 4")"
-    read -r -p "-> " tipo
-  done
-
-  # Funcion que imprime el tipo de asignacion al archivo,
-  # para posterior conocimiento
-  # ----------------------------------
-  function guardaTipoEnArchivo() {
-    centrarEnPantalla "$(imprimirCuadro "50" "6" "Asignación de datos $1")" >>"$archivoSalida"
-  }
-
-  case "$tipo" in
-  1)
-    guardaTipoEnArchivo "manual"
-    asignarManual
-    ;;
-  2)
-    guardaTipoEnArchivo "automática desde archivo"
-    asignarDesdeArchivo "$1"
-    ;;
-  3)
-    guardaTipoEnArchivo "aleatoria"
-    asignarValoresAleatorios
-    ;;
-  4)
-    imprimirAyuda
-    ;;
-  0)
-    centrarEnPantalla "$(imprimirCuadro "50" "6" "Ha salido del programa mediante el menú de opciones")" >>"$archivoSalida"
-    exit 99
-    ;;
-  *)
-    centrarEnPantalla "$(imprimirCuadro "100" "error" "Ha ocurrido algún tipo de error")" | sacarHaciaArchivo "$archivoSalida" -a
-    exit 99
-    ;;
-  esac
 }
 
-# Ayuda del algoritmo
-# ----------------------------------
-function imprimirAyuda() {
-  local ayuda
-  ayuda=(
-    "El algoritmo de FCFS según necesidades con memoria no continua y no reubicable funciona tal que...
-    Se pueden insertar los valores desde...
-    Puedes elegir tiempo de... que hará...
-    Si tienes alguna duda más consulta el manual externo"
-  )
-
-  clear
-  centrarEnPantalla "$(imprimirCuadro "50" "default" "AYUDA")" | sacarHaciaArchivo "$archivoSalida" -a
-  centrarEnPantalla "$(imprimirCuadro "150" "random" "${ayuda[@]}")" | sacarHaciaArchivo "$archivoSalida" -a
-  read -r -p "$(centrarEnPantalla "$(imprimirCuadro "50" "default" "Pulsa intro para salir")")"
-  elegirTipoDeEntrada "$archivoEntrada"
-}
-
-# Elige el tipo de tiempo del algoritmo
-# ----------------------------------
-function elegirTipoDeTiempo() {
-  local tiempo
-  local tipoTiempo
-  tipoTiempo=(
-    "1.- Tiempo Real
-    2.- Tiempo Acumulado"
-  )
-
-  clear
-  centrarEnPantalla "$(imprimirCuadro "50" "default" "TIPO DE TIEMPO")" | sacarHaciaArchivo "$archivoSalida" -a
-  centrarEnPantalla "$(imprimirCuadro "50" "0" "${tipoTiempo[@]}")" | sacarHaciaArchivo "$archivoSalida" -a
-  read -r -p "-> " tiempo
-
-  while [[ ! "$tiempo" =~ ^[1-2]+$ ]]; do
-    centrarEnPantalla "$(imprimirCuadro "80" "error" "Inserta un valor numérico entre 1 y 2")"
-    read -r -p "-> " tiempo
-  done
-
-  case "$tiempo" in
-  1)
-    tipoDeTiempo="real"
-    ;;
-  2)
-    tipoDeTiempo="acumulado"
-    ;;
-  *)
-    centrarEnPantalla "$(imprimirCuadro "100" "error" "Ha ocurrido algún tipo de error")" | sacarHaciaArchivo "$archivoSalida" -a
-    exit 99
-    ;;
-  esac
-}
-
-# Main
+######################## Main
+# Main, eje central del algoritmo, única llamada en cuerpo.
 # ----------------------------------
 function main() {
-  # Variables globales
+  # Variables globales de subfunciones
   # ----------------------------------
   declare estiloGeneral
   declare tipoDeTiempo
@@ -773,19 +802,19 @@ function main() {
     # Elegimos el estilo de los marcos en el programa
     asignarEstiloGeneral "2"
   }
+  # ------------------------------------------------
 
   # Introduccion
   # ------------------------------------------------
   function introduccion() {
-    clear
     # Imprime introducción
     centrarEnPantalla "$(imprimirCuadro "50" "0" "$introduccion")" | sacarHaciaArchivo "$archivoSalida"
     # Imprime mensaje advertencia
     centrarEnPantalla "$(imprimirCuadro "100" "advertencia" "$advertencia")" | sacarHaciaArchivo "$archivoSalida" -a
     # Imprime mensaje error
     centrarEnPantalla "$(imprimirCuadro "100" "error" "$error")" | sacarHaciaArchivo "$archivoSalida" -a
-    # Pulsar tecla para avanzar al menu
-    read -r -p "$(centrarEnPantalla "$(imprimirCuadro "50" "default" "Pulsa intro para avanzar")")"
+    # Avanza de fase
+    avanzarAlgoritmo
   }
   # ------------------------------------------------
 
@@ -795,22 +824,22 @@ function main() {
     elegirTipoDeEntrada "$archivoEntrada"
     elegirTipoDeTiempo
   }
+  # ------------------------------------------------
 
   # Ejecuta Algoritmo
   # ------------------------------------------------
   function algoritmo() {
     # usar el tipo de tiempo, borrar linea
     echo "$tipoDeTiempo" >>res.log
-    # Comienza la ejecucion del algoritmo según el tiempo pasado
-    # Ir imprimiendo las filas y los tiempos según pase el tiempo
     for ((fila = 1; fila <= NUM_FIL; fila++)); do
       clear
       centrarEnPantalla "$(imprimirCuadro "100" "acierto" "$acierto")" | sacarHaciaArchivo "$archivoSalida" -a
       # Saca el resultado - TODO -> Algoritmo y uso de memoria medinate enter, calculo de tiempo medio, etc Uso de memoria
       centrarEnPantalla "$(imprimirTabla "$fila" "6")" | sacarHaciaArchivo "$archivoSalida" -a
-      read -r -p "$(centrarEnPantalla "$(imprimirCuadro "50" "default" "Pulsa intro para avanzar")")"
+      avanzarAlgoritmo
     done
   }
+  # ------------------------------------------------
 
   # Pregunta al usuario si quiere salir del programa
   # ------------------------------------------------
@@ -828,9 +857,10 @@ function main() {
 
     if [[ $temp =~ [sS][iI]|[sS] ]]; then
       cat "$archivoSalida"
-      read -r -p "$(centrarEnPantalla "$(imprimirCuadro "50" "default" "Pulsa intro para avanzar")")"
+      avanzarAlgoritmo
     fi
   }
+  # ------------------------------------------------
 
   # Pregunta al usuario si quiere sacar el informe
   # ------------------------------------------------
@@ -853,6 +883,7 @@ function main() {
       array=()
     fi
   }
+  # ------------------------------------------------
 
   # Saca spam
   # ------------------------------------------------
@@ -880,9 +911,11 @@ function main() {
 
     centrarEnPantalla "$(imprimirCuadro "38" "0" "$spam")" | sacarHaciaArchivo "$archivoSalida"
   }
+  # ------------------------------------------------
 
   # Main de main xD
   # ------------------------------------------------
+  clear
   asignaciones
   introduccion
   while [[ "$salirDePractica" != "true" ]]; do
@@ -895,5 +928,3 @@ function main() {
 }
 
 main
-
-# TODO -> Limpiar los clears a una funcion de intro para avanzar
