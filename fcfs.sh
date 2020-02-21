@@ -315,6 +315,7 @@ function asignarDesdeArchivo() {
 function asignarValoresAleatorios() {
   local numValAleatorios
 
+  clear
   centrarEnPantalla "$(imprimirCuadro "50" "6" "¿Cuántos valores aleatorios quieres generar?")" | sacarHaciaArchivo "$archivoSalida" -a
   read -r -p "-> " numValAleatorios
 
@@ -485,6 +486,7 @@ function fc() {
 }
 
 # Devuelve la longitud del string
+# @param String del que queremos calcular la longitud
 # ----------------------------------
 function calcularLongitud() {
   local elementoArray # Elemento a ser centrado
@@ -507,7 +509,7 @@ function imprimirCuadro() {
   # Asigna un estilo a la tabla, de doble linea, linea basica,
   # esquinas redondeadas, etc...
   # ----------------------------------
-  function asignarEstilo() {
+  function asignarEstiloCuadro() {
     local simboloHorizontal
 
     estilo=("${estiloGeneral[@]}")
@@ -532,6 +534,10 @@ function imprimirCuadro() {
   # ----------------------------------
   function asignarAncho() {
     anchoCuadro="$1"
+
+    if [ "$((anchoCuadro % 2))" == "1" ]; then
+      ((anchoCuadro++))
+    fi
   }
 
   # Imprime los elementos del array
@@ -574,7 +580,7 @@ function imprimirCuadro() {
   # ----------------------------------
   asignarAncho "$1"
   asignacolor "$2"
-  asignarEstilo
+  asignarEstiloCuadro
   imprimir "$@"
 }
 
@@ -734,6 +740,45 @@ function imprimirTabla() {
   imprimir
 }
 
+# Imprime el uso de la memoria según los procesos en ella
+# ----------------------------------
+function imprimirMemoria() {
+  local colorVacio
+  local -A coloresMemoria
+  local procesosEnMemoria
+
+  # Asigna el número de procesos en memoria
+  # ----------------------------------
+  function asignarNumProcesos() {
+    procesosEnMemoria="6"
+  }
+
+  # Guarda los colores aleatorio de la memoria
+  # ----------------------------------
+  function asignarColores() {
+    colorVacio="$(cc Neg error)"
+    for ((i = 1; i <= procesosEnMemoria; i++)); do
+      coloresMemoria[$i]=$(cc Neg "$((i + 4))")
+    done
+  }
+
+  # Imprime cuadro de memoria
+  # ----------------------------------
+  function imprimir() {
+    # TODO -> Entender como hacer esto bien
+    for ((i = 1; i <= procesosEnMemoria; i++)); do
+      printf "${coloresMemoria[$i]}%s$(fc)" " P${i} "
+    done
+    printf "$colorVacio%s$(fc)" " Vacio "
+  }
+
+  # Main de cuadro de memoria
+  # ----------------------------------
+  asignarNumProcesos
+  asignarColores
+  imprimir
+}
+
 # Centra en pantalla el valor pasado, si es un string, divide por saltos de
 # linea y coloca cada linea en el centro
 # @param string a centrar
@@ -760,12 +805,13 @@ function centrarEnPantalla() {
 # ----------------------------------
 function avanzarAlgoritmo() {
   # Pulsar tecla para avanzar al menu
+  printf "%s\n\n\n" ""
   read -r -p "$(centrarEnPantalla "$(imprimirCuadro "50" "default" "Pulsa intro para avanzar")")"
   clear
 }
 
 ######################## Main
-# Main, eje central del algoritmo, única llamada en cuerpo.
+# Main, eje central del algoritmo, única llamada en cuerpo
 # ----------------------------------
 function main() {
   # Variables globales de subfunciones
@@ -834,8 +880,15 @@ function main() {
     for ((fila = 1; fila <= NUM_FIL; fila++)); do
       clear
       centrarEnPantalla "$(imprimirCuadro "100" "acierto" "$acierto")" | sacarHaciaArchivo "$archivoSalida" -a
+
       # Saca el resultado - TODO -> Algoritmo y uso de memoria medinate enter, calculo de tiempo medio, etc Uso de memoria
+      
+      centrarEnPantalla "$(imprimirCuadro "25" "default" "TABLA DE PROCESOS")"
       centrarEnPantalla "$(imprimirTabla "$fila" "6")" | sacarHaciaArchivo "$archivoSalida" -a
+
+      imprimirCuadro "25" "default" "USO DE MEMORIA" | sacarHaciaArchivo "$archivoSalida" -a
+      imprimirMemoria | sacarHaciaArchivo "$archivoSalida" -a
+
       avanzarAlgoritmo
     done
   }
