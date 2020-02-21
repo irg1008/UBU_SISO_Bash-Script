@@ -970,9 +970,6 @@ function main() {
   # TODO -> Algoritmo y uso de memoria medinate enter, calculo de tiempo medio, etc Uso de memoria
   # ------------------------------------------------
   function algoritmo() {
-    # usar el tipo de tiempo, borrar linea
-    echo "$tipoDeTiempo" >>res.log
-
     # Imprime una cabecera muy simple
     # ------------------------------------------------
     function cabecera() {
@@ -984,6 +981,12 @@ function main() {
     # ------------------------------------------------
     function calcularSigIns() {
       centrarEnPantalla "$(imprimirCuadro "100" "3" "Instante $1 - Tamaño de memoria: $TAM_MEM")" | sacarHaciaArchivo "$archivoSalida" -a
+    }
+
+    # Funcion que calcula el algoritmo como tal
+    # ------------------------------------------------
+    function calcularDatos() {
+    echo "$tipoDeTiempo" >>res.log
     }
 
     # Imprime el dibujo de la tabla
@@ -1015,6 +1018,7 @@ function main() {
     for ((instante = 0; instante <= 10; instante++)); do
       cabecera
       calcularSigIns "$instante"
+      calcularDatos # Funcion del algoritmo como tal
       mainImprimirTabla
       imprimirLineaTiempo
       mainImprimirMemoria
