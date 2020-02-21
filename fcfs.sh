@@ -326,7 +326,8 @@ function asignarValoresAleatorios() {
 
   NUM_FIL=$numValAleatorios
 
-  for ((i = 1; i <= NUM_COL; i++)); do
+  # Solo ponemos aleatorios los 4 primeros atributos, que son los que meteria el usuario por teclado
+  for ((i = 1; i <= 4; i++)); do
     for ((j = 1; j <= NUM_FIL; j++)); do
       if [ "$i" == "1" ]; then
         array[$i, $j]="P"${j}
@@ -586,6 +587,7 @@ function imprimirCuadro() {
 
 # Imprime una tabla según el tamaño del array de datos
 # @param numeroFilasImprimir
+# @param numeroColumnasImprimir
 # ----------------------------------
 function imprimirTabla() {
   local titulos
@@ -598,6 +600,13 @@ function imprimirTabla() {
   local encTabla
   local interTabla
   local pieTabla
+
+  # Asigna el titulo de la tabla
+  # ----------------------------------
+  function asignarTitulosYNumCol() {
+    titulos=("Proceso" "Llegada" "Ejecución" "Tamaño" "Estado" "Respuesta" "Espera" "Restante")
+    NUM_COL="${#titulos[@]}"
+  }
 
   # Guarda los colores aleatorio de la tabla
   # ----------------------------------
@@ -620,8 +629,6 @@ function imprimirTabla() {
   # Imprime los titulos de las columnas de datos
   # ----------------------------------
   function imprimirTitulos() {
-    titulos=("Proceso" "Llegada" "Ejecución" "Espera" "Respuesta")
-
     local longitudArray # Para centrar en la tabla
 
     for ((i = 0; i < columnasImprimir; i++)); do
@@ -643,24 +650,25 @@ function imprimirTabla() {
     columnasImprimir="$2"
     anchoCelda="12"
 
-    for ((i = 1; i <= NUM_COL; i++)); do
-      for ((j = 1; j <= NUM_FIL; j++)); do
+    if [ "$filasImprimir" -gt "$NUM_FIL" ]; then
+      filasImprimir="$NUM_FIL"
+    fi
+
+    if [ "$columnasImprimir" -gt "$NUM_COL" ]; then
+      columnasImprimir="$NUM_COL"
+    fi
+
+    for ((i = 1; i <= columnasImprimir; i++)); do
+      for ((j = 1; j <= filasImprimir; j++)); do
         longitudElemento=$(calcularLongitud "${array[$i, $j]}")
         if [[ "$anchoCelda" -lt "$longitudElemento" ]]; then
           anchoCelda="$longitudElemento"
-          if [ "$((anchoCelda % 2))" == "1" ]; then
-            ((anchoCelda++))
-          fi
         fi
       done
     done
 
-    if [ "$filasImprimir" -gt "$NUM_FIL" ]; then
-      filasImprimir=$NUM_FIL
-    fi
-
-    if [ "$columnasImprimir" -gt "$NUM_COL" ]; then
-      columnasImprimir=$NUM_COL
+    if [ "$((anchoCelda % 2))" == "1" ]; then
+      ((anchoCelda++))
     fi
   }
 
@@ -733,10 +741,10 @@ function imprimirTabla() {
 
   # Main de impresion
   # ----------------------------------
+  asignarTitulosYNumCol
   guardarColoresDeTabla
   asignarAnchoYFilasYColumnas "$1" "$2"
   asignarEstiloDeTabla
-  printf "\n\n"
   imprimir
 }
 
@@ -843,8 +851,6 @@ function main() {
     advertencia=$(extraerDeConfig "advertencia")
     archivoSalida=$(extraerDeConfig "archivoSalida")
     archivoEntrada=$(extraerDeConfig "archivoEntrada")
-    # Máximo y fijo pues son los datos que se calculan, se puede cambiar esto si se implementan mas calculos o para otros algoritmos
-    NUM_COL=5
     # Elegimos el estilo de los marcos en el programa
     asignarEstiloGeneral "2"
   }
@@ -873,22 +879,55 @@ function main() {
   # ------------------------------------------------
 
   # Ejecuta Algoritmo
+  # TODO -> Algoritmo y uso de memoria medinate enter, calculo de tiempo medio, etc Uso de memoria
   # ------------------------------------------------
   function algoritmo() {
     # usar el tipo de tiempo, borrar linea
     echo "$tipoDeTiempo" >>res.log
-    for ((fila = 1; fila <= NUM_FIL; fila++)); do
+
+    # Imprime una cabecera muy simple
+    # ------------------------------------------------
+    function cabecera() {
       clear
       centrarEnPantalla "$(imprimirCuadro "100" "acierto" "$acierto")" | sacarHaciaArchivo "$archivoSalida" -a
+    }
 
-      # Saca el resultado - TODO -> Algoritmo y uso de memoria medinate enter, calculo de tiempo medio, etc Uso de memoria
-      
-      centrarEnPantalla "$(imprimirCuadro "25" "default" "TABLA DE PROCESOS")"
-      centrarEnPantalla "$(imprimirTabla "$fila" "6")" | sacarHaciaArchivo "$archivoSalida" -a
+    # Calcula los siguientes datos a mostrar
+    # ------------------------------------------------
+    function calcularSigIns() {
+      echo ""
+    }
 
-      imprimirCuadro "25" "default" "USO DE MEMORIA" | sacarHaciaArchivo "$archivoSalida" -a
-      imprimirMemoria | sacarHaciaArchivo "$archivoSalida" -a
+    # Imprime el dibujo de la tabla
+    # ------------------------------------------------
+    function mainImprimirTabla() {
+      centrarEnPantalla "$(imprimirCuadro "25" "default" "TABLA DE PROCESOS")" | sacarHaciaArchivo "$archivoSalida" -a
+      centrarEnPantalla "$(imprimirTabla "$1" "10")" | sacarHaciaArchivo "$archivoSalida" -a
+    }
 
+    # Imprime la linea de tiempo
+    # ------------------------------------------------
+    function imprimirLineaTiempo() {
+      printf "\n\n%s" ""
+      centrarEnPantalla "$(imprimirCuadro "25" "default" "LINEA DE TIEMPO")" | sacarHaciaArchivo "$archivoSalida" -a
+    }
+
+    # Imprime el dibujo de la memoria
+    # ------------------------------------------------
+    function mainImprimirMemoria() {
+      printf "\n\n%s" ""
+      centrarEnPantalla "$(imprimirCuadro "25" "default" "USO DE MEMORIA")" | sacarHaciaArchivo "$archivoSalida" -a
+      centrarEnPantalla "$(imprimirMemoria)" | sacarHaciaArchivo "$archivoSalida" -a
+    }
+
+    # Main de las llamadas de la parte de calculo de algoritmo
+    # ------------------------------------------------
+    for ((fila = 1; fila <= NUM_FIL; fila++)); do
+      calcularSigIns
+      cabecera
+      mainImprimirTabla "$fila"
+      imprimirLineaTiempo
+      mainImprimirMemoria
       avanzarAlgoritmo
     done
   }
@@ -962,7 +1001,7 @@ function main() {
  █▄▄▄▄▄█ █▄▄█  ▀▀     ▀▄█▄▄▀▀ █▀▄ 
     "
 
-    centrarEnPantalla "$(imprimirCuadro "38" "0" "$spam")" | sacarHaciaArchivo "$archivoSalida"
+    centrarEnPantalla "$(imprimirCuadro "38" "default" "$spam")" | sacarHaciaArchivo "$archivoSalida"
   }
   # ------------------------------------------------
 
