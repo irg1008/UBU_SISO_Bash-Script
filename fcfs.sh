@@ -480,7 +480,7 @@ function imprimirMemoria() {
 }
 
 # Calcula el numero de instantes que tendrá el programa
-calcularNumInstantes() {
+function calcularNumInstantes() {
   local -i num
 
   for ((i=1; i<=NUM_FIL; i++));do
@@ -945,11 +945,10 @@ function main() {
     advertencia=$(extraerDeConfig "advertencia")
     archivoSalida=$(extraerDeConfig "archivoSalida")
     archivoEntrada=$(extraerDeConfig "archivoEntrada")
-    # Elegimos el estilo de los marcos en el programa
+    # Elegimos el estilo de los marcos en el programa [1-3]
     asignarEstiloGeneral "2"
     # Asignamos el valor al numero de columnas, o titulos de la tabla. TODO-> mejorar esto asignando automaticamente
     NUM_COL="8"
-    # $((${#array[@]} / NUM_FIL))
   }
   # ------------------------------------------------
 
