@@ -979,58 +979,60 @@ function main() {
   function algoritmo() {
     # Imprime una cabecera muy simple
     # ------------------------------------------------
-    function cabecera() {
+    function algCabecera() {
       clear
       centrarEnPantalla "$(imprimirCuadro "100" "acierto" "$acierto")" | sacarHaciaArchivo "$archivoSalida" -a
     }
 
     # Calcula los siguientes datos a mostrar
     # ------------------------------------------------
-    function calcularSigIns() {
+    function algCalcularSigIns() {
       centrarEnPantalla "$(imprimirCuadro "100" "3" "Instante $1 - Tamaño de memoria: $TAM_MEM")" | sacarHaciaArchivo "$archivoSalida" -a
     }
 
-    # Funcion que calcula el algoritmo como tal
+    # Funcion que calcula el tiempo y estado de todos los proceos en cada instante,
+    # sirve para saber como colcarlos en memoria y calcular el tiempo medio final
     # ------------------------------------------------
-    function calcularDatos() {
+    function algCalcularDatos() {
       # TODO -> Llamar a las funciones externas de forma ordenada
       echo "$tipoDeTiempo" >>res.log
     }
 
     # Imprime el dibujo de la tabla
     # ------------------------------------------------
-    function mainImprimirTabla() {
+    function algImprimirTabla() {
       centrarEnPantalla "$(imprimirCuadro "25" "default" "TABLA DE PROCESOS")" | sacarHaciaArchivo "$archivoSalida" -a
       centrarEnPantalla "$(imprimirTabla "$NUM_FIL" "10")" | sacarHaciaArchivo "$archivoSalida" -a
     }
 
     # Imprime la linea de tiempo
     # ------------------------------------------------
-    function imprimirLineaTiempo() {
+    function algImprimirLineaTiempo() {
       printf "\n\n%s" ""
       centrarEnPantalla "$(imprimirCuadro "25" "default" "LINEA DE TIEMPO")" | sacarHaciaArchivo "$archivoSalida" -a
+      # TODO -> Llamada externa
     }
 
     # Imprime el dibujo de la memoria
     # ------------------------------------------------
-    function mainImprimirMemoria() {
+    function algImprimirMemoria() {
       printf "\n\n%s" ""
       centrarEnPantalla "$(imprimirCuadro "25" "default" "USO DE MEMORIA")" | sacarHaciaArchivo "$archivoSalida" -a
       centrarEnPantalla "$(imprimirMemoria)" | sacarHaciaArchivo "$archivoSalida" -a
+      # TODO -> Terminar esto
     }
 
     # Main de las llamadas de la parte de calculo de algoritmo
     # ------------------------------------------------
     ordenarArray
-    calcularNumInstantes
     for ((instante = 0; instante <= $(calcularNumInstantes); instante++)); do
-      cabecera
-      calcularSigIns "$instante"
-      calcularDatos # Funcion del algoritmo como tal
-      mainImprimirTabla
-      imprimirLineaTiempo
-      mainImprimirMemoria
-      avanzarAlgoritmo
+      algCabecera
+      algCalcularSigIns "$instante"
+      algCalcularDatos
+      algImprimirTabla
+      algImprimirLineaTiempo
+      algImprimirMemoria
+      algAvanzarAlgoritmo
     done
   }
   # ------------------------------------------------
