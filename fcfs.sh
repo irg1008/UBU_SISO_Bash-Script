@@ -994,7 +994,7 @@ function main() {
     # sirve para saber como colcarlos en memoria y calcular el tiempo medio final
     # ------------------------------------------------
     function algCalcularDatos() {
-      # TODO -> Llamar a las funciones externas de forma ordenada
+      # TODO-> Llamar a las funciones externas de forma ordenada
       echo "$tipoDeTiempo" >>res.log
     }
 
