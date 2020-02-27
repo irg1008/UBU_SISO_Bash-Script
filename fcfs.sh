@@ -185,6 +185,7 @@ function asignarManual() {
   # Guarda el tamaño de la memoria
   # ----------------------------------
   function tamMemoria() {
+    clear
     centrarEnPantalla "$(imprimirCuadro "50" "6" "Tamaño de la memoria")"
     read -r -p "-> " TAM_MEM
 
@@ -355,7 +356,7 @@ function asignarValoresAleatorios() {
   local numValAleatorios
 
   # Tamaño de memoria aleatorio
-  TAM_MEM=$(((RANDOM % 20) + 1))
+  TAM_MEM=$(((RANDOM % 20) + 5)) # 5-20
 
   clear
   centrarEnPantalla "$(imprimirCuadro "50" "6" "¿Cuántos valores aleatorios quieres generar?")" | sacarHaciaArchivo "$archivoSalida" -a
@@ -379,7 +380,7 @@ function asignarValoresAleatorios() {
         array[$i, $j]=$((RANDOM % 20)) # 0-20
         ;;
       *)
-        array[$i, $j]=$(((RANDOM % 20) + 1)) # 1-20
+        array[$i, $j]=$(((RANDOM % (TAM_MEM + 2)) + 1)) # MIN-(TAM_MEM+2)
         ;;
       esac
     done
@@ -483,8 +484,12 @@ function imprimirMemoria() {
 function calcularNumInstantes() {
   local -i num
 
-  for ((i=1; i<=NUM_FIL; i++));do
-    num+=${array[3, $i]}
+  for ((i = 1; i <= NUM_FIL; i++)); do
+  # Si el proceso cabe en memoria se va a ejecutar, aquí no asignamos estados,
+  # ya que lo haremos cuando comprobemos ese estado en la lista de procesos a ejecutar
+    if [[ "${array[4, $i]}" -le TAM_MEM ]]; then
+      num+=${array[3, $i]}
+    fi
   done
 
   echo "$num"
@@ -987,7 +992,7 @@ function main() {
     # Calcula los siguientes datos a mostrar
     # ------------------------------------------------
     function algCalcularSigIns() {
-      centrarEnPantalla "$(imprimirCuadro "100" "3" "Instante $1 - Tamaño de memoria: $TAM_MEM")" | sacarHaciaArchivo "$archivoSalida" -a
+      centrarEnPantalla "$(imprimirCuadro "100" "3" "Instante $1/$(calcularNumInstantes) - Tamaño de memoria: $TAM_MEM")" | sacarHaciaArchivo "$archivoSalida" -a
     }
 
     # Funcion que calcula el tiempo y estado de todos los proceos en cada instante,
@@ -1032,7 +1037,7 @@ function main() {
       algImprimirTabla
       algImprimirLineaTiempo
       algImprimirMemoria
-      algAvanzarAlgoritmo
+      avanzarAlgoritmo
     done
   }
   # ------------------------------------------------
