@@ -94,6 +94,13 @@ function extraerDeConfig() {
 
 ######################## 2. MENU Y ENTRADA DE DATOS
 
+# Funcion tipo de entrada de datos comun a todas las peticiones del programa
+# ----------------------------------
+function recibirEntrada() {
+  read -r -p "-> Tu entrada: "
+  echo "$REPLY"
+}
+
 # Funcion para elegir el tipo de entrada de datos
 # @param archivo externo para la opcion de archivo
 # ----------------------------------
@@ -110,11 +117,11 @@ function elegirTipoDeEntrada() {
 
   centrarEnPantalla "$(imprimirCuadro "50" "default" "MENÚ PRINCIPAL")" | sacarHaciaArchivo "$archivoSalida" -a
   centrarEnPantalla "$(imprimirCuadro "50" "0" "${opcionesEntrada[@]}")" | sacarHaciaArchivo "$archivoSalida" -a
-  read -r -p "-> " tipo
+  tipo=$(recibirEntrada)
 
-  while [[ ! "$tipo" =~ ^[0-4]+$ ]]; do
+  while [[ ! "$tipo" =~ ^[0-4]$ ]]; do
     centrarEnPantalla "$(imprimirCuadro "80" "error" "Inserta un valor numérico entre 0 y 4")"
-    read -r -p "-> " tipo
+    tipo=$(recibirEntrada)
   done
 
   # Funcion que imprime el tipo de asignacion al archivo,
@@ -156,12 +163,12 @@ function elegirTipoDeEntrada() {
 function asignarManual() {
   local masProcesos
 
-  # Comprueba si la entrada pasada es un entero
+  # Comprueba si la entrada pasada es entero
   # @param Numero a comprobar
   # @param Minimo entero válido
   # ----------------------------------
   function entradaEsEntero() {
-    if [[ "$1" =~ ^[$2-9]+$ ]]; then
+    if [[ "$1" =~ ^[0-9]+$ ]] && [[ "$1" -ge "$2" ]]; then
       echo "true"
     fi
   }
@@ -187,11 +194,11 @@ function asignarManual() {
   function tamMemoria() {
     clear
     centrarEnPantalla "$(imprimirCuadro "50" "6" "Tamaño de la memoria")"
-    read -r -p "-> " TAM_MEM
+    TAM_MEM=$(recibirEntrada)
 
     while [[ $(entradaEsEntero "$TAM_MEM" "1") != "true" ]]; do
       centrarEnPantalla "$(imprimirCuadro "80" "error" "Valor de tamaño de memoria no válido, mayor que 0")"
-      read -r -p "-> " TAM_MEM
+      TAM_MEM=$(recibirEntrada)
     done
   }
 
@@ -201,7 +208,7 @@ function asignarManual() {
     local nombre
 
     comienzoPregunta "$1" "Nombre del proceso $1"
-    read -r -p "-> " nombre
+    nombre=$(recibirEntrada)
 
     # Comprueba si el nombre esta repetido
     function estaRepetido() {
@@ -217,7 +224,7 @@ function asignarManual() {
 
     while [[ $(entradaEsStringValido "$nombre") != "true" ]] || [[ "$(estaRepetido)" == "true" ]]; do
       centrarEnPantalla "$(imprimirCuadro "80" "error" "Nombre del proceso erróneo, al menos una letra y no repetido")"
-      read -r -p "-> " nombre
+      nombre=$(recibirEntrada)
     done
 
     array[1, $1]="$nombre"
@@ -229,11 +236,11 @@ function asignarManual() {
     local llegada
 
     comienzoPregunta "$1" "Llegada del proceso $1"
-    read -r -p "-> " llegada
+    llegada=$(recibirEntrada)
 
     while [[ $(entradaEsEntero "$llegada" "0") != "true" ]]; do
       centrarEnPantalla "$(imprimirCuadro "80" "error" "Valor de llegada del proceso no válido, entero 0 o mayor")"
-      read -r -p "-> " llegada
+      llegada=$(recibirEntrada)
     done
 
     array[2, $1]="$llegada"
@@ -245,11 +252,11 @@ function asignarManual() {
     local ejecucion
 
     comienzoPregunta "$1" "Tiempo ejecución proceso $1"
-    read -r -p "-> " ejecucion
+    ejecucion=$(recibirEntrada)
 
     while [[ $(entradaEsEntero "$ejecucion" "1") != "true" ]]; do
       centrarEnPantalla "$(imprimirCuadro "80" "error" "Valor de tiempo de ejecución no válido, entero mayor que 0")"
-      read -r -p "-> " ejecucion
+      ejecucion=$(recibirEntrada)
     done
 
     array[3, $1]="$ejecucion"
@@ -261,11 +268,11 @@ function asignarManual() {
     local tam
 
     comienzoPregunta "$1" "Tamaño del proceso $1"
-    read -r -p "-> " tam
+    tam=$(recibirEntrada)
 
     while [[ $(entradaEsEntero "$tam" "1") != "true" ]]; do
       centrarEnPantalla "$(imprimirCuadro "80" "error" "Valor de tiempo de tamaño no válido, entero mayor que 0")"
-      read -r -p "-> " tam
+      tam=$(recibirEntrada)
     done
 
     array[4, $1]="$tam"
@@ -277,11 +284,11 @@ function asignarManual() {
     local temp
 
     comienzoPregunta "$1" "¿Quieres introducir otro proceso? [S/N]"
-    read -r -p "-> " temp
+    temp=$(recibirEntrada)
 
     while [[ ! "$temp" =~ ^([sS][iI]|[sS]|[nN][oO]|[nN])$ ]]; do
       centrarEnPantalla "$(imprimirCuadro "80" "error" "Entrada de datos errónea")"
-      read -r -p "-> " temp
+      temp=$(recibirEntrada)
     done
 
     if [[ $temp =~ [nN][oO]|[nN] ]]; then
@@ -360,11 +367,11 @@ function asignarValoresAleatorios() {
 
   clear
   centrarEnPantalla "$(imprimirCuadro "50" "6" "¿Cuántos valores aleatorios quieres generar?")" | sacarHaciaArchivo "$archivoSalida" -a
-  read -r -p "-> " numValAleatorios
+  numValAleatorios=$(recibirEntrada)
 
   while [[ ! "$numValAleatorios" =~ ^[0-9]+$ || "$numValAleatorios" -lt "1" || "$numValAleatorios" -gt "100" ]]; do
     centrarEnPantalla "$(imprimirCuadro "80" "error" "Inserta un valor numérico entre 1 y 100, recomendamos menos de 30")"
-    read -r -p "-> " numValAleatorios
+    numValAleatorios=$(recibirEntrada)
   done
 
   NUM_FIL=$numValAleatorios
@@ -374,13 +381,17 @@ function asignarValoresAleatorios() {
     for ((j = 1; j <= NUM_FIL; j++)); do
       case "$i" in
       1)
-        array[$i, $j]="P"${j}
+        array[$i, $j]="P"${j} # Nombre
         ;;
       2)
-        array[$i, $j]=$((RANDOM % 20)) # 0-20
+        array[$i, $j]=$((RANDOM % 20)) # Llegada [0-20]
         ;;
-      *)
-        array[$i, $j]=$(((RANDOM % (TAM_MEM + 2)) + 1)) # MIN-(TAM_MEM+2)
+      3)
+        array[$i, $j]=$(((RANDOM % 20) + 1)) # Ejecucion
+
+        ;;
+      4)
+        array[$i, $j]=$(((RANDOM % (TAM_MEM + 2)) + 1)) # Tamaño
         ;;
       esac
     done
@@ -419,11 +430,11 @@ function elegirTipoDeTiempo() {
   clear
   centrarEnPantalla "$(imprimirCuadro "50" "default" "TIPO DE TIEMPO")" | sacarHaciaArchivo "$archivoSalida" -a
   centrarEnPantalla "$(imprimirCuadro "50" "0" "${tipoTiempo[@]}")" | sacarHaciaArchivo "$archivoSalida" -a
-  read -r -p "-> " tiempo
+  tiempo=$(recibirEntrada)
 
   while [[ ! "$tiempo" =~ ^[1-2]+$ ]]; do
     centrarEnPantalla "$(imprimirCuadro "80" "error" "Inserta un valor numérico entre 1 y 2")"
-    read -r -p "-> " tiempo
+    tiempo=$(recibirEntrada)
   done
 
   case "$tiempo" in
@@ -483,10 +494,11 @@ function imprimirMemoria() {
 # Calcula el numero de instantes que tendrá el programa
 function calcularNumInstantes() {
   local -i num
+  num=0
 
   for ((i = 1; i <= NUM_FIL; i++)); do
-  # Si el proceso cabe en memoria se va a ejecutar, aquí no asignamos estados,
-  # ya que lo haremos cuando comprobemos ese estado en la lista de procesos a ejecutar
+    # Si el proceso cabe en memoria se va a ejecutar, aquí no asignamos estados,
+    # ya que lo haremos cuando comprobemos ese estado en la lista de procesos a ejecutar
     if [[ "${array[4, $i]}" -le TAM_MEM ]]; then
       num+=${array[3, $i]}
     fi
@@ -911,7 +923,7 @@ function centrarEnPantalla() {
 # ----------------------------------
 function avanzarAlgoritmo() {
   # Pulsar tecla para avanzar al menu
-  printf "%s\n\n\n" ""
+  printf "%s\n\n" ""
   read -r -p "$(centrarEnPantalla "$(imprimirCuadro "50" "default" "Pulsa intro para avanzar")")"
   clear
 }
@@ -952,7 +964,8 @@ function main() {
     archivoEntrada=$(extraerDeConfig "archivoEntrada")
     # Elegimos el estilo de los marcos en el programa [1-3]
     asignarEstiloGeneral "2"
-    # Asignamos el valor al numero de columnas, o titulos de la tabla. TODO-> mejorar esto asignando automaticamente
+    # Asignamos el valor al numero de columnas, o titulos de la tabla.
+    # TODO-> mejorar esto asignando automaticamente
     NUM_COL="8"
   }
   # ------------------------------------------------
@@ -1049,15 +1062,18 @@ function main() {
 
     clear
     centrarEnPantalla "$(imprimirCuadro "50" "default" "¿Quieres ver el informe? [S/N]")"
-    read -r -p "-> " temp
+    temp=$(recibirEntrada)
 
     while [[ ! "$temp" =~ ^([sS][iI]|[sS]|[nN][oO]|[nN])$ ]]; do
       centrarEnPantalla "$(imprimirCuadro "80" "error" "Entrada de datos errónea")"
-      read -r -p "-> " temp
+      temp=$(recibirEntrada)
     done
 
     if [[ $temp =~ [sS][iI]|[sS] ]]; then
-      cat "$archivoSalida"
+      clear
+      centrarEnPantalla "$(imprimirCuadro "200" "advertencia" "INICIO REVISIÓN INFORME")"
+      less -r "$archivoSalida" 
+      centrarEnPantalla "$(imprimirCuadro "200" "advertencia" "FINAL REVISIÓN INFORME")"
       avanzarAlgoritmo
     fi
   }
@@ -1070,11 +1086,11 @@ function main() {
 
     clear
     centrarEnPantalla "$(imprimirCuadro "50" "default" "¿Quieres volver a ejecutar el algoritmo? [S/N]")"
-    read -r -p "-> " temp
+    temp=$(recibirEntrada)
 
     while [[ ! "$temp" =~ ^([sS][iI]|[sS]|[nN][oO]|[nN])$ ]]; do
       centrarEnPantalla "$(imprimirCuadro "80" "error" "Entrada de datos errónea")"
-      read -r -p "-> " temp
+      temp=$(recibirEntrada)
     done
 
     if [[ $temp =~ [nN][oO]|[nN] ]]; then
