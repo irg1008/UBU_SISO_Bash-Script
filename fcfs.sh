@@ -508,32 +508,40 @@ function asignarEstadosInicial() {
 # ----------------------------------
 function asignarEstadosSegunInstante() {
 	local -i instante="$1"
+	local procesoEjecutando
+	local -a estados=("Fuera" "En Espera" "En Memoria" "Bloqueado" "Ejecutando" "Terminado")
 
 	# Asignamos los estados segun varias cosas, que el proceso haya llegado (llegada <= instante), que quepa en memoria (en los huecos que queden) y que no haya finalizado
 	for ((i = 0; i <= NUM_FIL; i++)); do
 		case "${array[$PROC_EST, $i]}" in
-		"Fuera")
+		"${estados[0]}")
 			if [[ "${array[$PROC_LLE, $i]}" -le "$instante" ]]; then
-				array[$PROC_EST, $i]="En Espera"
+				array[$PROC_EST, $i]="${estados[1]}"
 			fi
 			;;
-		"En Espera")
+		"${estados[1]}")
 			if [[ "${array[$PROC_TAM]}" > "$TAM_MEM" ]]; then
-				array[$PROC_EST, $i]="Bloqueado"
+				array[$PROC_EST, $i]="${estados[3]}"
 			else
 				if [[ "$(cabeEnMemoria "$i")" == "true" ]]; then
-					array[$PROC_EST, $i]="En Memoria"
+					array[$PROC_EST, $i]="${estados[2]}"
 				fi
 			fi
 			;;
-		"En Memoria")
-			for ((i = 0; i <= NUM_FIL; i++)); do
-				if [[ "$" ]]
-			done 
+		"${estados[2]}")
+			for ((j = 0; j <= NUM_FIL; j++)); do
+				if [[ "${array[$PROC_EST, $j]}" == "${estados[4]}" ]]; then
+					procesoEjecutando="true"
+				fi
+			done
+
+			if [[ "$procesoEjecutando" != "true" ]]; then
+				array[$PROC_EST, $i]="${estados[4]}"
+			fi
 			;;
-		"Ejecutando")
+		"${estados[4]}")
 			if [[ "${array[$PROC_LLE_RES, $i]}" == "0" ]]; then
-				array[$PROC_EST, $i]="Terminado"
+				array[$PROC_EST, $i]="${estados[5]}"
 			fi
 			;;
 		esac
