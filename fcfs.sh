@@ -500,6 +500,7 @@ function imprimirMemoria() {
 # ----------------------------------
 function imprimirLineaProcesos() {
 	local -a coloresLinea
+	local longitudArray
 
 	# Guarda los colores aleatorio de la memoria
 	# ----------------------------------
@@ -513,8 +514,13 @@ function imprimirLineaProcesos() {
 	# ----------------------------------
 	function imprimir() {
 		for ((i = 1; i <= NUM_FIL; i++)); do
+			longitudArray=$(calcularLongitud "${array[$PROC_NUM, $i]}")
 			if [[ "${array[$PROC_EST, $i]}" == "${estados[5]}" || "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
-				printf "${coloresLinea[$i]}%-*.*s$(fc)" "$((array[$PROC_EJE, $i] / 2))" "$((array[$PROC_EJE, $i] / 2))" "${array[$PROC_NUM, $i]}"
+				printf "${coloresLinea[$i]}%s" ""
+				printf "%-*s" "$((array[$PROC_EJE, $i] / 2 - longitudArray / 2))" ""
+				printf "%s" "${array[$PROC_NUM, $i]}"
+				printf "%*s" "$((array[$PROC_EJE, $i] / 2 - (longitudArray + 1) / 2))" ""
+				printf "$(fc)%s" ""
 			fi
 		done
 	}
