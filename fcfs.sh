@@ -200,11 +200,11 @@ function asignarManual() {
 	function tamMemoria() {
 		clear
 		centrarEnPantalla "$(imprimirCuadro "50" "6" "Tamaño de la memoria")"
-		TAM_MEM=$(recibirEntrada)
+		MEM_TAM=$(recibirEntrada)
 
-		while [[ $(entradaEsEntero "$TAM_MEM" "1") != "true" ]]; do
+		while [[ $(entradaEsEntero "$MEM_TAM" "1") != "true" ]]; do
 			centrarEnPantalla "$(imprimirCuadro "80" "error" "Valor de tamaño de memoria no válido, mayor que 0")"
-			TAM_MEM=$(recibirEntrada)
+			MEM_TAM=$(recibirEntrada)
 		done
 	}
 
@@ -342,7 +342,7 @@ function asignarDesdeArchivo() {
 	while read -r proceso llegada ejecucion tam; do
 
 		if [ "$i" == "-1" ]; then
-			TAM_MEM="$(cut -d "=" -f 2 <<<"$proceso")"
+			MEM_TAM="$(cut -d "=" -f 2 <<<"$proceso")"
 		elif [ "$i" -ge "1" ]; then
 			array[$PROC_NUM, $i]=$proceso
 			array[$PROC_LLE, $i]=$llegada
@@ -369,7 +369,7 @@ function asignarValoresAleatorios() {
 	local numValAleatorios
 
 	# Tamaño de memoria aleatorio
-	TAM_MEM=$(((RANDOM % 20) + 5)) # 5-20
+	MEM_TAM=$(((RANDOM % 20) + 5)) # 5-20
 
 	clear
 	centrarEnPantalla "$(imprimirCuadro "50" "6" "¿Cuántos valores aleatorios quieres generar?")" | sacarHaciaArchivo "$archivoSalida" -a
@@ -397,7 +397,7 @@ function asignarValoresAleatorios() {
 
 				;;
 			4)
-				array[$i, $j]=$(((RANDOM % (TAM_MEM + 2)) + 1)) # Tamaño
+				array[$i, $j]=$(((RANDOM % (MEM_TAM + 2)) + 1)) # Tamaño
 				;;
 			esac
 		done
@@ -509,7 +509,6 @@ function asignarEstadosInicial() {
 function asignarEstadosSegunInstante() {
 	local -i instante="$1"
 	local procesoEjecutando
-	local -a estados=("Fuera" "En Espera" "En Memoria" "Bloqueado" "Ejecutando" "Terminado")
 
 	# Asignamos los estados segun varias cosas, que el proceso haya llegado (llegada <= instante), que quepa en memoria (en los huecos que queden) y que no haya finalizado
 	for ((i = 0; i <= NUM_FIL; i++)); do
@@ -520,10 +519,10 @@ function asignarEstadosSegunInstante() {
 			fi
 			;;
 		"${estados[1]}")
-			if [[ "${array[$PROC_TAM]}" > "$TAM_MEM" ]]; then
+			if [[ "${array[$PROC_TAM]}" > "$MEM_TAM" ]]; then
 				array[$PROC_EST, $i]="${estados[3]}"
 			else
-				if [[ "$(cabeEnMemoria "$i")" == "true" ]]; then
+				if [[ "${array[$PROC_TAM]}" -le "$((MEM_TAM-MEM_USE))" ]]; then
 					array[$PROC_EST, $i]="${estados[2]}"
 				fi
 			fi
@@ -549,6 +548,7 @@ function asignarEstadosSegunInstante() {
 }
 
 # Calcula el numero de instantes que tendrá el programa
+# ----------------------------------
 function calcularNumInstantes() {
 	local -i num
 	num=0
@@ -556,12 +556,22 @@ function calcularNumInstantes() {
 	for ((i = 1; i <= NUM_FIL; i++)); do
 		# Si el proceso cabe en memoria se va a ejecutar, aquí no asignamos estados,
 		# ya que lo haremos cuando comprobemos ese estado en la lista de procesos a ejecutar
-		if [[ "${array[$PROC_TAM, $i]}" -le "$TAM_MEM" ]]; then
+		if [[ "${array[$PROC_TAM, $i]}" -le "$MEM_TAM" ]]; then
 			num+=${array[$PROC_EJE, $i]}
 		fi
 	done
 
 	echo "$num"
+}
+
+# Comprueba los procesos que se estan ejecutando
+# ----------------------------------
+function comprobarProcesosEjecutando() {
+	for ((i=0; i< NUM_FIL; i++)); do
+		if [[ "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
+			((array[$PROC_EJE, $i]--))
+		fi
+	done
 }
 
 ######################## 4. OTRAS FUNCIONES UTILES USADAS EN TODO EL PROGRAMA
@@ -996,7 +1006,8 @@ function main() {
 	declare -A array
 	declare NUM_COL
 	declare NUM_FIL
-	declare TAM_MEM
+	declare MEM_TAM
+	declare MEM_USE
 	# Variables de columnas, para saber que hay en cada una - Usadas para aclarar el código
 	# ----------------------------------
 	declare PROC_NUM
@@ -1081,6 +1092,8 @@ function main() {
 	# Ejecuta Algoritmo
 	# ------------------------------------------------
 	function algoritmo() {
+		local -a estados=("Fuera" "En Espera" "En Memoria" "Bloqueado" "Ejecutando" "Terminado")
+
 		# Imprime una cabecera muy simple
 		# ------------------------------------------------
 		function algCabecera() {
@@ -1093,7 +1106,7 @@ function main() {
 		function algCalcularSigIns() {
 			local instante="$1"
 
-			centrarEnPantalla "$(imprimirCuadro "100" "3" "Instante $instante/$(calcularNumInstantes) - Tamaño de memoria: $TAM_MEM")" | sacarHaciaArchivo "$archivoSalida" -a
+			centrarEnPantalla "$(imprimirCuadro "100" "3" "Instante $instante/$(calcularNumInstantes) - Memoria usada: $MEM_USE/$MEM_TAM")" | sacarHaciaArchivo "$archivoSalida" -a
 		}
 
 		# Funcion que calcula el tiempo y estado de todos los proceos en cada instante,
@@ -1103,8 +1116,25 @@ function main() {
 			local instante="$1"
 
 			asignarEstadosSegunInstante "$instante"
+			comprobarProcesosEjecutando
 			# TODO-> Llamar a las funciones externas de forma ordenada
 			echo "$tipoDeTiempo" >>res.log
+		}
+
+		# Función que calcula la memoria restante
+		# ------------------------------------------------
+		function algCalcularMemoriaRestante() {
+			for ((i=0; i<NUM_FIL; i++)); do
+				if [[ "${array[$PROC_EST, $i]}" == "${estados[2]}" || "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
+					MEM_USE+="${array[$PROC_TAM, $i]}"
+				fi
+			done
+		}
+
+		# Funcion que asigna la memoria vacia
+		# ------------------------------------------------
+		function algAsignarMemoriaInicial() {
+			MEM_USE="$MEM_TAM"
 		}
 
 		# Imprime el dibujo de la tabla
@@ -1135,10 +1165,12 @@ function main() {
 		# ------------------------------------------------
 		ordenarArray
 		asignarEstadosInicial
+		algAsignarMemoriaInicial
 		for ((instante = 0; instante <= $(calcularNumInstantes); instante++)); do
 			algCabecera
-			algCalcularSigIns "$instante"
 			algCalcularDatos "$instante"
+			algCalcularMemoriaRestante
+			algCalcularSigIns "$instante"
 			algImprimirTabla
 			algImprimirLineaTiempo
 			algImprimirMemoria
