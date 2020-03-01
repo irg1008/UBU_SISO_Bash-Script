@@ -524,6 +524,7 @@ function calcularMemoriaRestante() {
 function asignarEstadosSegunInstante() {
 	local -i instante="$1"
 	local procesoEjecutando="false"
+	local ningunProcesoEnCola="true"
 	local memRestante
 
 	# Asignamos los estados segun varias cosas, que el proceso haya llegado (llegada <= instante), que quepa en memoria (en los huecos que queden) y que no haya finalizado
@@ -540,10 +541,20 @@ function asignarEstadosSegunInstante() {
 
 		# En Espera
 		if [[ "${array[$PROC_EST, $i]}" == "${estados[1]}" ]]; then
-			if [[ "${array[$PROC_TAM, $i]}" -gt "$MEM_TAM" ]]; then
-				array[$PROC_EST, $i]="${estados[3]}"
-			elif [[ "${array[$PROC_TAM, $i]}" -le "$memRestante" ]]; then
-				array[$PROC_EST, $i]="${estados[2]}"
+			# Si ningun proceso anterior esta en espera, ejecutamos
+
+			for ((cola=1; cola<i; cola++)); do
+				if [[ "${array[$PROC_EST]}" == "${estados[1]}" ]]; then
+					ningunProcesoEnCola="false"
+				fi
+			done
+
+			if [[ "$ningunProcesoEnCola" == "true" ]]; then
+				if [[ "${array[$PROC_TAM, $i]}" -gt "$MEM_TAM" ]]; then
+					array[$PROC_EST, $i]="${estados[3]}"
+				elif [[ "${array[$PROC_TAM, $i]}" -le "$memRestante" ]]; then
+					array[$PROC_EST, $i]="${estados[2]}"
+				fi
 			fi
 		fi
 
@@ -1316,4 +1327,3 @@ main
 
 # TODO-> Arreglar que algunos procesos en es espera se cuelan antes en la lista
 # TODO-> Arreglar que no funciona lo de tiempo de espera acumulado y tiempo real
-# TODO-> Mostrar los tiempos medios con decimales
