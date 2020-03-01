@@ -544,7 +544,7 @@ function asignarEstadosSegunInstante() {
 			# Si ningun proceso anterior esta en espera, ejecutamos
 
 			for ((cola=1; cola<i; cola++)); do
-				if [[ "${array[$PROC_EST]}" == "${estados[1]}" ]]; then
+				if [[ "${array[$PROC_EST, $cola]}" == "${estados[1]}" ]]; then
 					ningunProcesoEnCola="false"
 				fi
 			done
