@@ -462,7 +462,7 @@ function elegirTipoDeTiempo() {
 # ----------------------------------
 function imprimirMemoria() {
 	local colorVacio
-	local -A coloresMemoria
+	local -a coloresMemoria
 	local procesosEnMemoria
 
 	# Asigna el número de procesos en memoria
@@ -512,22 +512,27 @@ function asignarEstadosSegunInstante() {
 
 	# Asignamos los estados segun varias cosas, que el proceso haya llegado (llegada <= instante), que quepa en memoria (en los huecos que queden) y que no haya finalizado
 	for ((i = 0; i <= NUM_FIL; i++)); do
-		case "${array[$PROC_EST, $i]}" in
-		"${estados[0]}")
+
+		# Fuera
+		if [[ "${array[$PROC_EST, $i]}" == "${estados[0]}" ]]; then
 			if [[ "${array[$PROC_LLE, $i]}" -le "$instante" ]]; then
 				array[$PROC_EST, $i]="${estados[1]}"
 			fi
-			;;
-		"${estados[1]}")
+		fi
+
+		# En Espera
+		if [[ "${array[$PROC_EST, $i]}" == "${estados[1]}" ]]; then
 			if [[ "${array[$PROC_TAM]}" > "$MEM_TAM" ]]; then
 				array[$PROC_EST, $i]="${estados[3]}"
 			else
-				if [[ "${array[$PROC_TAM]}" -le "$((MEM_TAM-MEM_USE))" ]]; then
+				if [[ "${array[$PROC_TAM]}" -le "$((MEM_TAM - MEM_USE))" ]]; then
 					array[$PROC_EST, $i]="${estados[2]}"
 				fi
 			fi
-			;;
-		"${estados[2]}")
+		fi
+
+		# En Memoria
+		if [[ "${array[$PROC_EST, $i]}" == "${estados[2]}" ]]; then
 			for ((j = 0; j <= NUM_FIL; j++)); do
 				if [[ "${array[$PROC_EST, $j]}" == "${estados[4]}" ]]; then
 					procesoEjecutando="true"
@@ -537,37 +542,45 @@ function asignarEstadosSegunInstante() {
 			if [[ "$procesoEjecutando" != "true" ]]; then
 				array[$PROC_EST, $i]="${estados[4]}"
 			fi
-			;;
-		"${estados[4]}")
+		fi
+
+		# Ejecutando
+		if [[ "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
 			if [[ "${array[$PROC_LLE_RES, $i]}" == "0" ]]; then
 				array[$PROC_EST, $i]="${estados[5]}"
 			fi
-			;;
-		esac
+		fi
 	done
 }
 
-# Calcula el numero de instantes que tendrá el programa
-# ----------------------------------
-function calcularNumInstantes() {
-	local -i num
-	num=0
+# Función que calcula la memoria restante
+# ------------------------------------------------
+function calcularMemoriaRestante() {
+	for ((i = 0; i <= NUM_FIL; i++)); do
+		if [[ "${array[$PROC_EST, $i]}" == "${estados[2]}" || "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
+			MEM_USE+="${array[$PROC_TAM, $i]}"
+		fi
+	done
+}
 
-	for ((i = 1; i <= NUM_FIL; i++)); do
-		# Si el proceso cabe en memoria se va a ejecutar, aquí no asignamos estados,
-		# ya que lo haremos cuando comprobemos ese estado en la lista de procesos a ejecutar
-		if [[ "${array[$PROC_TAM, $i]}" -le "$MEM_TAM" ]]; then
-			num+=${array[$PROC_EJE, $i]}
+# Comprueba si el programa ha acabado
+# ----------------------------------
+function procesosHanTerminado() {
+	local procHanTerminado="true"
+
+	for ((i = 0; i <= NUM_FIL; i++)); do
+		if [[ "${array[$PROC_EST, $i]}" != "${estados[5]}" ]]; then
+			procHanTerminado="false"
 		fi
 	done
 
-	echo "$num"
+	echo "$procHanTerminado"
 }
 
 # Comprueba los procesos que se estan ejecutando
 # ----------------------------------
 function comprobarProcesosEjecutando() {
-	for ((i=0; i< NUM_FIL; i++)); do
+	for ((i = 0; i < NUM_FIL; i++)); do
 		if [[ "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
 			((array[$PROC_EJE, $i]--))
 		fi
@@ -772,7 +785,7 @@ function imprimirCuadro() {
 function imprimirTabla() {
 	local titulos
 	local colorEncabezado
-	local -A coloresTabla
+	local -a coloresTabla
 	local estiloTabla
 	local anchoCelda
 	local filasImprimir
@@ -1001,23 +1014,23 @@ function avanzarAlgoritmo() {
 function main() {
 	# Variables globales de subfunciones
 	# ----------------------------------
-	declare estiloGeneral
+	declare -a estiloGeneral
 	declare tipoDeTiempo
 	declare -A array
-	declare NUM_COL
-	declare NUM_FIL
-	declare MEM_TAM
-	declare MEM_USE
+	declare -i NUM_COL
+	declare -i NUM_FIL
+	declare -i MEM_TAM
+	declare -i MEM_USE
 	# Variables de columnas, para saber que hay en cada una - Usadas para aclarar el código
 	# ----------------------------------
-	declare PROC_NUM
-	declare PROC_LLE
-	declare PROC_EJE
-	declare PROC_TAM
-	declare PROC_EST
-	declare PROC_RES
-	declare PROC_ESP
-	declare PROC_LLE_RES
+	declare -i PROC_NUM
+	declare -i PROC_LLE
+	declare -i PROC_EJE
+	declare -i PROC_TAM
+	declare -i PROC_EST
+	declare -i PROC_RES
+	declare -i PROC_ESP
+	declare -i PROC_LLE_RES
 	# Variables locales
 	# ----------------------------------
 	local configFile
@@ -1106,7 +1119,7 @@ function main() {
 		function algCalcularSigIns() {
 			local instante="$1"
 
-			centrarEnPantalla "$(imprimirCuadro "100" "3" "Instante $instante/$(calcularNumInstantes) - Memoria usada: $MEM_USE/$MEM_TAM")" | sacarHaciaArchivo "$archivoSalida" -a
+			centrarEnPantalla "$(imprimirCuadro "100" "3" "Instante $instante - Memoria usada: $MEM_USE/$MEM_TAM")" | sacarHaciaArchivo "$archivoSalida" -a
 		}
 
 		# Funcion que calcula el tiempo y estado de todos los proceos en cada instante,
@@ -1117,24 +1130,15 @@ function main() {
 
 			asignarEstadosSegunInstante "$instante"
 			comprobarProcesosEjecutando
+			calcularMemoriaRestante
 			# TODO-> Llamar a las funciones externas de forma ordenada
 			echo "$tipoDeTiempo" >>res.log
-		}
-
-		# Función que calcula la memoria restante
-		# ------------------------------------------------
-		function algCalcularMemoriaRestante() {
-			for ((i=0; i<NUM_FIL; i++)); do
-				if [[ "${array[$PROC_EST, $i]}" == "${estados[2]}" || "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
-					MEM_USE+="${array[$PROC_TAM, $i]}"
-				fi
-			done
 		}
 
 		# Funcion que asigna la memoria vacia
 		# ------------------------------------------------
 		function algAsignarMemoriaInicial() {
-			MEM_USE="$MEM_TAM"
+			MEM_USE="0"
 		}
 
 		# Imprime el dibujo de la tabla
@@ -1166,10 +1170,9 @@ function main() {
 		ordenarArray
 		asignarEstadosInicial
 		algAsignarMemoriaInicial
-		for ((instante = 0; instante <= $(calcularNumInstantes); instante++)); do
+		for ((instante = 0; $(procesosHanTerminado) == "true"; instante++)); do
 			algCabecera
 			algCalcularDatos "$instante"
-			algCalcularMemoriaRestante
 			algCalcularSigIns "$instante"
 			algImprimirTabla
 			algImprimirLineaTiempo
