@@ -498,9 +498,10 @@ function imprimirMemoria() {
 
 # Asigna los estados de los procesos
 # ----------------------------------
-function asignarEstadosInicial() {
-	for ((i = 0; i <= NUM_FIL; i++)); do
+function asignarDatosInicial() {
+	for ((i = 1; i <= NUM_FIL; i++)); do
 		array[$PROC_EST, $i]="Fuera"
+		array[$PROC_EJE_RES, $i]="${array[$PROC_EJE, $i]}"
 	done
 }
 
@@ -508,10 +509,10 @@ function asignarEstadosInicial() {
 # ----------------------------------
 function asignarEstadosSegunInstante() {
 	local -i instante="$1"
-	local procesoEjecutando
+	local procesoEjecutando="false"
 
 	# Asignamos los estados segun varias cosas, que el proceso haya llegado (llegada <= instante), que quepa en memoria (en los huecos que queden) y que no haya finalizado
-	for ((i = 0; i <= NUM_FIL; i++)); do
+	for ((i = 1; i <= NUM_FIL; i++)); do
 
 		# Fuera
 		if [[ "${array[$PROC_EST, $i]}" == "${estados[0]}" ]]; then
@@ -522,7 +523,7 @@ function asignarEstadosSegunInstante() {
 
 		# En Espera
 		if [[ "${array[$PROC_EST, $i]}" == "${estados[1]}" ]]; then
-			if [[ "${array[$PROC_TAM]}" > "$MEM_TAM" ]]; then
+			if [[ "${array[$PROC_TAM]}" -gt "$MEM_TAM" ]]; then
 				array[$PROC_EST, $i]="${estados[3]}"
 			else
 				if [[ "${array[$PROC_TAM]}" -le "$((MEM_TAM - MEM_USE))" ]]; then
@@ -533,7 +534,7 @@ function asignarEstadosSegunInstante() {
 
 		# En Memoria
 		if [[ "${array[$PROC_EST, $i]}" == "${estados[2]}" ]]; then
-			for ((j = 0; j <= NUM_FIL; j++)); do
+			for ((j = 1; j <= NUM_FIL; j++)); do
 				if [[ "${array[$PROC_EST, $j]}" == "${estados[4]}" ]]; then
 					procesoEjecutando="true"
 				fi
@@ -546,7 +547,7 @@ function asignarEstadosSegunInstante() {
 
 		# Ejecutando
 		if [[ "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
-			if [[ "${array[$PROC_LLE_RES, $i]}" == "0" ]]; then
+			if [[ "${array[$PROC_EJE_RES, $i]}" == "0" ]]; then
 				array[$PROC_EST, $i]="${estados[5]}"
 			fi
 		fi
@@ -556,6 +557,8 @@ function asignarEstadosSegunInstante() {
 # Función que calcula la memoria restante
 # ------------------------------------------------
 function calcularMemoriaRestante() {
+	MEM_USE="0"
+
 	for ((i = 0; i <= NUM_FIL; i++)); do
 		if [[ "${array[$PROC_EST, $i]}" == "${estados[2]}" || "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
 			MEM_USE+="${array[$PROC_TAM, $i]}"
@@ -568,7 +571,7 @@ function calcularMemoriaRestante() {
 function procesosHanTerminado() {
 	local procHanTerminado="true"
 
-	for ((i = 0; i <= NUM_FIL; i++)); do
+	for ((i = 1; i <= NUM_FIL; i++)); do
 		if [[ "${array[$PROC_EST, $i]}" != "${estados[5]}" ]]; then
 			procHanTerminado="false"
 		fi
@@ -580,9 +583,9 @@ function procesosHanTerminado() {
 # Comprueba los procesos que se estan ejecutando
 # ----------------------------------
 function comprobarProcesosEjecutando() {
-	for ((i = 0; i < NUM_FIL; i++)); do
+	for ((i = 1; i <= NUM_FIL; i++)); do
 		if [[ "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
-			((array[$PROC_EJE, $i]--))
+			((array[$PROC_EJE_RES, $i]--))
 		fi
 	done
 }
@@ -1030,7 +1033,7 @@ function main() {
 	declare -i PROC_EST
 	declare -i PROC_RES
 	declare -i PROC_ESP
-	declare -i PROC_LLE_RES
+	declare -i PROC_EJE_RES
 	# Variables locales
 	# ----------------------------------
 	local configFile
@@ -1069,9 +1072,9 @@ function main() {
 			PROC_EST="5"
 			PROC_RES="6"
 			PROC_ESP="7"
-			PROC_LLE_RES="8"
+			PROC_EJE_RES="8"
 
-			NUM_COL="$PROC_LLE_RES" # Ya que siempre esta columna va a ser la última
+			NUM_COL="$PROC_EJE_RES" # Ya que siempre esta columna va a ser la última
 		}
 
 		asignarConfigs
@@ -1128,9 +1131,9 @@ function main() {
 		function algCalcularDatos() {
 			local instante="$1"
 
-			asignarEstadosSegunInstante "$instante"
 			comprobarProcesosEjecutando
-			calcularMemoriaRestante
+			calcularMemoriaRestante # TODO-> Arreglar esto ya que por alguna razon no cuenta memoria ntes de asignar los estados
+			asignarEstadosSegunInstante "$instante"
 			# TODO-> Llamar a las funciones externas de forma ordenada
 			echo "$tipoDeTiempo" >>res.log
 		}
@@ -1168,9 +1171,11 @@ function main() {
 		# Main de las llamadas de la parte de calculo de algoritmo
 		# ------------------------------------------------
 		ordenarArray
-		asignarEstadosInicial
+		asignarDatosInicial
 		algAsignarMemoriaInicial
-		for ((instante = 0; $(procesosHanTerminado) == "true"; instante++)); do
+		local instante
+		instante=0
+		while [[ $(procesosHanTerminado) != "true" ]]; do
 			algCabecera
 			algCalcularDatos "$instante"
 			algCalcularSigIns "$instante"
@@ -1178,6 +1183,7 @@ function main() {
 			algImprimirLineaTiempo
 			algImprimirMemoria
 			avanzarAlgoritmo
+			((instante++))
 		done
 	}
 	# ------------------------------------------------
