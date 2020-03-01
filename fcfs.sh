@@ -1157,13 +1157,13 @@ function main() {
 			# Saca la media de respuesta en formato decimal
 			# ----------------------------------
 			function sacarMediaRespuesta() {
-				printf %.2f\\n "$((mediaRespuesta / NUM_FIL))e-2"
+				printf "%.2f" "$((mediaRespuesta / NUM_FIL))e-2"
 			}
 
 			# Saca la media de espera en formato decimal
 			# ----------------------------------
 			function sacarMediaEspera() {
-				printf %.2f\\n "$((mediaEspera / NUM_FIL))e-2"
+				printf "%.2f" "$((mediaEspera / NUM_FIL))e-2"
 			}
 
 			centrarEnPantalla "$(imprimirCuadro "100" "3" "Tiempo Medio de Respuesta: $(sacarMediaRespuesta) - Tiempo Medio de Espera: $(sacarMediaEspera)")" | sacarHaciaArchivo "$archivoSalida" -a
