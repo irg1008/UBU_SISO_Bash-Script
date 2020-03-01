@@ -510,6 +510,7 @@ function asignarDatosInicial() {
 function asignarEstadosSegunInstante() {
 	local -i instante="$1"
 	local procesoEjecutando="false"
+	local memRestante=$((MEM_TAM-MEM_USE))
 
 	# Asignamos los estados segun varias cosas, que el proceso haya llegado (llegada <= instante), que quepa en memoria (en los huecos que queden) y que no haya finalizado
 	for ((i = 1; i <= NUM_FIL; i++)); do
@@ -523,10 +524,10 @@ function asignarEstadosSegunInstante() {
 
 		# En Espera
 		if [[ "${array[$PROC_EST, $i]}" == "${estados[1]}" ]]; then
-			if [[ "${array[$PROC_TAM]}" -gt "$MEM_TAM" ]]; then
+			if [[ "${array[$PROC_TAM, $i]}" -gt "$MEM_TAM" ]]; then
 				array[$PROC_EST, $i]="${estados[3]}"
 			else
-				if [[ "${array[$PROC_TAM]}" -le "$((MEM_TAM - MEM_USE))" ]]; then
+				if [[ "${array[$PROC_TAM, $i]}" -le "$memRestante" ]]; then
 					array[$PROC_EST, $i]="${estados[2]}"
 				fi
 			fi
@@ -549,6 +550,7 @@ function asignarEstadosSegunInstante() {
 		if [[ "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
 			if [[ "${array[$PROC_EJE_RES, $i]}" == "0" ]]; then
 				array[$PROC_EST, $i]="${estados[5]}"
+				# Añadir aqui tiempo respuesta o eso
 			fi
 		fi
 	done
@@ -572,7 +574,7 @@ function procesosHanTerminado() {
 	local procHanTerminado="true"
 
 	for ((i = 1; i <= NUM_FIL; i++)); do
-		if [[ "${array[$PROC_EST, $i]}" != "${estados[5]}" ]]; then
+		if [[ "${array[$PROC_EST, $i]}" != "${estados[5]}" && "${array[$PROC_EST, $i]}" != "${estados[3]}" ]]; then
 			procHanTerminado="false"
 		fi
 	done
@@ -1132,8 +1134,8 @@ function main() {
 			local instante="$1"
 
 			comprobarProcesosEjecutando
-			calcularMemoriaRestante # TODO-> Arreglar esto ya que por alguna razon no cuenta memoria ntes de asignar los estados
 			asignarEstadosSegunInstante "$instante"
+			calcularMemoriaRestante
 			# TODO-> Llamar a las funciones externas de forma ordenada
 			echo "$tipoDeTiempo" >>res.log
 		}
