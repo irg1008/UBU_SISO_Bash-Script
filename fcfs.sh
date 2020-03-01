@@ -496,6 +496,35 @@ function imprimirMemoria() {
 	imprimir
 }
 
+# Imprime la linea de procesos de CPU
+# ----------------------------------
+function imprimirLineaProcesos() {
+	local -a coloresLinea
+
+	# Guarda los colores aleatorio de la memoria
+	# ----------------------------------
+	function asignarColores() {
+		for ((i = 1; i <= NUM_FIL; i++)); do
+			coloresLinea[$i]=$(cc Neg "$((i + 4))")
+		done
+	}
+
+	# Imprime la linea de procesos en la CPU
+	# ----------------------------------
+	function imprimir() {
+		for ((i = 1; i <= NUM_FIL; i++)); do
+			if [[ "${array[$PROC_EST, $i]}" == "${estados[5]}" || "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
+				printf "${coloresLinea[$i]}%-*.*s$(fc)" "$((array[$PROC_EJE, $i] / 2))" "$((array[$PROC_EJE, $i] / 2))" "${array[$PROC_NUM, $i]}"
+			fi
+		done
+	}
+
+	# Main de cuadro de memoria
+	# ----------------------------------
+	asignarColores
+	imprimir
+}
+
 # Asigna los estados de los procesos
 # ----------------------------------
 function asignarDatosInicial() {
@@ -543,7 +572,7 @@ function asignarEstadosSegunInstante() {
 		if [[ "${array[$PROC_EST, $i]}" == "${estados[1]}" ]]; then
 			# Si ningun proceso anterior esta en espera, ejecutamos
 
-			for ((cola=1; cola<i; cola++)); do
+			for ((cola = 1; cola < i; cola++)); do
 				if [[ "${array[$PROC_EST, $cola]}" == "${estados[1]}" ]]; then
 					ningunProcesoEnCola="false"
 				fi
@@ -1208,7 +1237,7 @@ function main() {
 		function algImprimirLineaTiempo() {
 			printf "\n\n%s" ""
 			centrarEnPantalla "$(imprimirCuadro "25" "default" "LINEA DE TIEMPO")" | sacarHaciaArchivo "$archivoSalida" -a
-			# TODO -> Llamada externa
+			centrarEnPantalla "$(imprimirLineaProcesos)" | sacarHaciaArchivo "$archivoSalida" -a
 		}
 
 		# Imprime el dibujo de la memoria
