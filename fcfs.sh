@@ -529,7 +529,6 @@ function asignarEstadosSegunInstante() {
 	# Asignamos los estados segun varias cosas, que el proceso haya llegado (llegada <= instante), que quepa en memoria (en los huecos que queden) y que no haya finalizado
 	for ((i = 1; i <= NUM_FIL; i++)); do
 
-		calcularMemoriaRestante
 		memRestante=$((MEM_TAM - MEM_USE))
 
 		# Fuera
@@ -569,6 +568,8 @@ function asignarEstadosSegunInstante() {
 				array[$PROC_RES, $i]="$instante"
 			fi
 		fi
+
+		calcularMemoriaRestante
 	done
 }
 
@@ -1115,6 +1116,8 @@ function main() {
 	# ------------------------------------------------
 	function algoritmo() {
 		local -a estados=("Fuera" "En Espera" "En Memoria" "Bloqueado" "Ejecutando" "Terminado")
+		local instante
+		instante="0"
 
 		# Imprime una cabecera muy simple
 		# ------------------------------------------------
@@ -1131,6 +1134,30 @@ function main() {
 			centrarEnPantalla "$(imprimirCuadro "100" "3" "Instante $instante - Memoria usada: $MEM_USE/$MEM_TAM")" | sacarHaciaArchivo "$archivoSalida" -a
 		}
 
+		# Calcula los tiempos medios de respuesta y espera
+		# ------------------------------------------------
+		function algTiemposMedios() {
+			local medioRespuesta
+			medioRespuesta="0"
+			local medioEspera
+			medioEspera="0"
+
+			for ((i = 1; i <= NUM_FIL; i++)); do
+				if [[ "${array[$PROC_RES, $i]}" != "-" ]]; then
+					medioRespuesta+="${array[$PROC_RES, $i]}"
+					medioEspera+="${array[$PROC_ESP, $i]}"
+				fi
+			done
+
+			medioRespuesta=$((medioRespuesta * 10 / NUM_FIL))
+			medioEspera=$((medioEspera * 10 / NUM_FIL))
+
+			medioRespuesta=$(printf "%.2f\n" "$(echo "$((medioRespuesta / 10))" | bc -l)")
+			medioEspera=$(printf "%.2f\n" "$(echo "$((medioEspera / 10))" | bc -l)")
+
+			centrarEnPantalla "$(imprimirCuadro "100" "3" "Tiempo Medio de Respuesta: $medioRespuesta - Tiempo Medio de Espera: $medioEspera")" | sacarHaciaArchivo "$archivoSalida" -a
+		}
+
 		# Funcion que calcula el tiempo y estado de todos los proceos en cada instante,
 		# sirve para saber como colcarlos en memoria y calcular el tiempo medio final
 		# ------------------------------------------------
@@ -1139,7 +1166,6 @@ function main() {
 
 			comprobarProcesosEjecutando
 			asignarEstadosSegunInstante "$instante"
-			echo "$tipoDeTiempo" >>res.log # TODO-> Implementar esto
 		}
 
 		# Funcion que asigna la memoria vacia
@@ -1177,13 +1203,12 @@ function main() {
 		ordenarArray
 		asignarDatosInicial
 		algAsignarMemoriaInicial
-		local instante
-		instante=0
 		while [[ $(procesosHanTerminado) != "true" ]]; do
-			algCabecera
 			algCalcularDatos "$instante"
+			algCabecera
 			algCalcularSigIns "$instante"
 			algImprimirTabla
+			algTiemposMedios
 			algImprimirLineaTiempo
 			algImprimirMemoria
 			avanzarAlgoritmo
@@ -1277,3 +1302,7 @@ function main() {
 }
 
 main
+
+# TODO-> Arreglar que algunos procesos en es espera se cuelan antes en la lista
+# TODO-> Arreglar que no funciona lo de tiempo de espera acumulado y tiempo real
+# TODO-> Mostrar los tiempos medios con decimales
