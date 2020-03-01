@@ -502,7 +502,23 @@ function asignarDatosInicial() {
 	for ((i = 1; i <= NUM_FIL; i++)); do
 		array[$PROC_EST, $i]="Fuera"
 		array[$PROC_EJE_RES, $i]="${array[$PROC_EJE, $i]}"
+		array[$PROC_RES, $i]="-"
+		array[$PROC_ESP, $i]="-"
 	done
+}
+
+# Función que calcula la memoria restante
+# ------------------------------------------------
+function calcularMemoriaRestante() {
+	MEM_USE="0"
+
+	for ((i = 0; i <= NUM_FIL; i++)); do
+		if [[ "${array[$PROC_EST, $i]}" == "${estados[2]}" || "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
+			MEM_USE+="${array[$PROC_TAM, $i]}"
+		fi
+	done
+
+	echo $((MEM_TAM - MEM_USE))
 }
 
 # Asigna los estados segun avanza el algoritmo
@@ -510,7 +526,6 @@ function asignarDatosInicial() {
 function asignarEstadosSegunInstante() {
 	local -i instante="$1"
 	local procesoEjecutando="false"
-	local memRestante=$((MEM_TAM-MEM_USE))
 
 	# Asignamos los estados segun varias cosas, que el proceso haya llegado (llegada <= instante), que quepa en memoria (en los huecos que queden) y que no haya finalizado
 	for ((i = 1; i <= NUM_FIL; i++)); do
@@ -526,10 +541,8 @@ function asignarEstadosSegunInstante() {
 		if [[ "${array[$PROC_EST, $i]}" == "${estados[1]}" ]]; then
 			if [[ "${array[$PROC_TAM, $i]}" -gt "$MEM_TAM" ]]; then
 				array[$PROC_EST, $i]="${estados[3]}"
-			else
-				if [[ "${array[$PROC_TAM, $i]}" -le "$memRestante" ]]; then
-					array[$PROC_EST, $i]="${estados[2]}"
-				fi
+			elif [[ "${array[$PROC_TAM, $i]}" -le "$(calcularMemoriaRestante)" ]]; then
+				array[$PROC_EST, $i]="${estados[2]}"
 			fi
 		fi
 
@@ -543,6 +556,7 @@ function asignarEstadosSegunInstante() {
 
 			if [[ "$procesoEjecutando" != "true" ]]; then
 				array[$PROC_EST, $i]="${estados[4]}"
+				array[$PROC_ESP, $i]="$instante"
 			fi
 		fi
 
@@ -550,20 +564,8 @@ function asignarEstadosSegunInstante() {
 		if [[ "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
 			if [[ "${array[$PROC_EJE_RES, $i]}" == "0" ]]; then
 				array[$PROC_EST, $i]="${estados[5]}"
-				# Añadir aqui tiempo respuesta o eso
+				array[$PROC_RES, $i]="$instante"
 			fi
-		fi
-	done
-}
-
-# Función que calcula la memoria restante
-# ------------------------------------------------
-function calcularMemoriaRestante() {
-	MEM_USE="0"
-
-	for ((i = 0; i <= NUM_FIL; i++)); do
-		if [[ "${array[$PROC_EST, $i]}" == "${estados[2]}" || "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
-			MEM_USE+="${array[$PROC_TAM, $i]}"
 		fi
 	done
 }
@@ -1135,9 +1137,7 @@ function main() {
 
 			comprobarProcesosEjecutando
 			asignarEstadosSegunInstante "$instante"
-			calcularMemoriaRestante
-			# TODO-> Llamar a las funciones externas de forma ordenada
-			echo "$tipoDeTiempo" >>res.log
+			echo "$tipoDeTiempo" >>res.log # TODO-> Implementar esto
 		}
 
 		# Funcion que asigna la memoria vacia
