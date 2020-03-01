@@ -512,13 +512,11 @@ function asignarDatosInicial() {
 function calcularMemoriaRestante() {
 	MEM_USE="0"
 
-	for ((i = 0; i <= NUM_FIL; i++)); do
-		if [[ "${array[$PROC_EST, $i]}" == "${estados[2]}" || "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
-			MEM_USE+="${array[$PROC_TAM, $i]}"
+	for ((k = 0; k <= NUM_FIL; k++)); do
+		if [[ "${array[$PROC_EST, $k]}" == "${estados[2]}" || "${array[$PROC_EST, $k]}" == "${estados[4]}" ]]; then
+			MEM_USE+="${array[$PROC_TAM, $k]}"
 		fi
 	done
-
-	echo $((MEM_TAM - MEM_USE))
 }
 
 # Asigna los estados segun avanza el algoritmo
@@ -526,9 +524,13 @@ function calcularMemoriaRestante() {
 function asignarEstadosSegunInstante() {
 	local -i instante="$1"
 	local procesoEjecutando="false"
+	local memRestante
 
 	# Asignamos los estados segun varias cosas, que el proceso haya llegado (llegada <= instante), que quepa en memoria (en los huecos que queden) y que no haya finalizado
 	for ((i = 1; i <= NUM_FIL; i++)); do
+
+		calcularMemoriaRestante
+		memRestante=$((MEM_TAM - MEM_USE))
 
 		# Fuera
 		if [[ "${array[$PROC_EST, $i]}" == "${estados[0]}" ]]; then
@@ -541,7 +543,7 @@ function asignarEstadosSegunInstante() {
 		if [[ "${array[$PROC_EST, $i]}" == "${estados[1]}" ]]; then
 			if [[ "${array[$PROC_TAM, $i]}" -gt "$MEM_TAM" ]]; then
 				array[$PROC_EST, $i]="${estados[3]}"
-			elif [[ "${array[$PROC_TAM, $i]}" -le "$(calcularMemoriaRestante)" ]]; then
+			elif [[ "${array[$PROC_TAM, $i]}" -le "$memRestante" ]]; then
 				array[$PROC_EST, $i]="${estados[2]}"
 			fi
 		fi
