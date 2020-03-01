@@ -1120,14 +1120,14 @@ function main() {
 		instante="0"
 
 		# Imprime una cabecera muy simple
-		# ------------------------------------------------
+		# ----------------------------------
 		function algCabecera() {
 			clear
 			centrarEnPantalla "$(imprimirCuadro "100" "acierto" "$acierto")" | sacarHaciaArchivo "$archivoSalida" -a
 		}
 
 		# Calcula los siguientes datos a mostrar
-		# ------------------------------------------------
+		# ----------------------------------
 		function algCalcularSigIns() {
 			local instante="$1"
 
@@ -1135,32 +1135,43 @@ function main() {
 		}
 
 		# Calcula los tiempos medios de respuesta y espera
-		# ------------------------------------------------
+		# ----------------------------------
 		function algTiemposMedios() {
-			local medioRespuesta
-			medioRespuesta="0"
-			local medioEspera
-			medioEspera="0"
+			local -i mediaRespuesta
+			local -i mediaEspera
+			mediaEspera="0"
+			mediaRespuesta="0"
 
 			for ((i = 1; i <= NUM_FIL; i++)); do
 				if [[ "${array[$PROC_RES, $i]}" != "-" ]]; then
-					medioRespuesta+="${array[$PROC_RES, $i]}"
-					medioEspera+="${array[$PROC_ESP, $i]}"
+					mediaRespuesta+="${array[$PROC_RES, $i]}"
+				fi
+				if [[ "${array[$PROC_ESP, $i]}" != "-" ]]; then
+					mediaEspera+="${array[$PROC_ESP, $i]}"
 				fi
 			done
 
-			medioRespuesta=$((medioRespuesta * 10 / NUM_FIL))
-			medioEspera=$((medioEspera * 10 / NUM_FIL))
+			mediaRespuesta="$((mediaRespuesta * 100))"
+			mediaEspera="$((mediaEspera * 100))"
 
-			medioRespuesta=$(printf "%.2f\n" "$(echo "$((medioRespuesta / 10))" | bc -l)")
-			medioEspera=$(printf "%.2f\n" "$(echo "$((medioEspera / 10))" | bc -l)")
+			# Saca la media de respuesta en formato decimal
+			# ----------------------------------
+			function sacarMediaRespuesta() {
+				printf %.2f\\n "$((mediaRespuesta / NUM_FIL))e-2"
+			}
 
-			centrarEnPantalla "$(imprimirCuadro "100" "3" "Tiempo Medio de Respuesta: $medioRespuesta - Tiempo Medio de Espera: $medioEspera")" | sacarHaciaArchivo "$archivoSalida" -a
+			# Saca la media de espera en formato decimal
+			# ----------------------------------
+			function sacarMediaEspera() {
+				printf %.2f\\n "$((mediaEspera / NUM_FIL))e-2"
+			}
+
+			centrarEnPantalla "$(imprimirCuadro "100" "3" "Tiempo Medio de Respuesta: $(sacarMediaRespuesta) - Tiempo Medio de Espera: $(sacarMediaEspera)")" | sacarHaciaArchivo "$archivoSalida" -a
 		}
 
 		# Funcion que calcula el tiempo y estado de todos los proceos en cada instante,
 		# sirve para saber como colcarlos en memoria y calcular el tiempo medio final
-		# ------------------------------------------------
+		# ----------------------------------
 		function algCalcularDatos() {
 			local instante="$1"
 
@@ -1169,20 +1180,20 @@ function main() {
 		}
 
 		# Funcion que asigna la memoria vacia
-		# ------------------------------------------------
+		# ----------------------------------
 		function algAsignarMemoriaInicial() {
 			MEM_USE="0"
 		}
 
 		# Imprime el dibujo de la tabla
-		# ------------------------------------------------
+		# ----------------------------------
 		function algImprimirTabla() {
 			centrarEnPantalla "$(imprimirCuadro "25" "default" "TABLA DE PROCESOS")" | sacarHaciaArchivo "$archivoSalida" -a
 			centrarEnPantalla "$(imprimirTabla "$NUM_FIL" "10")" | sacarHaciaArchivo "$archivoSalida" -a
 		}
 
 		# Imprime la linea de tiempo
-		# ------------------------------------------------
+		# ----------------------------------
 		function algImprimirLineaTiempo() {
 			printf "\n\n%s" ""
 			centrarEnPantalla "$(imprimirCuadro "25" "default" "LINEA DE TIEMPO")" | sacarHaciaArchivo "$archivoSalida" -a
@@ -1190,7 +1201,7 @@ function main() {
 		}
 
 		# Imprime el dibujo de la memoria
-		# ------------------------------------------------
+		# ----------------------------------
 		function algImprimirMemoria() {
 			printf "\n\n%s" ""
 			centrarEnPantalla "$(imprimirCuadro "25" "default" "USO DE MEMORIA")" | sacarHaciaArchivo "$archivoSalida" -a
@@ -1199,7 +1210,7 @@ function main() {
 		}
 
 		# Main de las llamadas de la parte de calculo de algoritmo
-		# ------------------------------------------------
+		# ----------------------------------
 		ordenarArray
 		asignarDatosInicial
 		algAsignarMemoriaInicial
