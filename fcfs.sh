@@ -423,40 +423,6 @@ function imprimirAyuda() {
 	elegirTipoDeEntrada "$archivoEntrada"
 }
 
-# Elige el tipo de tiempo del algoritmo
-# ----------------------------------
-function elegirTipoDeTiempo() {
-	local tiempo
-	local tipoTiempo
-	tipoTiempo=(
-		"1.- Tiempo Real"
-		"2.- Tiempo Acumulado"
-	)
-
-	clear
-	centrarEnPantalla "$(imprimirCuadro "50" "default" "TIPO DE TIEMPO")" | sacarHaciaArchivo "$archivoSalida" -a
-	centrarEnPantalla "$(imprimirCuadro "50" "0" "${tipoTiempo[@]}")" | sacarHaciaArchivo "$archivoSalida" -a
-	tiempo=$(recibirEntrada)
-
-	while [[ ! "$tiempo" =~ ^[1-2]+$ ]]; do
-		centrarEnPantalla "$(imprimirCuadro "80" "error" "Inserta un valor numérico entre 1 y 2")"
-		tiempo=$(recibirEntrada)
-	done
-
-	case "$tiempo" in
-	1)
-		tipoDeTiempo="real"
-		;;
-	2)
-		tipoDeTiempo="acumulado"
-		;;
-	*)
-		centrarEnPantalla "$(imprimirCuadro "100" "error" "Ha ocurrido algún tipo de error")" | sacarHaciaArchivo "$archivoSalida" -a
-		exit 99
-		;;
-	esac
-}
-
 ######################## 3. ALGORITMO
 # Imprime el uso de la memoria según los procesos en ella
 # ----------------------------------
@@ -527,8 +493,6 @@ function imprimirLineaProcesos() {
 			printf "%s" " $1 "
 		fi
 		printf "$(fc)%s" ""
-
-		printf "\n"
 	}
 
 	# Imprimir si no hay procesos en la linea
@@ -1098,7 +1062,6 @@ function main() {
 	# Variables globales de subfunciones
 	# ----------------------------------
 	declare -a estiloGeneral
-	declare tipoDeTiempo
 	declare -A array
 	declare -i NUM_COL
 	declare -i NUM_FIL
@@ -1181,7 +1144,6 @@ function main() {
 	# ------------------------------------------------
 	function menu() {
 		elegirTipoDeEntrada "$archivoEntrada"
-		elegirTipoDeTiempo
 	}
 	# ------------------------------------------------
 
@@ -1288,11 +1250,12 @@ function main() {
 			printf "%s\n\n" ""
 			read -r -p "$(centrarEnPantalla "$(imprimirCuadro "50" "default" "Pulsa intro para avanzar o [F] para finalizar")")" temp
 
-			if [[ "$temp" =~ [fF] ]]; then
-				acabarAlgoritmo="true"
-			fi
-
 			clear
+
+			if [[ "$temp" =~ ^([fF])$ ]]; then
+				acabarAlgoritmo="true"
+				centrarEnPantalla "$(imprimirCuadro "100" "3" "Ejecutando y exportando algoritmo en segundo plano. Serán solo unos segundos")"
+			fi
 		}
 
 		# Main del cuerpo del algoritmo
@@ -1302,8 +1265,8 @@ function main() {
 			algCalcularSigIns
 			algImprimirTabla
 			algTiemposMedios
-			algImprimirLineaTiempo
 			algImprimirMemoria
+			algImprimirLineaTiempo
 		}
 
 		# Main de las llamadas de la parte de calculo de algoritmo
