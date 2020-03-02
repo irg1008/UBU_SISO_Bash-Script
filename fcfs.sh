@@ -497,7 +497,7 @@ function imprimirMemoria() {
 }
 
 # Imprime la linea de procesos de CPU
-# @param Instante actual 
+# @param Instante actual
 # ----------------------------------
 function imprimirLineaProcesos() {
 	local -a coloresLinea
@@ -514,33 +514,34 @@ function imprimirLineaProcesos() {
 	# @param Instante
 	# ----------------------------------
 	function imprimir() {
-		local procesosAMostar
-		local longitudArray
-		procesosAMostar="false"
+		local procesosAMostrar
+		procesosAMosttar="0"
 
 		for ((i = 1; i <= NUM_FIL; i++)); do
 			if [[ "${array[$PROC_EST, $i]}" == "${estados[5]}" || "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
-				procesosAMostar="true"
-				longitudArray=$(calcularLongitud "${array[$PROC_NUM, $i]}")
+				((procesosAMosttar++))
 
 				printf "${coloresLinea[$i]}%s" ""
 				printf "%s" " ${array[$PROC_ESP, $i]} "
 
-				printf "%-*s" "$(((array[$PROC_EJE, $i]-array[$PROC_EJE_RES, $i]) / 2 - longitudArray / 2))" ""
-				printf "%s" "${array[$PROC_NUM, $i]}"
-				printf "%*s" "$(((array[$PROC_EJE, $i]-array[$PROC_EJE_RES, $i]) / 2 - (longitudArray + 1) / 2))" ""
+				printf "%s" " ${array[$PROC_NUM, $i]} "
+				printf "%*s" "$((array[$PROC_EJE, $i] - array[$PROC_EJE_RES, $i]))" ""
 
 				if [[ "${array[$PROC_EST, $i]}" == "${estados[5]}" ]]; then
 					printf "%s" " ${array[$PROC_RES, $i]} "
-				elif [[ "${array[$PROC_RES, $i]}" == "${estados[4]}" ]]; then
-					printf "%s" " $1"
+				elif [[ "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
+					printf "%s" " $1 "
 				fi
 				printf "$(fc)%s" ""
 			fi
+
+			if [[ "$((procesosAMostrar % 5))" == "0" ]]; then
+				printf "\n"
+			fi
 		done
 
-		if [[ "$procesosAMostar" == "false" ]]; then
-			printf "%s" "No hay procesos ejecutando o ya terminados"
+		if [[ "$procesosAMostrar" == "0" ]]; then
+			printf "%s" " No hay procesos ejecutando o ya terminados "
 		fi
 	}
 
@@ -821,6 +822,7 @@ function imprimirCuadro() {
 			printf "$color%s" ""
 			printf "${estilo[10]}%-*s" "$((anchoCuadro / 2 - longitudArray / 2))" ""
 			printf "%s" "${titulos[$i]}" ""
+			printf "$color%s" ""
 			printf "%*s${estilo[10]}" "$((anchoCuadro / 2 - (longitudArray + 1) / 2))" ""
 			printf "$(fc)\n%s" ""
 		done
@@ -1262,7 +1264,7 @@ function main() {
 		function algImprimirLineaTiempo() {
 			printf "\n\n%s" ""
 			centrarEnPantalla "$(imprimirCuadro "25" "default" "LINEA DE TIEMPO")" | sacarHaciaArchivo "$archivoSalida" -a
-			centrarEnPantalla "$(imprimirLineaProcesos "$1")" | sacarHaciaArchivo "$archivoSalida" -a
+			centrarEnPantalla "$(imprimirCuadro "$(calcularLongitud "$(imprimirLineaProcesos "$1")")" "default" "$(imprimirLineaProcesos "$1")")" | sacarHaciaArchivo "$archivoSalida" -a
 		}
 
 		# Imprime el dibujo de la memoria
@@ -1379,5 +1381,4 @@ function main() {
 
 main
 
-# TODO-> Arreglar que algunos procesos en es espera se cuelan antes en la lista
 # TODO-> Arreglar que no funciona lo de tiempo de espera acumulado y tiempo real
