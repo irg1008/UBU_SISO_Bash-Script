@@ -497,10 +497,10 @@ function imprimirMemoria() {
 }
 
 # Imprime la linea de procesos de CPU
+# @param Instante actual 
 # ----------------------------------
 function imprimirLineaProcesos() {
 	local -a coloresLinea
-	local longitudArray
 
 	# Guarda los colores aleatorio de la memoria
 	# ----------------------------------
@@ -511,24 +511,43 @@ function imprimirLineaProcesos() {
 	}
 
 	# Imprime la linea de procesos en la CPU
+	# @param Instante
 	# ----------------------------------
 	function imprimir() {
+		local procesosAMostar
+		local longitudArray
+		procesosAMostar="false"
+
 		for ((i = 1; i <= NUM_FIL; i++)); do
-			longitudArray=$(calcularLongitud "${array[$PROC_NUM, $i]}")
 			if [[ "${array[$PROC_EST, $i]}" == "${estados[5]}" || "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
+				procesosAMostar="true"
+				longitudArray=$(calcularLongitud "${array[$PROC_NUM, $i]}")
+
 				printf "${coloresLinea[$i]}%s" ""
-				printf "%-*s" "$((array[$PROC_EJE, $i] / 2 - longitudArray / 2))" ""
+				printf "%s" " ${array[$PROC_ESP, $i]} "
+
+				printf "%-*s" "$(((array[$PROC_EJE, $i]-array[$PROC_EJE_RES, $i]) / 2 - longitudArray / 2))" ""
 				printf "%s" "${array[$PROC_NUM, $i]}"
-				printf "%*s" "$((array[$PROC_EJE, $i] / 2 - (longitudArray + 1) / 2))" ""
+				printf "%*s" "$(((array[$PROC_EJE, $i]-array[$PROC_EJE_RES, $i]) / 2 - (longitudArray + 1) / 2))" ""
+
+				if [[ "${array[$PROC_EST, $i]}" == "${estados[5]}" ]]; then
+					printf "%s" " ${array[$PROC_RES, $i]} "
+				elif [[ "${array[$PROC_RES, $i]}" == "${estados[4]}" ]]; then
+					printf "%s" " $1"
+				fi
 				printf "$(fc)%s" ""
 			fi
 		done
+
+		if [[ "$procesosAMostar" == "false" ]]; then
+			printf "%s" "No hay procesos ejecutando o ya terminados"
+		fi
 	}
 
 	# Main de cuadro de memoria
 	# ----------------------------------
 	asignarColores
-	imprimir
+	imprimir "$1"
 }
 
 # Asigna los estados de los procesos
@@ -1243,7 +1262,7 @@ function main() {
 		function algImprimirLineaTiempo() {
 			printf "\n\n%s" ""
 			centrarEnPantalla "$(imprimirCuadro "25" "default" "LINEA DE TIEMPO")" | sacarHaciaArchivo "$archivoSalida" -a
-			centrarEnPantalla "$(imprimirLineaProcesos)" | sacarHaciaArchivo "$archivoSalida" -a
+			centrarEnPantalla "$(imprimirLineaProcesos "$1")" | sacarHaciaArchivo "$archivoSalida" -a
 		}
 
 		# Imprime el dibujo de la memoria
@@ -1266,7 +1285,7 @@ function main() {
 			algCalcularSigIns "$instante"
 			algImprimirTabla
 			algTiemposMedios
-			algImprimirLineaTiempo
+			algImprimirLineaTiempo "$instante"
 			algImprimirMemoria
 			avanzarAlgoritmo
 			((instante++))
@@ -1310,7 +1329,7 @@ function main() {
 
 		if [[ $temp =~ [nN][oO]|[nN] ]]; then
 			salirDePractica="true"
-			centrarEnPantalla "$(imprimirCuadro "100" "acierto" "¡Gracias por usar nuestro algoritmo! Visita nuestro repo aquí abajo")" | sacarHaciaArchivo "$archivoSalida"
+			centrarEnPantalla "$(imprimirCuadro "100" "acierto" "¡Gracias por usar nuestro algoritmo! Visita nuestro repo aquí abajo")" | sacarHaciaArchivo "$archivoSalida" -a
 		elif [[ "$temp" =~ [sS][iI]|[sS] ]]; then
 			array=()
 		fi
