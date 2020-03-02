@@ -408,15 +408,24 @@ function asignarValoresAleatorios() {
 # ----------------------------------
 function imprimirAyuda() {
 	local ayuda
+	local funciona
+	funciona=(
+		"Algoritmo FCFS según necesidades memoria no reubicable memoria no continua"
+		" "
+		"Este algoritmo funciona introduciendo los procesos en CPU según el orden de llegada de los mismos."
+		"Se ejecutarán los procesos siempre que entren en memoria, en caso contrario quedarán bloqueados"
+	)
 	ayuda=(
-		"El algoritmo de FCFS según necesidades con memoria no continua y no reubicable funciona tal que...
-		Se pueden insertar los valores desde...
-		Puedes elegir tiempo de... que hará...
-		Si tienes alguna duda más consulta el manual externo"
+		"Puedes introducir los datos de tres formas:"
+		" "
+		"- Forma manual: Inserta el valor de memoria y despues todos los procesos uno a uno"
+		"- Forma automática desde archivo: Introduce los datos desde el archivo externo de datos"
+		"- Forma automática: Asigna todos los valores de forma automática"
 	)
 
 	clear
 	centrarEnPantalla "$(imprimirCuadro "50" "default" "AYUDA")" | sacarHaciaArchivo "$archivoSalida" -a
+	centrarEnPantalla "$(imprimirCuadro "150" "random" "${funciona[@]}")" | sacarHaciaArchivo "$archivoSalida" -a
 	centrarEnPantalla "$(imprimirCuadro "150" "random" "${ayuda[@]}")" | sacarHaciaArchivo "$archivoSalida" -a
 	read -r -p "$(centrarEnPantalla "$(imprimirCuadro "50" "default" "Pulsa intro para volver al menú")")"
 	clear
@@ -691,31 +700,36 @@ function cc() {
 	Par)
 		salida+="5;"
 		;;
+	*)
+		salida+="1;"
+		;;
 	esac
 
-	case "$2" in
-	random)
-		salida+="$(generarColor fg_negro);$(generarColor bg)m"
-		;;
-	default)
-		salida+="$(($(generarColor fg_negro) + 7));$(generarColor bg_negro)m"
-		;;
-	error)
-		salida+="$(($(generarColor fg_negro) + 7));$(($(generarColor bg_negro) + 1))m"
-		;;
-	acierto)
-		salida+="$(($(generarColor fg_negro)));$(($(generarColor bg_negro) + 2))m"
-		;;
-	advertencia)
-		salida+="$(($(generarColor fg_negro)));$(($(generarColor bg_negro) + 3))m"
-		;;
-	0)
-		salida+="$(generarColor fg);$(generarColor bg_negro)m"
-		;;
-	*)
-		salida+="$(generarColor fg_negro);$(($(generarColor bg_negro) + 1 + $(($2 % 7))))m"
-		;;
-	esac
+	if [[ "$2" != "" ]]; then
+		case "$2" in
+		random)
+			salida+="$(generarColor fg_negro);$(generarColor bg)m"
+			;;
+		default)
+			salida+="$(($(generarColor fg_negro) + 7));$(generarColor bg_negro)m"
+			;;
+		error)
+			salida+="$(($(generarColor fg_negro) + 7));$(($(generarColor bg_negro) + 1))m"
+			;;
+		acierto)
+			salida+="$(($(generarColor fg_negro)));$(($(generarColor bg_negro) + 2))m"
+			;;
+		advertencia)
+			salida+="$(($(generarColor fg_negro)));$(($(generarColor bg_negro) + 3))m"
+			;;
+		0)
+			salida+="$(generarColor fg);$(generarColor bg_negro)m"
+			;;
+		*)
+			salida+="$(generarColor fg_negro);$(($(generarColor bg_negro) + 1 + $(($2 % 7))))m"
+			;;
+		esac
+	fi
 
 	echo "$salida"
 }
@@ -768,7 +782,11 @@ function imprimirCuadro() {
 
 	# Asigna el color principal de la introduccion
 	function asignacolor() {
-		color=$(cc Neg "$1")
+		if [[ "$2" == "" ]]; then
+			color=$(cc Neg "$1")
+		else
+			color=$(cc "$2" "$1")
+		fi
 	}
 
 	# Asigna el ancho de la celda
@@ -821,7 +839,7 @@ function imprimirCuadro() {
 	# Main de cuadro
 	# ----------------------------------
 	asignarAncho "$1"
-	asignacolor "$2"
+	asignacolor "$2" "$4"
 	asignarEstiloCuadro
 	imprimir "$@"
 }
@@ -1050,7 +1068,7 @@ function centrarEnPantalla() {
 # Funcion basica de avance de algoritmo
 # ----------------------------------
 function avanzarAlgoritmo() {
-	printf "%s\n\n" ""
+	# printf "%s\n\n" ""
 	read -r -p "$(centrarEnPantalla "$(imprimirCuadro "50" "default" "Pulsa intro para avanzar")")"
 	clear
 }
@@ -1238,7 +1256,6 @@ function main() {
 			printf "\n\n%s" ""
 			centrarEnPantalla "$(imprimirCuadro "25" "default" "USO DE MEMORIA")"
 			centrarEnPantalla "$(imprimirMemoria)"
-			# TODO -> Terminar esto
 		}
 
 		# Funcion para avanzar el algoritmo o terminarlo
@@ -1248,7 +1265,7 @@ function main() {
 			temp=""
 
 			printf "%s\n\n" ""
-			read -r -p "$(centrarEnPantalla "$(imprimirCuadro "50" "default" "Pulsa intro para avanzar o [F] para finalizar")")" temp
+			read -r -p "$(centrarEnPantalla "$(imprimirCuadro "50" "acierto" "Pulsa intro para avanzar o [F] para finalizar")")" temp
 
 			clear
 
@@ -1374,4 +1391,5 @@ function main() {
 
 main
 
-# TODO-> Arreglar que no funciona lo de tiempo de espera acumulado y tiempo real
+# TODO-> Arreglar que la linea de cpu se vea bien
+# TODO-> Arreglar linea de memoria
