@@ -477,7 +477,9 @@ function imprimirMemoria() {
 function imprimirLineaProcesos() {
 	local -a coloresLinea
 	local procesosAMostrar
+  local terminalWidth
 	procesosAMostrar="0"
+  terminalWidth="$(tput cols)"
 
 	# Guarda los colores aleatorio de la memoria
 	# ----------------------------------
@@ -516,6 +518,9 @@ function imprimirLineaProcesos() {
 	function imprimir() {
 		for ((i = 1; i <= NUM_FIL; i++)); do
 			if [[ "${array[$PROC_EST, $i]}" == "${estados[5]}" || "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
+        if [[ "$(calcularLongitud "$(imprimirLineas "$1")")" -ge "$((terminalWidth - 20))" ]]; then
+          printf "\n"
+        fi
 				imprimirLineas "$1"
 			fi
 		done
@@ -1393,3 +1398,5 @@ main
 
 # TODO-> Arreglar que la linea de cpu se vea bien
 # TODO-> Arreglar linea de memoria
+# TODO-> Añadir lo de respuesta tambien en la continuacion del algoritmo?
+# TODO-> Preguntar si quiere que se trunque el proceso cuando pasa a la siguiente línea
