@@ -501,6 +501,8 @@ function imprimirMemoria() {
 # ----------------------------------
 function imprimirLineaProcesos() {
 	local -a coloresLinea
+	local procesosAMostrar
+	procesosAMostrar="0"
 
 	# Guarda los colores aleatorio de la memoria
 	# ----------------------------------
@@ -510,38 +512,43 @@ function imprimirLineaProcesos() {
 		done
 	}
 
+	# Imprime lineas de procesos
+	# ----------------------------------
+	function imprimirLineas() {
+		((procesosAMostrar++))
+
+		printf "%s${coloresLinea[$i]}" ""
+		printf "%s%s" " ${array[$PROC_ESP, $i]} " " ${array[$PROC_NUM, $i]} "
+		printf "%*s" "$((array[$PROC_EJE, $i] - array[$PROC_EJE_RES, $i]))" ""
+
+		if [[ "${array[$PROC_EST, $i]}" == "${estados[5]}" ]]; then
+			printf "%s" " ${array[$PROC_RES, $i]} "
+		elif [[ "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
+			printf "%s" " $1 "
+		fi
+		printf "$(fc)%s" ""
+
+		printf "\n"
+	}
+
+	# Imprimir si no hay procesos en la linea
+	# ----------------------------------
+	function imprimirVacio() {
+		imprimirCuadro "50" "default" "$(printf "%s" " No hay procesos ejecutando o ya terminados ")"
+	}
+
 	# Imprime la linea de procesos en la CPU
 	# @param Instante
 	# ----------------------------------
 	function imprimir() {
-		local procesosAMostrar
-		procesosAMosttar="0"
-
 		for ((i = 1; i <= NUM_FIL; i++)); do
 			if [[ "${array[$PROC_EST, $i]}" == "${estados[5]}" || "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
-				((procesosAMosttar++))
-
-				printf "${coloresLinea[$i]}%s" ""
-				printf "%s" " ${array[$PROC_ESP, $i]} "
-
-				printf "%s" " ${array[$PROC_NUM, $i]} "
-				printf "%*s" "$((array[$PROC_EJE, $i] - array[$PROC_EJE_RES, $i]))" ""
-
-				if [[ "${array[$PROC_EST, $i]}" == "${estados[5]}" ]]; then
-					printf "%s" " ${array[$PROC_RES, $i]} "
-				elif [[ "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
-					printf "%s" " $1 "
-				fi
-				printf "$(fc)%s" ""
-			fi
-
-			if [[ "$((procesosAMostrar % 5))" == "0" ]]; then
-				printf "\n"
+				imprimirLineas "$1"
 			fi
 		done
 
 		if [[ "$procesosAMostrar" == "0" ]]; then
-			printf "%s" " No hay procesos ejecutando o ya terminados "
+			imprimirVacio
 		fi
 	}
 
@@ -1079,7 +1086,6 @@ function centrarEnPantalla() {
 # Funcion basica de avance de algoritmo
 # ----------------------------------
 function avanzarAlgoritmo() {
-	# Pulsar tecla para avanzar al menu
 	printf "%s\n\n" ""
 	read -r -p "$(centrarEnPantalla "$(imprimirCuadro "50" "default" "Pulsa intro para avanzar")")"
 	clear
@@ -1184,21 +1190,20 @@ function main() {
 	function algoritmo() {
 		local -a estados=("Fuera" "En Espera" "En Memoria" "Bloqueado" "Ejecutando" "Terminado")
 		local instante
+		local acabarAlgoritmo
+		acabarAlgoritmo="false"
 		instante="0"
 
 		# Imprime una cabecera muy simple
 		# ----------------------------------
 		function algCabecera() {
-			clear
-			centrarEnPantalla "$(imprimirCuadro "100" "acierto" "$acierto")" | sacarHaciaArchivo "$archivoSalida" -a
+			centrarEnPantalla "$(imprimirCuadro "100" "acierto" "$acierto")"
 		}
 
 		# Calcula los siguientes datos a mostrar
 		# ----------------------------------
 		function algCalcularSigIns() {
-			local instante="$1"
-
-			centrarEnPantalla "$(imprimirCuadro "100" "3" "Instante $instante - Memoria usada: $MEM_USE/$MEM_TAM")" | sacarHaciaArchivo "$archivoSalida" -a
+			centrarEnPantalla "$(imprimirCuadro "100" "3" "Instante $instante - Memoria usada: $MEM_USE/$MEM_TAM")"
 		}
 
 		# Calcula los tiempos medios de respuesta y espera
@@ -1233,15 +1238,13 @@ function main() {
 				printf "%.2f" "$((mediaEspera / NUM_FIL))e-2"
 			}
 
-			centrarEnPantalla "$(imprimirCuadro "100" "3" "Tiempo Medio de Respuesta: $(sacarMediaRespuesta) - Tiempo Medio de Espera: $(sacarMediaEspera)")" | sacarHaciaArchivo "$archivoSalida" -a
+			centrarEnPantalla "$(imprimirCuadro "100" "3" "Tiempo Medio de Respuesta: $(sacarMediaRespuesta) - Tiempo Medio de Espera: $(sacarMediaEspera)")"
 		}
 
 		# Funcion que calcula el tiempo y estado de todos los proceos en cada instante,
 		# sirve para saber como colcarlos en memoria y calcular el tiempo medio final
 		# ----------------------------------
 		function algCalcularDatos() {
-			local instante="$1"
-
 			comprobarProcesosEjecutando
 			asignarEstadosSegunInstante "$instante"
 		}
@@ -1255,41 +1258,68 @@ function main() {
 		# Imprime el dibujo de la tabla
 		# ----------------------------------
 		function algImprimirTabla() {
-			centrarEnPantalla "$(imprimirCuadro "25" "default" "TABLA DE PROCESOS")" | sacarHaciaArchivo "$archivoSalida" -a
-			centrarEnPantalla "$(imprimirTabla "$NUM_FIL" "10")" | sacarHaciaArchivo "$archivoSalida" -a
+			centrarEnPantalla "$(imprimirCuadro "25" "default" "TABLA DE PROCESOS")"
+			centrarEnPantalla "$(imprimirTabla "$NUM_FIL" "10")"
 		}
 
 		# Imprime la linea de tiempo
 		# ----------------------------------
 		function algImprimirLineaTiempo() {
 			printf "\n\n%s" ""
-			centrarEnPantalla "$(imprimirCuadro "25" "default" "LINEA DE TIEMPO")" | sacarHaciaArchivo "$archivoSalida" -a
-			centrarEnPantalla "$(imprimirCuadro "$(calcularLongitud "$(imprimirLineaProcesos "$1")")" "default" "$(imprimirLineaProcesos "$1")")" | sacarHaciaArchivo "$archivoSalida" -a
+			centrarEnPantalla "$(imprimirCuadro "25" "default" "LINEA DE TIEMPO")"
+			centrarEnPantalla "$(imprimirLineaProcesos "$instante")"
 		}
 
 		# Imprime el dibujo de la memoria
 		# ----------------------------------
 		function algImprimirMemoria() {
 			printf "\n\n%s" ""
-			centrarEnPantalla "$(imprimirCuadro "25" "default" "USO DE MEMORIA")" | sacarHaciaArchivo "$archivoSalida" -a
-			centrarEnPantalla "$(imprimirMemoria)" | sacarHaciaArchivo "$archivoSalida" -a
+			centrarEnPantalla "$(imprimirCuadro "25" "default" "USO DE MEMORIA")"
+			centrarEnPantalla "$(imprimirMemoria)"
 			# TODO -> Terminar esto
+		}
+
+		# Funcion para avanzar el algoritmo o terminarlo
+		# ----------------------------------
+		function algAvanzarAlgoritmo() {
+			local temp
+			temp=""
+
+			printf "%s\n\n" ""
+			read -r -p "$(centrarEnPantalla "$(imprimirCuadro "50" "default" "Pulsa intro para avanzar o [F] para finalizar")")" temp
+
+			if [[ "$temp" =~ [fF] ]]; then
+				acabarAlgoritmo="true"
+			fi
+
+			clear
+		}
+
+		# Main del cuerpo del algoritmo
+		# ----------------------------------
+		function algCuerpoAlgoritmo() {
+			algCabecera
+			algCalcularSigIns
+			algImprimirTabla
+			algTiemposMedios
+			algImprimirLineaTiempo
+			algImprimirMemoria
 		}
 
 		# Main de las llamadas de la parte de calculo de algoritmo
 		# ----------------------------------
+		clear
 		ordenarArray
 		asignarDatosInicial
 		algAsignarMemoriaInicial
 		while [[ $(procesosHanTerminado) != "true" ]]; do
-			algCalcularDatos "$instante"
-			algCabecera
-			algCalcularSigIns "$instante"
-			algImprimirTabla
-			algTiemposMedios
-			algImprimirLineaTiempo "$instante"
-			algImprimirMemoria
-			avanzarAlgoritmo
+			algCalcularDatos
+			if [[ "$acabarAlgoritmo" == "true" ]]; then
+				algCuerpoAlgoritmo >>"$archivoSalida"
+			else
+				algCuerpoAlgoritmo | sacarHaciaArchivo "$archivoSalida" -a
+				algAvanzarAlgoritmo
+			fi
 			((instante++))
 		done
 	}
