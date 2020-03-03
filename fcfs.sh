@@ -1394,3 +1394,4 @@ main
 
 # TODO-> Arreglar que la linea de cpu se vea bien, truncado
 # TODO-> Arreglar linea de memoria
+# TODO-> Hacer que solo se imprima cuando datos importantes cambian, disminuye mucho los enters a introducir y el tiempo de impresion si decide finalizar
