@@ -1395,3 +1395,7 @@ main
 # TODO-> Arreglar que la linea de cpu se vea bien, truncado
 # TODO-> Arreglar linea de memoria
 # TODO-> Hacer que solo se imprima cuando datos importantes cambian, disminuye mucho los enters a introducir y el tiempo de impresion si decide finalizar
+# TODO-> Arreglar lo de tiempo de espera que no es asi
+# TODO-> Colocar los nombres de los procesos como P0X para menor de 10
+# TODO-> Maximo 100 procesos
+# TODO-> Hacer la practica usando otra parecida, borrar mucho de esta
