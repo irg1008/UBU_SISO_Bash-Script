@@ -5,7 +5,7 @@ Autor = ["Jorge Ruiz", "Ivan Ruiz"]
 [mensajes]
 errorGeneral = "☒ Si ves un mensaje como este, es que has introducido mal los datos o hay un problema ☒"
 mensajeAlgoritmo = "☑ Ejecutando algoritmo | FCFS-SN-NN ☑"
-advertenciaGeneral = "⚠ Si tiene algún problema con el algoritmo, vea la opción de ayuda en el menú inferior ⚠"
+advertenciaGeneral = "⚠ Esto no es un error, si ve este cuadro está recibiendo un aviso, todo normal ⚠"
 
 [archivos]
 archivoSalida = "res.log" # Abrir con el comando cat en la terminal para correcta muestra

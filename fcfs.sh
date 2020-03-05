@@ -101,7 +101,7 @@ function extraerDeConfig() {
 # ----------------------------------
 function recibirEntrada() {
   local mensaje
-  mensaje="$(printf "$(cc Neg 3)%15s$(fc)" "Respuesta:")"
+  mensaje="$(printf "\n$(cc Neg 3)%15s$(fc)" "Respuesta:")"
 
   read -r -p "$mensaje "
   echo "$REPLY"
@@ -134,7 +134,7 @@ function elegirTipoDeEntrada() {
   # para posterior conocimiento
   # ----------------------------------
   function guardaTipoEnArchivo() {
-    centrarEnPantalla "$(imprimirCuadro "50" "6" "Asignación de datos $1")" >>"$archivoSalida"
+    centrarEnPantalla "$(imprimirCuadro "50" "blanco" "Asignación de datos $1")" >>"$archivoSalida"
   }
 
   case "$tipo" in
@@ -191,7 +191,7 @@ function asignarManual() {
   # ----------------------------------
   function comienzoPregunta() {
     clear
-    centrarEnPantalla "$(imprimirCuadro "50" "6" "$2")"
+    centrarEnPantalla "$(imprimirCuadro "50" "blanco" "$2")"
     centrarEnPantalla "$(imprimirTabla "$1" "4")"
   }
 
@@ -199,7 +199,7 @@ function asignarManual() {
   # ----------------------------------
   function tamMemoria() {
     clear
-    centrarEnPantalla "$(imprimirCuadro "50" "6" "Tamaño de la memoria")"
+    centrarEnPantalla "$(imprimirCuadro "50" "blanco" "Tamaño de la memoria")"
     MEM_TAM=$(recibirEntrada)
 
     while [[ $(entradaEsEntero "$MEM_TAM" "1") != "true" ]]; do
@@ -273,13 +273,18 @@ function asignarManual() {
   function guardarTamMemoria() {
     local tam
 
-    comienzoPregunta "$1" "Tamaño del proceso $1"
+    comienzoPregunta "$1" "Tamaño del proceso $1 - (Memoria: $MEM_TAM)"
     tam=$(recibirEntrada)
 
     while [[ $(entradaEsEntero "$tam" "1") != "true" ]]; do
       centrarEnPantalla "$(imprimirCuadro "80" "error" "Valor de tiempo de tamaño no válido, entero mayor que 0")"
       tam=$(recibirEntrada)
     done
+
+    if [[ "$tam" -gt "$MEM_TAM" ]]; then
+      centrarEnPantalla "$(imprimirCuadro "80" "advertencia" "⚠ ¡El tamaño del proceso es mayor que la memoria! No podrá ejecutarse ⚠")"
+      avanzarAlgoritmo
+    fi
 
     array[$PROC_TAM, $1]="$tam"
   }
@@ -372,7 +377,7 @@ function asignarValoresAleatorios() {
   MEM_TAM=$(((RANDOM % 20) + 5)) # 5-20
 
   clear
-  centrarEnPantalla "$(imprimirCuadro "50" "6" "¿Cuántos valores aleatorios quieres generar?")" | sacarHaciaArchivo "$archivoSalida" -a
+  centrarEnPantalla "$(imprimirCuadro "50" "blanco" "¿Cuántos valores aleatorios quieres generar?")" | sacarHaciaArchivo "$archivoSalida" -a
   numValAleatorios=$(recibirEntrada)
 
   while [[ ! "$numValAleatorios" =~ ^[0-9]+$ || "$numValAleatorios" -lt "1" || "$numValAleatorios" -ge "100" ]]; do
@@ -450,7 +455,7 @@ function imprimirMemoria() {
     procesosEnMemoria="6"
   }
 
-  # Guarda los colores aleatorio de la memoria
+  # Guarda los colores aleatorios de la memoria
   # ----------------------------------
   function asignarColores() {
     colorVacio="$(cc Neg error)"
@@ -483,7 +488,7 @@ function imprimirLineaProcesos() {
   local terminalWidth
   terminalWidth="$(tput cols)"
 
-  # Guarda los colores aleatorio de la memoria
+  # Guarda los colores aleatorios de la linea
   # ----------------------------------
   function asignarColores() {
     for ((i = 1; i <= NUM_FIL; i++)); do
@@ -508,7 +513,7 @@ function imprimirLineaProcesos() {
   # Imprimir si no hay procesos en la linea
   # ----------------------------------
   function imprimirVacio() {
-    imprimirCuadro "50" "default" "$(printf "%s" " No hay procesos ejecutando o ya terminados ")"
+    imprimirCuadro "100" "advertencia" "$(printf "%s" "⚠ No hay procesos ejecutando o ya terminados ⚠")"
   }
 
   # Imprime la linea de procesos en la CPU
@@ -730,8 +735,11 @@ function cc() {
     0)
       salida+="$(generarColor fg);$(generarColor bg_negro)m"
       ;;
+    blanco)
+      salida+="$(generarColor fg_negro);$(($(generarColor bg_negro) + 7))m"
+      ;;
     *)
-      salida+="$(generarColor fg_negro);$(($(generarColor bg_negro) + 1 + $(($2 % 7))))m"
+      salida+="$(generarColor fg_negro);$(($(generarColor bg_negro) + 1 + $(($2 % 6))))m"
       ;;
     esac
   fi
@@ -1154,10 +1162,10 @@ function main() {
   function introduccion() {
     # Imprime introducción
     centrarEnPantalla "$(imprimirCuadro "50" "0" "$introduccion")" | sacarHaciaArchivo "$archivoSalida"
-    # Imprime mensaje advertencia
-    centrarEnPantalla "$(imprimirCuadro "100" "advertencia" "$advertencia")"
     # Imprime mensaje error
     centrarEnPantalla "$(imprimirCuadro "100" "error" "$error")"
+    # Imprime mensaje advertencia
+    centrarEnPantalla "$(imprimirCuadro "100" "advertencia" "$advertencia")"
     # Avanza de fase
     avanzarAlgoritmo
   }
@@ -1174,6 +1182,7 @@ function main() {
   # ------------------------------------------------
   function algoritmo() {
     local -a estados=("Fuera" "En Espera" "En Memoria" "Bloqueado" "Ejecutando" "Terminado")
+    local -A arrayCopia
     local instante
     local acabarAlgoritmo
     acabarAlgoritmo="false"
@@ -1267,14 +1276,41 @@ function main() {
       local temp
       temp=""
 
-      read -r -p "$(centrarEnPantalla "$(imprimirCuadro "50" "acierto" "Pulsa intro para avanzar o [F] para finalizar")")" temp
+      read -r -p "$(centrarEnPantalla "$(imprimirCuadro "50" "blanco" "Pulsa intro para avanzar o [F] para finalizar")")" temp
 
+      # Doble clear para limpiar pantalla (ya que el conetenido es mayor que la pantalla y solo hace el salto)
+      clear
       clear
 
       if [[ "$temp" =~ ^([fF])$ ]]; then
         acabarAlgoritmo="true"
         centrarEnPantalla "$(imprimirCuadro "100" "3" "Ejecutando y exportando algoritmo en segundo plano. Serán solo unos segundos")"
       fi
+    }
+
+    # Hace una copia del array antes de cambiarlo en la ejecucion
+    # ----------------------------------
+    function copiarArray() {
+      for ((i = 1; i <= NUM_FIL; i++)); do
+        for ((j = 1; j <= NUM_COL; j++)); do
+          arrayCopia[$j, $i]="${array[$j, $i]}"
+        done
+      done
+    }
+
+    # Comprueba si en el instante de ejucion pasa algo importante para mostrar o no
+    # Consideramos que algo importante pasa si cambia algún estado de los procesos
+    # ----------------------------------
+    function algoImportantePasa() {
+      local algoImportantePasa="false"
+
+      for ((i = 1; i <= NUM_FIL; i++)); do
+        if [[ "${array[$PROC_EST, $i]}" != "${arrayCopia[$PROC_EST, $i]}" ]]; then
+          algoImportantePasa="true"
+        fi
+      done
+
+      echo "$algoImportantePasa"
     }
 
     # Main del cuerpo del algoritmo
@@ -1294,14 +1330,20 @@ function main() {
     asignarDatosInicial
     algAsignarMemoriaInicial
     algCabecera >>"$archivoSalida"
+
     while [[ $(procesosHanTerminado) != "true" ]]; do
+      copiarArray
       algCalcularDatos
-      if [[ "$acabarAlgoritmo" == "true" ]]; then
-        algCuerpoAlgoritmo >>"$archivoSalida"
-      else
-        algCabecera
-        algCuerpoAlgoritmo | sacarHaciaArchivo "$archivoSalida" -a
-        algAvanzarAlgoritmo
+
+      # Si pasa algo importante lo mostramos en pantalla y/o sacamos por archivo
+      if [[ "$(algoImportantePasa)" == "true" ]]; then
+        if [[ "$acabarAlgoritmo" == "true" ]]; then
+          algCuerpoAlgoritmo >>"$archivoSalida"
+        else
+          algCabecera
+          algCuerpoAlgoritmo | sacarHaciaArchivo "$archivoSalida" -a
+          algAvanzarAlgoritmo
+        fi
       fi
       ((instante++))
     done
@@ -1344,7 +1386,6 @@ function main() {
 
     if [[ $temp =~ [nN][oO]|[nN] ]]; then
       salirDePractica="true"
-      centrarEnPantalla "$(imprimirCuadro "100" "acierto" "¡Gracias por usar nuestro algoritmo! Visita nuestro repo aquí abajo")" | sacarHaciaArchivo "$archivoSalida" -a
     elif [[ "$temp" =~ [sS][iI]|[sS] ]]; then
       array=()
     fi
@@ -1355,6 +1396,7 @@ function main() {
   # ------------------------------------------------
   function imprimirSpam() {
     local spam
+    local gitSpam=("¡Gracias por usar nuestro algoritmo!" "Visita nuestro repositorio aquí abajo")
     spam="
  ▄▄▄▄▄▄▄   ▄ ▄▄▄▄   ▄▄  ▄▄ ▄▄▄▄▄▄▄
  █ ▄▄▄ █ ▀ ▀ ▄█▀█▀ █ ▀▄█▄▀ █ ▄▄▄ █
@@ -1374,6 +1416,8 @@ function main() {
  █ ███ █ █ █▄▄  ▄██▀▀█▀ ▄▄▀▄▀▀▄▄▀▀
  █▄▄▄▄▄█ █▄▄█  ▀▀     ▀▄█▄▄▀▀ █▀▄ 
  "
+    clear
+    centrarEnPantalla "$(imprimirCuadro "50" "acierto" "${gitSpam[@]}")" | sacarHaciaArchivo "$archivoSalida" -a
     centrarEnPantalla "$(imprimirCuadro "38" "default" "$spam")" | sacarHaciaArchivo "$archivoSalida" -a
   }
   # ------------------------------------------------
@@ -1396,6 +1440,4 @@ main
 
 # TODO-> Arreglar que la linea de cpu se vea bien, truncado
 # TODO-> Arreglar linea de memoria
-# TODO-> Hacer que solo se imprima cuando datos importantes cambian, disminuye mucho los enters a introducir y el tiempo de impresion si decide finalizar
 # TODO-> Ir donde lolo y que me diga que cambiar, y luego ezz
-# TODO-> Cambiar el color blanco de los procesos porque hay que usarlo en la memoria vacia
