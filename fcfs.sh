@@ -1440,4 +1440,5 @@ main
 
 # TODO-> Arreglar que la linea de cpu se vea bien, truncado
 # TODO-> Arreglar linea de memoria
+
 # TODO-> Ir donde lolo y que me diga que cambiar, y luego ezz
