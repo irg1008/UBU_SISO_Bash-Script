@@ -1272,7 +1272,6 @@ function main() {
       clear
 
       if [[ "$temp" =~ ^([fF])$ ]]; then
-        clear
         acabarAlgoritmo="true"
         centrarEnPantalla "$(imprimirCuadro "100" "3" "Ejecutando y exportando algoritmo en segundo plano. Serán solo unos segundos")"
       fi
