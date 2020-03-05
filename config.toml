@@ -4,7 +4,7 @@ Autor = ["Jorge Ruiz", "Ivan Ruiz"]
 
 [mensajes]
 errorGeneral = "☒ Si ves un mensaje como este, es que has introducido mal los datos o hay un problema ☒"
-aciertoGeneral = "☑ Ejecutando algoritmo ☑"
+mensajeAlgoritmo = "☑ Ejecutando algoritmo | FCFS-SN-NN ☑"
 advertenciaGeneral = "⚠ Si tiene algún problema con el algoritmo, vea la opción de ayuda en el menú inferior ⚠"
 
 [archivos]

@@ -68,7 +68,7 @@ function extraerDeConfig() {
     declare -a "salidaArray=( $(echo "$salida" | tr '`$<>' '????') )"
     for ((i = 0; i < ${#salidaArray[@]}; i++)); do
       echo "${salidaArray[$i]}"
-      if [ "$i" == "2" ] || [ "$i" == "4" ]; then
+      if [[ "$i" == "2" || "$i" == "4" ]]; then
         echo " "
       fi
     done
@@ -308,7 +308,7 @@ function asignarManual() {
   # ----------------------------------
   NUM_FIL="1"
   tamMemoria
-  while [ "$masProcesos" != "false" ]; do
+  while [[ "$masProcesos" != "false" && "$NUM_FIL" -lt "100" ]]; do
     guardarNombreDelProceso "$NUM_FIL"
     guardarLlegadaProceso "$NUM_FIL"
     guardarTiempoEjecucion "$NUM_FIL"
@@ -343,7 +343,7 @@ function asignarDesdeArchivo() {
 
     if [ "$i" == "-1" ]; then
       MEM_TAM="$(cut -d "=" -f 2 <<<"$proceso")"
-    elif [ "$i" -ge "1" ]; then
+    elif [[ "$i" -ge "1" && "$i" -lt "100" ]]; then
       array[$PROC_NUM, $i]=$proceso
       array[$PROC_LLE, $i]=$llegada
       array[$PROC_EJE, $i]=$ejecucion
@@ -375,8 +375,8 @@ function asignarValoresAleatorios() {
   centrarEnPantalla "$(imprimirCuadro "50" "6" "¿Cuántos valores aleatorios quieres generar?")" | sacarHaciaArchivo "$archivoSalida" -a
   numValAleatorios=$(recibirEntrada)
 
-  while [[ ! "$numValAleatorios" =~ ^[0-9]+$ || "$numValAleatorios" -lt "1" || "$numValAleatorios" -gt "100" ]]; do
-    centrarEnPantalla "$(imprimirCuadro "80" "error" "Inserta un valor numérico entre 1 y 100, recomendamos menos de 30")"
+  while [[ ! "$numValAleatorios" =~ ^[0-9]+$ || "$numValAleatorios" -lt "1" || "$numValAleatorios" -ge "100" ]]; do
+    centrarEnPantalla "$(imprimirCuadro "80" "error" "Inserta un valor numérico entre 1 y 99, recomendamos menos de 30")"
     numValAleatorios=$(recibirEntrada)
   done
 
@@ -387,7 +387,11 @@ function asignarValoresAleatorios() {
     for ((j = 1; j <= NUM_FIL; j++)); do
       case "$i" in
       1)
-        array[$i, $j]="P"${j} # Nombre
+        if [[ "$j" -lt "10" ]]; then
+          array[$i, $j]="P0"${j} # Nombre
+        else
+          array[$i, $j]="P"${j}
+        fi
         ;;
       2)
         array[$i, $j]=$((RANDOM % 20)) # Llegada [0-20]
@@ -427,7 +431,7 @@ function imprimirAyuda() {
   centrarEnPantalla "$(imprimirCuadro "50" "default" "AYUDA")" | sacarHaciaArchivo "$archivoSalida" -a
   centrarEnPantalla "$(imprimirCuadro "150" "random" "${funciona[@]}")" | sacarHaciaArchivo "$archivoSalida" -a
   centrarEnPantalla "$(imprimirCuadro "150" "random" "${ayuda[@]}")" | sacarHaciaArchivo "$archivoSalida" -a
-  read -r -p "$(centrarEnPantalla "$(imprimirCuadro "50" "default" "Pulsa intro para volver al menú")")"
+  read -r -p "$(centrarEnPantalla "$(imprimirCuadro "35" "default" "Pulsa intro para volver al menú")")"
   clear
   elegirTipoDeEntrada "$archivoEntrada"
 }
@@ -604,7 +608,7 @@ function asignarEstadosSegunInstante() {
 
       if [[ "$procesoEjecutando" != "true" ]]; then
         array[$PROC_EST, $i]="${estados[4]}"
-        array[$PROC_ESP, $i]="$instante"
+        array[$PROC_ESP, $i]="$((instante - array[$PROC_LLE, $i]))"
       fi
     fi
 
@@ -612,7 +616,7 @@ function asignarEstadosSegunInstante() {
     if [[ "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
       if [[ "${array[$PROC_EJE_RES, $i]}" == "0" ]]; then
         array[$PROC_EST, $i]="${estados[5]}"
-        array[$PROC_RES, $i]="$instante"
+        array[$PROC_RES, $i]="$((instante - array[$PROC_LLE, $i]))" # Que coincide con el tiempo de ejcución por ser FCFS
       fi
     fi
 
@@ -1070,7 +1074,7 @@ function centrarEnPantalla() {
 # ----------------------------------
 function avanzarAlgoritmo() {
   # printf "%s\n\n" ""
-  read -r -p "$(centrarEnPantalla "$(imprimirCuadro "50" "default" "Pulsa intro para avanzar")")"
+  read -r -p "$(centrarEnPantalla "$(imprimirCuadro "35" "default" "Pulsa intro para avanzar")")"
   clear
 }
 
@@ -1239,23 +1243,21 @@ function main() {
     # Imprime el dibujo de la tabla
     # ----------------------------------
     function algImprimirTabla() {
-      centrarEnPantalla "$(imprimirCuadro "25" "default" "TABLA DE PROCESOS")"
+      centrarEnPantalla "$(imprimirCuadro "100" "default" "TABLA DE PROCESOS")"
       centrarEnPantalla "$(imprimirTabla "$NUM_FIL" "10")"
     }
 
     # Imprime la linea de tiempo
     # ----------------------------------
     function algImprimirLineaTiempo() {
-      printf "\n\n%s" ""
-      centrarEnPantalla "$(imprimirCuadro "25" "default" "LINEA DE TIEMPO")"
+      centrarEnPantalla "$(imprimirCuadro "100" "default" "LINEA DE TIEMPO")"
       centrarEnPantalla "$(imprimirLineaProcesos "$instante")"
     }
 
     # Imprime el dibujo de la memoria
     # ----------------------------------
     function algImprimirMemoria() {
-      printf "\n\n%s" ""
-      centrarEnPantalla "$(imprimirCuadro "25" "default" "USO DE MEMORIA")"
+      centrarEnPantalla "$(imprimirCuadro "100" "default" "USO DE MEMORIA")"
       centrarEnPantalla "$(imprimirMemoria)"
     }
 
@@ -1265,12 +1267,12 @@ function main() {
       local temp
       temp=""
 
-      printf "%s\n\n" ""
       read -r -p "$(centrarEnPantalla "$(imprimirCuadro "50" "acierto" "Pulsa intro para avanzar o [F] para finalizar")")" temp
 
       clear
 
       if [[ "$temp" =~ ^([fF])$ ]]; then
+        clear
         acabarAlgoritmo="true"
         centrarEnPantalla "$(imprimirCuadro "100" "3" "Ejecutando y exportando algoritmo en segundo plano. Serán solo unos segundos")"
       fi
@@ -1279,7 +1281,6 @@ function main() {
     # Main del cuerpo del algoritmo
     # ----------------------------------
     function algCuerpoAlgoritmo() {
-      algCabecera
       algCalcularSigIns
       algImprimirTabla
       algTiemposMedios
@@ -1293,11 +1294,13 @@ function main() {
     ordenarArray
     asignarDatosInicial
     algAsignarMemoriaInicial
+    algCabecera >>"$archivoSalida"
     while [[ $(procesosHanTerminado) != "true" ]]; do
       algCalcularDatos
       if [[ "$acabarAlgoritmo" == "true" ]]; then
         algCuerpoAlgoritmo >>"$archivoSalida"
       else
+        algCabecera
         algCuerpoAlgoritmo | sacarHaciaArchivo "$archivoSalida" -a
         algAvanzarAlgoritmo
       fi
@@ -1395,3 +1398,5 @@ main
 # TODO-> Arreglar que la linea de cpu se vea bien, truncado
 # TODO-> Arreglar linea de memoria
 # TODO-> Hacer que solo se imprima cuando datos importantes cambian, disminuye mucho los enters a introducir y el tiempo de impresion si decide finalizar
+# TODO-> Ir donde lolo y que me diga que cambiar, y luego ezz
+# TODO-> Cambiar el color blanco de los procesos porque hay que usarlo en la memoria vacia
