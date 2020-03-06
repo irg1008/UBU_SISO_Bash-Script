@@ -445,38 +445,70 @@ function imprimirAyuda() {
 # Imprime el uso de la memoria según los procesos en ella
 # ----------------------------------
 function imprimirMemoria() {
-  local colorVacio
   local -a coloresMemoria
-  local procesosEnMemoria
-
-  # Asigna el número de procesos en memoria
-  # ----------------------------------
-  function asignarNumProcesos() {
-    procesosEnMemoria="6"
-  }
+  local colorVacio
+  local espacios
+  espacios="   "
 
   # Guarda los colores aleatorios de la memoria
   # ----------------------------------
   function asignarColores() {
-    colorVacio="$(cc Neg error)"
-    for ((i = 1; i <= procesosEnMemoria; i++)); do
+    colorVacio="$(cc Neg blanco)" # Cuando la memoria esta vacia debe ser blanco
+    for ((i = 1; i <= NUM_FIL; i++)); do
       coloresMemoria[$i]=$(cc Neg "$((i + 4))")
     done
   }
 
-  # Imprime cuadro de memoria
+  # Si hay algún cambio que altere la memoria, la  cambiamos, si no la imprimimos como estaba
+  # para no mover los procesos, ya que no es reubicable
+  # ----------------------------------
+  function comprobarMovimientosDeMemoria() {
+    local -i posicion
+
+    for ((i = 1; i <= NUM_FIL; i++)); do
+      # Si algún proceso ha pasado de Fuera a En Memoria o Ejecutando -> Entra en los huecos
+      if [[ "${arrayCopia[$PROC_EST, $i]}" == "${estados[0]}" ]] && [[ "${array[$PROC_EST, $i]}" == "${estados[2]}" || "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
+        # Vamos añadiendolo a los huecos que están vacios
+        for ((tamProc = 0; tamProc < array[$PROC_TAM, $i]; tamProc++)); do
+          posicion="0"
+          while [[ "${procesosEnMemoria[posicion]}" != "$stringVacio" ]]; do
+            ((posicion++))
+          done
+          # Guardamos la ID para igualar colores
+          procesosEnMemoria[$posicion]="$i"
+        done
+      # Si algún proceso pasa de Ejecutando a Terminado (lo contrario) -> Sale de los huecos
+      elif [[ "${arrayCopia[$PROC_EST, $i]}" == "${estados[4]}" ]] && [[ "${array[$PROC_EST, $i]}" == "${estados[5]}" ]]; then
+        # Quitar del dibujo y ponerlo en hueco vacio
+        # vamos añadiendolo a los huecos que están vacios
+        for ((j = 0; j < MEM_TAM; j++)); do
+          if [[ "${procesosEnMemoria[$j]}" == "$i" ]]; then
+            procesosEnMemoria[$j]="$stringVacio"
+          fi
+        done
+      fi
+    done
+  }
+
+  # Imprime cuadro de memoria o nulo si no hay nada que imprimir
   # ----------------------------------
   function imprimir() {
-    for ((i = 1; i <= procesosEnMemoria; i++)); do
-      printf "${coloresMemoria[$i]}%s$(fc)" " P${i} "
+    printf "%s" "${procesosEnMemoria[@]}"
+    printf "\n"
+    for ((pos = 0; pos < MEM_TAM; pos++)); do
+      if [[ "${procesosEnMemoria[$pos]}" == "$stringVacio" ]]; then
+        printf "$colorVacio%s$(fc)" "$espacios"
+      else
+        local idProceso="${procesosEnMemoria[$pos]}"
+        printf "${coloresMemoria[$idProceso]}%s$(fc)" "$espacios"
+      fi
     done
-    printf "$colorVacio%s$(fc)" " Vacio "
   }
 
   # Main de cuadro de memoria
   # ----------------------------------
-  asignarNumProcesos
   asignarColores
+  comprobarMovimientosDeMemoria
   imprimir
 }
 
@@ -1182,11 +1214,14 @@ function main() {
   # ------------------------------------------------
   function algoritmo() {
     local -a estados=("Fuera" "En Espera" "En Memoria" "Bloqueado" "Ejecutando" "Terminado")
+    local -a procesosEnMemoria
+    local stringVacio
     local -A arrayCopia
     local instante
     local acabarAlgoritmo
     acabarAlgoritmo="false"
     instante="0"
+    stringVacio="null"
 
     # Imprime una cabecera muy simple
     # ----------------------------------
@@ -1247,6 +1282,10 @@ function main() {
     # ----------------------------------
     function algAsignarMemoriaInicial() {
       MEM_USE="0"
+
+      for ((i = 0; i < MEM_TAM; i++)); do
+        procesosEnMemoria[$i]="$stringVacio"
+      done
     }
 
     # Imprime el dibujo de la tabla
@@ -1267,7 +1306,7 @@ function main() {
     # ----------------------------------
     function algImprimirMemoria() {
       centrarEnPantalla "$(imprimirCuadro "100" "default" "USO DE MEMORIA")"
-      centrarEnPantalla "$(imprimirMemoria)"
+      imprimirMemoria
     }
 
     # Funcion para avanzar el algoritmo o terminarlo
@@ -1439,6 +1478,6 @@ function main() {
 main
 
 # TODO-> Arreglar que la linea de cpu se vea bien, truncado
-# TODO-> Arreglar linea de memoria
+# TODO-> Imprimir doble linea en la linea de memoria, o cambiar la forma en la que se imprime
 
 # TODO-> Ir donde lolo y que me diga que cambiar, y luego ezz
