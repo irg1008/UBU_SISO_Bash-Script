@@ -542,6 +542,11 @@ function imprimirMemoria() {
           fi
         done
 
+        # Lo volvemos a poner si antes ahi un espacio u otro proceso
+        if [[ "${procesosEnMemoria[$((pos - 1))]}" == "$stringVacio" || "${procesosEnMemoria[$((pos - 1))]}" != "$idProceso" ]]; then
+          nombreEstaPuesto="false"
+        fi
+
         # Si no hemos puesto el nombre lo ponemos
         if [[ "$nombreEstaPuesto" == "false" ]]; then
           printf "${serieColores[$idProceso]}%s$(fc)" "${array[$PROC_NUM, $idProceso]}"
@@ -586,6 +591,8 @@ function imprimirMemoria() {
     imprimirSegundaFila
     printf "\n\t\t\t\t"
     imrpimirTerceraFila
+
+    printf "\n"
   }
 
   # Main de cuadro de memoria
@@ -605,7 +612,7 @@ function imprimirLineaProcesos() {
   # ----------------------------------
   function asignarColores() {
     for ((i = 1; i <= NUM_FIL; i++)); do
-      coloresLinea[$i]="${serieColores[$i]}"
+      coloresLinea[$i]=$(cc Neg "$((i + 4))")
     done
   }
 
@@ -626,7 +633,7 @@ function imprimirLineaProcesos() {
   # Imprimir si no hay procesos en la linea
   # ----------------------------------
   function imprimirVacio() {
-    imprimirCuadro "100" "advertencia" "$(printf "%s" "⚠ No hay procesos ejecutando o ya terminados ⚠")"
+    centrarEnPantalla "$(imprimirCuadro "100" "advertencia" "⚠ No hay procesos ejecutando o ya terminados ⚠")"
   }
 
   # Imprime la linea de procesos en la CPU
@@ -636,18 +643,24 @@ function imprimirLineaProcesos() {
     local procesosAMostrar
     procesosAMostrar="0"
 
-    printf "\t\t\t\t"
-
     for ((i = 1; i <= NUM_FIL; i++)); do
       if [[ "${array[$PROC_EST, $i]}" == "${estados[5]}" || "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
         ((procesosAMostrar++))
-        imprimirLineas "$1"
       fi
     done
 
     if [[ "$procesosAMostrar" == "0" ]]; then
       imprimirVacio
+    else
+      printf "\t\t\t\t"
+      for ((i = 1; i <= NUM_FIL; i++)); do
+        if [[ "${array[$PROC_EST, $i]}" == "${estados[5]}" || "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
+          imprimirLineas "$1"
+        fi
+      done
     fi
+
+    printf "\n"
   }
 
   # Main de cuadro de memoria
@@ -999,7 +1012,7 @@ function imprimirTabla() {
   function guardarColoresDeTabla() {
     colorEncabezado=$(cc Neg default)
     for ((i = 1; i <= NUM_FIL; i++)); do
-      coloresTabla[$i]="${serieColores[$i]}"
+      coloresTabla[$i]=$(cc Neg "$((i + 4))")
     done
   }
 
@@ -1025,7 +1038,7 @@ function imprimirTabla() {
     local longitudElemento
     filasImprimir="$1"
     columnasImprimir="$2"
-    anchoCelda="6"
+    anchoCelda="11"
 
     if [ "$filasImprimir" -gt "$NUM_FIL" ]; then
       filasImprimir="$NUM_FIL"
