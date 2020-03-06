@@ -442,20 +442,60 @@ function imprimirAyuda() {
 }
 
 ######################## 3. ALGORITMO
-# Imprime el uso de la memoria según los procesos en ella
+# Calcula los cambios en memoria para no hacerlo en la misma funcion de impresion
 # ----------------------------------
-function imprimirMemoria() {
-  local -a coloresMemoria
-  local colorVacio
-  local espacios
-  espacios="   "
+function calcularCambiosMemoria() {
 
-  # Guarda los colores aleatorios de la memoria
+  # Devuelve true si un proceso ha entrado en la memoria
   # ----------------------------------
-  function asignarColores() {
-    colorVacio="$(cc Neg blanco)" # Cuando la memoria esta vacia debe ser blanco
-    for ((i = 1; i <= NUM_FIL; i++)); do
-      coloresMemoria[$i]=$(cc Neg "$((i + 4))")
+  function entraEnMemoria() {
+    local entra="false"
+    local i="$1"
+
+    # Fuera|En Espera -> En Memoria|Ejecutando
+    if [[ "${arrayCopia[$PROC_EST, $i]}" == "${estados[0]}" || "${arrayCopia[$PROC_EST, $i]}" == "${estados[1]}" ]] && [[ "${array[$PROC_EST, $i]}" == "${estados[2]}" || "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
+      entra="true"
+    fi
+
+    echo "$entra"
+  }
+
+  # Mete el proceso en memoria
+  # ----------------------------------
+  function meterEnMemoria() {
+    # Vamos añadiendolo a los huecos que están vacios
+    posicion="0"
+    for ((tamProc = 0; tamProc < array[$PROC_TAM, $i]; tamProc++)); do
+      while [[ "${procesosEnMemoria[$posicion]}" != "$stringVacio" ]]; do
+        ((posicion++))
+      done
+      # Guardamos la ID para igualar colores
+      procesosEnMemoria[$posicion]="$i"
+    done
+  }
+
+  # Devuelve true si un proceso sale de memoria
+  # ----------------------------------
+  function saleDeMemoria() {
+    local sale="false"
+    local i="$1"
+
+    # En Memoria|Ejecutando -> Terminado
+    if [[ "${arrayCopia[$PROC_EST, $i]}" == "${estados[2]}" || "${arrayCopia[$PROC_EST, $i]}" == "${estados[4]}" ]] && [[ "${array[$PROC_EST, $i]}" == "${estados[5]}" ]]; then
+      sale="true"
+    fi
+
+    echo "$sale"
+  }
+
+  # Saca de memoria el proceso
+  # ----------------------------------
+  function sacarDeMemoria() {
+    # Quitar el proceso y ponerlo en hueco vacio
+    for ((j = 0; j < MEM_TAM; j++)); do
+      if [[ "${procesosEnMemoria[$j]}" == "$i" ]]; then
+        procesosEnMemoria[$j]="$stringVacio"
+      fi
     done
   }
 
@@ -466,49 +506,90 @@ function imprimirMemoria() {
     local -i posicion
 
     for ((i = 1; i <= NUM_FIL; i++)); do
-      # Si algún proceso ha pasado de Fuera a En Memoria o Ejecutando -> Entra en los huecos
-      if [[ "${arrayCopia[$PROC_EST, $i]}" == "${estados[0]}" ]] && [[ "${array[$PROC_EST, $i]}" == "${estados[2]}" || "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
-        # Vamos añadiendolo a los huecos que están vacios
-        for ((tamProc = 0; tamProc < array[$PROC_TAM, $i]; tamProc++)); do
-          posicion="0"
-          while [[ "${procesosEnMemoria[posicion]}" != "$stringVacio" ]]; do
-            ((posicion++))
-          done
-          # Guardamos la ID para igualar colores
-          procesosEnMemoria[$posicion]="$i"
-        done
-      # Si algún proceso pasa de Ejecutando a Terminado (lo contrario) -> Sale de los huecos
-      elif [[ "${arrayCopia[$PROC_EST, $i]}" == "${estados[4]}" ]] && [[ "${array[$PROC_EST, $i]}" == "${estados[5]}" ]]; then
-        # Quitar del dibujo y ponerlo en hueco vacio
-        # vamos añadiendolo a los huecos que están vacios
-        for ((j = 0; j < MEM_TAM; j++)); do
-          if [[ "${procesosEnMemoria[$j]}" == "$i" ]]; then
-            procesosEnMemoria[$j]="$stringVacio"
-          fi
-        done
-      fi
-    done
-  }
-
-  # Imprime cuadro de memoria o nulo si no hay nada que imprimir
-  # ----------------------------------
-  function imprimir() {
-    printf "%s" "${procesosEnMemoria[@]}"
-    printf "\n"
-    for ((pos = 0; pos < MEM_TAM; pos++)); do
-      if [[ "${procesosEnMemoria[$pos]}" == "$stringVacio" ]]; then
-        printf "$colorVacio%s$(fc)" "$espacios"
-      else
-        local idProceso="${procesosEnMemoria[$pos]}"
-        printf "${coloresMemoria[$idProceso]}%s$(fc)" "$espacios"
+      if [[ "$(entraEnMemoria "$i")" == "true" ]]; then
+        meterEnMemoria
+      elif [[ "$(saleDeMemoria "$i")" == "true" ]]; then
+        sacarDeMemoria
       fi
     done
   }
 
   # Main de cuadro de memoria
   # ----------------------------------
-  asignarColores
   comprobarMovimientosDeMemoria
+}
+
+# Imprime el uso de la memoria según los procesos en ella
+# ----------------------------------
+function imprimirMemoria() {
+  local espacios
+  espacios="   "
+
+  # Imprime la primera fila
+  # ----------------------------------
+  function imprimirPrimeraFila() {
+    for ((pos = 0; pos < MEM_TAM; pos++)); do
+      if [[ "${procesosEnMemoria[$pos]}" == "$stringVacio" ]]; then
+        printf "%s" "$espacios"
+      else
+        local nombreEstaPuesto="false"
+        idProceso="${procesosEnMemoria[$pos]}"
+
+        # Comprobamos si ya hemos puesto el nombre
+        for ((i = 0; i < pos; i++)); do
+          if [[ "${procesosEnMemoria[$i]}" == "$idProceso" ]]; then
+            nombreEstaPuesto="true"
+          fi
+        done
+
+        # Si no hemos puesto el nombre lo ponemos
+        if [[ "$nombreEstaPuesto" == "false" ]]; then
+          printf "${serieColores[$idProceso]}%s$(fc)" "${array[$PROC_NUM, $idProceso]}"
+        else
+          printf "%s" "$espacios"
+        fi
+      fi
+    done
+  }
+
+  # Imprime la segunda fila
+  # ----------------------------------
+  function imprimirSegundaFila() {
+    for ((pos = 0; pos < MEM_TAM; pos++)); do
+      if [[ "${procesosEnMemoria[$pos]}" == "$stringVacio" ]]; then
+        printf "$colorVacio%s$(fc)" "$espacios"
+      else
+        idProceso="${procesosEnMemoria[$pos]}"
+        printf "${serieColores[$idProceso]}%s$(fc)" "$espacios"
+      fi
+    done
+  }
+
+  # Imprime la tercera fila
+  # ----------------------------------
+  function imrpimirTerceraFila() {
+    printf "$(cc Nor "advertencia")%s" ""
+    for ((pos = 0; pos < MEM_TAM; pos++)); do
+      printf "%-*s" "$(calcularLongitud "$espacios")" "$((pos + 1))"
+    done
+    printf "$(fc)%s" ""
+  }
+
+  # Imprime cuadro de memoria o nulo si no hay nada que imprimir
+  # ----------------------------------
+  function imprimir() {
+    local idProceso
+
+    printf "\t\t\t\t"
+    imprimirPrimeraFila
+    printf "\n\t\t\t\t"
+    imprimirSegundaFila
+    printf "\n\t\t\t\t"
+    imrpimirTerceraFila
+  }
+
+  # Main de cuadro de memoria
+  # ----------------------------------
   imprimir
 }
 
@@ -517,14 +598,14 @@ function imprimirMemoria() {
 # ----------------------------------
 function imprimirLineaProcesos() {
   local -a coloresLinea
-  local terminalWidth
-  terminalWidth="$(tput cols)"
+  # local terminalWidth
+  # terminalWidth="$(tput cols)"
 
   # Guarda los colores aleatorios de la linea
   # ----------------------------------
   function asignarColores() {
     for ((i = 1; i <= NUM_FIL; i++)); do
-      coloresLinea[$i]=$(cc Neg "$((i + 4))")
+      coloresLinea[$i]="${serieColores[$i]}"
     done
   }
 
@@ -554,6 +635,8 @@ function imprimirLineaProcesos() {
   function imprimir() {
     local procesosAMostrar
     procesosAMostrar="0"
+
+    printf "\t\t\t\t"
 
     for ((i = 1; i <= NUM_FIL; i++)); do
       if [[ "${array[$PROC_EST, $i]}" == "${estados[5]}" || "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
@@ -914,19 +997,10 @@ function imprimirTabla() {
   # Guarda los colores aleatorio de la tabla
   # ----------------------------------
   function guardarColoresDeTabla() {
-    local random="false"
-
-    if [ "$random" == "true" ]; then
-      colorEncabezado=$(cc Neg)
-      for ((i = 1; i <= NUM_FIL; i++)); do
-        coloresTabla[$i]=$(cc Neg random)
-      done
-    else
-      colorEncabezado=$(cc Neg default)
-      for ((i = 1; i <= NUM_FIL; i++)); do
-        coloresTabla[$i]=$(cc Neg "$((i + 4))")
-      done
-    fi
+    colorEncabezado=$(cc Neg default)
+    for ((i = 1; i <= NUM_FIL; i++)); do
+      coloresTabla[$i]="${serieColores[$i]}"
+    done
   }
 
   # Imprime los titulos de las columnas de datos
@@ -951,7 +1025,7 @@ function imprimirTabla() {
     local longitudElemento
     filasImprimir="$1"
     columnasImprimir="$2"
-    anchoCelda="12"
+    anchoCelda="6"
 
     if [ "$filasImprimir" -gt "$NUM_FIL" ]; then
       filasImprimir="$NUM_FIL"
@@ -1219,6 +1293,8 @@ function main() {
     local -A arrayCopia
     local instante
     local acabarAlgoritmo
+    local -a serieColores
+    local colorVacio
     acabarAlgoritmo="false"
     instante="0"
     stringVacio="null"
@@ -1299,7 +1375,7 @@ function main() {
     # ----------------------------------
     function algImprimirLineaTiempo() {
       centrarEnPantalla "$(imprimirCuadro "100" "default" "LINEA DE TIEMPO")"
-      centrarEnPantalla "$(imprimirLineaProcesos "$instante")"
+      imprimirLineaProcesos "$instante"
     }
 
     # Imprime el dibujo de la memoria
@@ -1362,12 +1438,22 @@ function main() {
       algImprimirLineaTiempo
     }
 
+    # Asigna los colores que llevaran los procesos y todas las lineas en las que esten presentados
+    # ----------------------------------
+    function algAsignarSerieDeColores() {
+      colorVacio="$(cc Neg blanco)" # Cuando la memoria esta vacia debe ser blanco
+      for ((i = 1; i <= NUM_FIL; i++)); do
+        serieColores[$i]=$(cc Neg "$((i + 4))")
+      done
+    }
+
     # Main de las llamadas de la parte de calculo de algoritmo
     # ----------------------------------
     clear
     ordenarArray
     asignarDatosInicial
     algAsignarMemoriaInicial
+    algAsignarSerieDeColores
     algCabecera >>"$archivoSalida"
 
     while [[ $(procesosHanTerminado) != "true" ]]; do
@@ -1376,6 +1462,7 @@ function main() {
 
       # Si pasa algo importante lo mostramos en pantalla y/o sacamos por archivo
       if [[ "$(algoImportantePasa)" == "true" ]]; then
+        calcularCambiosMemoria
         if [[ "$acabarAlgoritmo" == "true" ]]; then
           algCuerpoAlgoritmo >>"$archivoSalida"
         else
@@ -1427,6 +1514,8 @@ function main() {
       salirDePractica="true"
     elif [[ "$temp" =~ [sS][iI]|[sS] ]]; then
       array=()
+      clear | sacarHaciaArchivo "$archivoSalida" -a
+      centrarEnPantalla "$(imprimirCuadro "50" "random" "Ejecutando el algoritmo de nuevo")" | sacarHaciaArchivo "$archivoSalida" -a
     fi
   }
   # ------------------------------------------------
@@ -1477,7 +1566,5 @@ function main() {
 
 main
 
-# TODO-> Arreglar que la linea de cpu se vea bien, truncado
-# TODO-> Imprimir doble linea en la linea de memoria, o cambiar la forma en la que se imprime
-
+# TODO-> Conseguir centrar la memoria (y añadir las filas auxiliares) y la linea de cpu, o truncarlo en su defecto
 # TODO-> Ir donde lolo y que me diga que cambiar, y luego ezz
