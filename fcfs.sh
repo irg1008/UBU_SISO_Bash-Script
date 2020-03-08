@@ -549,7 +549,7 @@ function imprimirMemoria() {
 
         # Si no hemos puesto el nombre lo ponemos
         if [[ "$nombreEstaPuesto" == "false" ]]; then
-          printf "${serieColores[$idProceso]}%s$(fc)" "${array[$PROC_NUM, $idProceso]}"
+          printf "${serieColores_FG[$idProceso]}%s$(fc)" "${array[$PROC_NUM, $idProceso]}"
         else
           printf "%s" "$espacios"
         fi
@@ -573,11 +573,17 @@ function imprimirMemoria() {
   # Imprime la tercera fila
   # ----------------------------------
   function imrpimirTerceraFila() {
-    printf "$(cc Nor "advertencia")%s" ""
     for ((pos = 0; pos < MEM_TAM; pos++)); do
-      printf "%-*s" "$(calcularLongitud "$espacios")" "$((pos + 1))"
+      if [[ "${procesosEnMemoria[$pos]}" != "${procesosEnMemoria[$((pos + 1))]}" ]]; then
+        idProceso="${procesosEnMemoria[$pos]}"
+        printf "${serieColores_FG[$idProceso]}%*s$(fc)" "$(calcularLongitud "$espacios")" "$((pos + 1))"
+      elif [[ "$pos" == "0" ]]; then
+        idProceso="${procesosEnMemoria[$pos]}"
+        printf "${serieColores_FG[$idProceso]}%-*s$(fc)" "$(calcularLongitud "$espacios")" "$((pos + 1))"
+      else
+        printf "%s" "$espacios"
+      fi
     done
-    printf "$(fc)%s" ""
   }
 
   # Imprime cuadro de memoria o nulo si no hay nada que imprimir
@@ -585,7 +591,7 @@ function imprimirMemoria() {
   function imprimir() {
     local idProceso
 
-    printf "\t\t\t\t"
+    printf "\n\t\t\t\t"
     imprimirPrimeraFila
     printf "\n\t\t\t\t"
     imprimirSegundaFila
@@ -843,7 +849,7 @@ function cc() {
     ;;
   esac
 
-  if [[ "$2" != "" ]]; then
+  if [[ "$2" != "" && "$3" == "" ]]; then
     case "$2" in
     random)
       salida+="$(generarColor fg_negro);$(generarColor bg)m"
@@ -870,6 +876,8 @@ function cc() {
       salida+="$(generarColor fg_negro);$(($(generarColor bg_negro) + 1 + $(($2 % 6))))m"
       ;;
     esac
+  elif [[ "$3" == "fg" ]]; then
+    salida+="$(($(generarColor fg_negro) + 1 + $(($2 % 6))))m"
   fi
 
   echo "$salida"
@@ -1108,8 +1116,11 @@ function imprimirTabla() {
     for ((k = 1; k <= filasImprimir; k++)); do
       # Fila de datos
       printf "${coloresTabla[$k]}%s" ""
-      printf "%s" "$interTabla"
-      printf "$(fc)\n%s" ""
+
+      # Interlinea -> Descomentar esto para dibujarla en la tala, se hace muy grande
+      #printf "%s" "$interTabla"
+      #printf "$(fc)\n%s" ""
+
       printf "${coloresTabla[$k]}%s" ""
       for ((j = 1; j <= columnasImprimir; j++)); do
         # Celda
@@ -1271,7 +1282,7 @@ function main() {
     }
 
     asignarConfigs
-    asignarEstiloGeneral "2"
+    asignarEstiloGeneral "3"
     asignarPosicionYNumColumnas
   }
   # ------------------------------------------------
@@ -1307,6 +1318,7 @@ function main() {
     local instante
     local acabarAlgoritmo
     local -a serieColores
+    local -a serieColores_FG
     local colorVacio
     acabarAlgoritmo="false"
     instante="0"
@@ -1456,7 +1468,8 @@ function main() {
     function algAsignarSerieDeColores() {
       colorVacio="$(cc Neg blanco)" # Cuando la memoria esta vacia debe ser blanco
       for ((i = 1; i <= NUM_FIL; i++)); do
-        serieColores[$i]=$(cc Neg "$((i + 4))")
+        serieColores[$i]=$(cc Nor "$((i + 4))")
+        serieColores_FG[$i]=$(cc Nor "$((i + 4))" "fg")
       done
     }
 
