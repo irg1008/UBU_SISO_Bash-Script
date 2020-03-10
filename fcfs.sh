@@ -10,7 +10,7 @@
 # hay muchas variables que cambian la estética, como el tipo de marco, colores, etc.
 # Esto es para testeo de distintas opciones pero si se quiere cambiar, se deja a gusto
 # del siguiente programador :)
-# pd:no hay variables globales, yihaaa!
+# pd:no hay variables globales, yihaaa! +-
 #
 # Consejo útil, en VSCODE usa ctr + k + 0 para hacer collapse de las funciones
 # y ctr + k + j para hacer expand
@@ -576,10 +576,10 @@ function imprimirMemoria() {
     for ((pos = 0; pos < MEM_TAM; pos++)); do
       if [[ "${procesosEnMemoria[$pos]}" != "${procesosEnMemoria[$((pos + 1))]}" ]]; then
         idProceso="${procesosEnMemoria[$pos]}"
-        printf "${serieColores_FG[$idProceso]}%*s$(fc)" "$(calcularLongitud "$espacios")" "$((pos + 1))"
+        printf "${serieColores_FG[$idProceso]}%*s$(fc)" "$(calcularLongitud "$espacios")" "$((pos + 0))" # Cambiar por pos + 1 si se quiere empezar por la posición 1
       elif [[ "$pos" == "0" ]]; then
         idProceso="${procesosEnMemoria[$pos]}"
-        printf "${serieColores_FG[$idProceso]}%-*s$(fc)" "$(calcularLongitud "$espacios")" "$((pos + 1))"
+        printf "${serieColores_FG[$idProceso]}%-*s$(fc)" "$(calcularLongitud "$espacios")" "$((pos + 0))"
       else
         printf "%s" "$espacios"
       fi
@@ -590,13 +590,16 @@ function imprimirMemoria() {
   # ----------------------------------
   function imprimir() {
     local idProceso
+    local mem=""
 
-    printf "\n\t\t\t\t"
-    imprimirPrimeraFila
-    printf "\n\t\t\t\t"
-    imprimirSegundaFila
-    printf "\n\t\t\t\t"
-    imrpimirTerceraFila
+    mem+="$(printf "\n\t\t\t\t")"
+    mem+="$(imprimirPrimeraFila)"
+    mem+="$(printf "\n\t\t\t\t")"
+    mem+="$(imprimirSegundaFila)"
+    mem+="$(printf "\n\t\t\t\t")"
+    mem+="$(imrpimirTerceraFila)"
+
+    printf "%s" "$mem"
 
     printf "\n"
   }
@@ -1046,7 +1049,7 @@ function imprimirTabla() {
     local longitudElemento
     filasImprimir="$1"
     columnasImprimir="$2"
-    anchoCelda="11"
+    anchoCelda="1" # 1 es la mínima posible, se ajustará al tamaño mayor que haya en la tabla, no se hará truncado porque es cuestión del usuario insertar datos viables
 
     if [ "$filasImprimir" -gt "$NUM_FIL" ]; then
       filasImprimir="$NUM_FIL"
@@ -1057,8 +1060,12 @@ function imprimirTabla() {
     fi
 
     for ((i = 1; i <= columnasImprimir; i++)); do
-      for ((j = 1; j <= filasImprimir; j++)); do
-        longitudElemento=$(calcularLongitud "${array[$i, $j]}")
+      for ((j = 0; j <= filasImprimir; j++)); do
+        if [[ "$j" == "0" ]]; then
+          longitudElemento=$(calcularLongitud "${titulos[$i]}")
+        else
+          longitudElemento=$(calcularLongitud "${array[$i, $j]}")
+        fi
         if [[ "$anchoCelda" -lt "$longitudElemento" ]]; then
           anchoCelda="$longitudElemento"
         fi
@@ -1592,5 +1599,6 @@ function main() {
 
 main
 
-# TODO-> Conseguir centrar la memoria (y añadir las filas auxiliares) y la linea de cpu, o truncarlo en su defecto
+# TODO-> Añadir lineas auxiliares a la línea de CPU
+# TODO-> Añadir el truncado
 # TODO-> Ir donde lolo y que me diga que cambiar, y luego ezz
