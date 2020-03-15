@@ -374,7 +374,7 @@ function asignarValoresAleatorios() {
   local numValAleatorios
 
   # Tamaño de memoria aleatorio
-  MEM_TAM=$(((RANDOM % 20) + 5)) # 5-20
+  MEM_TAM=$(((RANDOM % 40) + 5)) # 5-20
 
   clear
   centrarEnPantalla "$(imprimirCuadro "50" "blanco" "¿Cuántos valores aleatorios quieres generar?")" | sacarHaciaArchivo "$archivoSalida" -a
@@ -568,11 +568,12 @@ function imprimirMemoria() {
         printf "${serieColores[$idProceso]}%s$(fc)" "$espacios"
       fi
     done
+    printf "$(cc Nor blanco fg)%s$(fc)" " $MEM_TAM"
   }
 
   # Imprime la tercera fila
   # ----------------------------------
-  function imrpimirTerceraFila() {
+  function imprimirTerceraFila() {
     for ((pos = 0; pos < MEM_TAM; pos++)); do
       if [[ "${procesosEnMemoria[$pos]}" != "${procesosEnMemoria[$((pos + 1))]}" ]]; then
         idProceso="${procesosEnMemoria[$pos]}"
@@ -590,18 +591,24 @@ function imprimirMemoria() {
   # ----------------------------------
   function imprimir() {
     local idProceso
-    local mem=""
+    local -a mem=()
+    # local anchoTerm
+    # anchoTerm="$(tput cols)"
 
-    mem+="$(printf "\n\t\t\t\t")"
-    mem+="$(imprimirPrimeraFila)"
-    mem+="$(printf "\n\t\t\t\t")"
-    mem+="$(imprimirSegundaFila)"
-    mem+="$(printf "\n\t\t\t\t")"
-    mem+="$(imrpimirTerceraFila)"
+    # local anchoSinColores
+    # local anchoConColores
 
-    printf "%s" "$mem"
+    mem[1]="$(imprimirPrimeraFila)"
+    mem[2]="$(imprimirSegundaFila)"
+    mem[3]="$(imprimirTerceraFila)"
 
-    printf "\n"
+    # anchoSinColores="$(calcularLongitud "${mem[1]}")"
+    # anchoConColores="$(calcularLongitudConColores "${mem[1]}")"
+
+    # printf "\t\t\t\t%s $anchoSinColores - $anchoConColores \n" ""
+    printf "\t\t\t\t%s\n" "${mem[1]}"
+    printf "\t\t\t\t%s\n" "${mem[2]}"
+    printf "\t\t\t\t%s\n" "${mem[3]}"
   }
 
   # Main de cuadro de memoria
@@ -613,29 +620,56 @@ function imprimirMemoria() {
 # @param Instante actual
 # ----------------------------------
 function imprimirLineaProcesos() {
-  local -a coloresLinea
-  # local terminalWidth
-  # terminalWidth="$(tput cols)"
+  local espacios
+  espacios="   "
 
-  # Guarda los colores aleatorios de la linea
+  # Imprime la primera fila
   # ----------------------------------
-  function asignarColores() {
-    for ((i = 1; i <= NUM_FIL; i++)); do
-      coloresLinea[$i]=$(cc Neg "$((i + 4))")
+  function imprimirPrimeraFila() {
+    printf "${serieColores_FG[$i]}%s" ""
+    printf "%-*s" "$(calcularLongitud "$espacios")" "${array[$PROC_NUM, $i]}"
+    for ((j = 1; j < ejec; j++)); do
+      printf "%s" "$espacios"
     done
+    printf "$(fc)%s" ""
   }
 
-  # Imprime lineas de procesos
+  # Imprime la segunda fila
   # ----------------------------------
-  function imprimirLineas() {
-    printf "${coloresLinea[$i]}%s" ""
-    printf " %s %s " "${array[$PROC_ESP, $i]}" "${array[$PROC_NUM, $i]}"
-    printf "%*s" "$((array[$PROC_EJE, $i] - array[$PROC_EJE_RES, $i]))" ""
-    if [[ "${array[$PROC_EST, $i]}" == "${estados[5]}" ]]; then
-      printf " %s " "${array[$PROC_RES, $i]}"
-    elif [[ "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
-      printf " %s " "$1"
+  function imprimirSegundaFila() {
+    printf "${serieColores[$i]}%s" ""
+    if [[ "$(($1 - (array[$PROC_ESP, $i] + array[$PROC_LLE, $i])))" == "1" ]]; then
+      ejec="2"
     fi
+    for ((j = 0; j < ejec; j++)); do
+      printf "%s" "$espacios"
+    done
+    printf "$(fc)%s" ""
+  }
+
+  # Imprime la tercera fila
+  # ----------------------------------
+  function imprimirTerceraFila() {
+    printf "${serieColores_FG[$i]}%s" ""
+
+    printf "%-*s" "$(calcularLongitud "$espacios")" "$((array[$PROC_LLE, $i] + array[$PROC_ESP, $i]))"
+
+    for ((j = 2; j < ejec; j++)); do
+      printf "%s" "$espacios"
+    done
+
+    if [[ "$((array[$PROC_ESP, $i] + array[$PROC_LLE, $i]))" == "$1" ]]; then
+      printf "%s" "$espacios"
+    else
+      # Si el proceso está "Terminado"
+      if [[ "${array[$PROC_EST, $i]}" == "${estados[5]}" ]]; then
+        printf "%*s" "$(calcularLongitud "$espacios")" "$((array[$PROC_LLE, $i] + array[$PROC_RES, $i]))"
+        # Si el proceso está "Ejecutando"
+      elif [[ "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
+        printf "%*s" "$(calcularLongitud "$espacios")" "$1"
+      fi
+    fi
+
     printf "$(fc)%s" ""
   }
 
@@ -650,7 +684,12 @@ function imprimirLineaProcesos() {
   # ----------------------------------
   function imprimir() {
     local procesosAMostrar
+    local -a linea
+    local ejec
+    linea=()
     procesosAMostrar="0"
+    # local anchoTerm
+    # anchoTerm="$(tput cols)"
 
     for ((i = 1; i <= NUM_FIL; i++)); do
       if [[ "${array[$PROC_EST, $i]}" == "${estados[5]}" || "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
@@ -659,22 +698,24 @@ function imprimirLineaProcesos() {
     done
 
     if [[ "$procesosAMostrar" == "0" ]]; then
-      imprimirVacio
+      printf "%s" "$(imprimirVacio)"
     else
-      printf "\t\t\t\t"
       for ((i = 1; i <= NUM_FIL; i++)); do
         if [[ "${array[$PROC_EST, $i]}" == "${estados[5]}" || "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
-          imprimirLineas "$1"
+          ejec="$((array[$PROC_EJE, $i] - array[$PROC_EJE_RES, $i]))"
+          linea[0]+="$(imprimirPrimeraFila "$1")"
+          linea[1]+="$(imprimirSegundaFila "$1")"
+          linea[2]+="$(imprimirTerceraFila "$1")"
         fi
       done
+      printf "\t\t\t\t%s\n" "${linea[0]}"
+      printf "\t\t\t\t%s\n" "${linea[1]}"
+      printf "\t\t\t\t%s\n" "${linea[2]}"
     fi
-
-    printf "\n"
   }
 
   # Main de cuadro de memoria
   # ----------------------------------
-  asignarColores
   imprimir "$1"
 }
 
@@ -880,7 +921,15 @@ function cc() {
       ;;
     esac
   elif [[ "$3" == "fg" ]]; then
-    salida+="$(($(generarColor fg_negro) + 1 + $(($2 % 6))))m"
+    case "$2" in
+    blanco)
+      salida+="$(($(generarColor fg_negro) + 7))m"
+      ;;
+    *)
+      salida+="$(($(generarColor fg_negro) + 1 + $(($2 % 6))))m"
+      ;;
+    esac
+
   fi
 
   echo "$salida"
@@ -892,12 +941,29 @@ function fc() {
   echo "\033[0m"
 }
 
-# Devuelve la longitud del string
+# Devuelve la longitud del string, primero quitandole los patrones de colores.
 # @param String del que queremos calcular la longitud
 # ----------------------------------
 function calcularLongitud() {
-  local elementoArray # Elemento a ser centrado
+  local elementoArray # Elemento a ser calculado
   elementoArray=$1
+
+  # Quita los colores del string
+  function quitarColores() {
+    elementoArray="$(echo "$elementoArray" | sed -r 's/\x1B\[([0-9]{1,3}((;[0-9]{1,3})*)?)?[m|K]//g')"
+  }
+
+  quitarColores
+  echo ${#elementoArray}
+}
+
+# Devuelve la longitud del string, contando los patrones de colores.
+# @param String del que queremos calcular la longitud
+# ----------------------------------
+function calcularLongitudConColores() {
+  local elementoArray # Elemento a ser calculado
+  elementoArray=$1
+
   echo ${#elementoArray}
 }
 
@@ -1580,6 +1646,7 @@ function main() {
     clear
     centrarEnPantalla "$(imprimirCuadro "50" "acierto" "${gitSpam[@]}")" | sacarHaciaArchivo "$archivoSalida" -a
     centrarEnPantalla "$(imprimirCuadro "38" "default" "$spam")" | sacarHaciaArchivo "$archivoSalida" -a
+    printf "\n"
   }
   # ------------------------------------------------
 
@@ -1599,6 +1666,5 @@ function main() {
 
 main
 
-# TODO-> Añadir lineas auxiliares a la línea de CPU
 # TODO-> Añadir el truncado
 # TODO-> Ir donde lolo y que me diga que cambiar, y luego ezz
