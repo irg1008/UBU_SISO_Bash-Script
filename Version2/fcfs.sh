@@ -162,6 +162,20 @@ function elegirTipoDeEntrada() {
     exit 99
     ;;
   esac
+
+  colocarNombreAProcesos
+}
+
+# Funcion que pone los nombres a los procesos con el estándar pedido
+# ----------------------------------
+function colocarNombreAProcesos() {
+  for ((j = 1; j <= NUM_FIL; j++)); do
+    if [[ "$j" -lt "10" ]]; then
+      array[1, $j]="P0"${j}
+    else
+      array[1, $j]="P"${j}
+    fi
+  done
 }
 
 # Asigna valores en el array de forma manual
@@ -179,20 +193,12 @@ function asignarManual() {
     fi
   }
 
-  # Comprueba si la entrada pasada es un string valido
-  # ----------------------------------
-  function entradaEsStringValido() {
-    if [[ "$1" =~ [A-Za-z] ]]; then
-      echo "true"
-    fi
-  }
-
   # Imprime tabla limpia
   # ----------------------------------
   function comienzoPregunta() {
     clear
     centrarEnPantalla "$(imprimirCuadro "50" "blanco" "$2")"
-    centrarEnPantalla "$(imprimirTabla "$1" "4")"
+    centrarEnPantalla "$(imprimirTabla "$1" "4" "2")" # Imprimir tabla desde la col 2 a la 4
   }
 
   # Guarda el tamaño de la memoria
@@ -203,37 +209,9 @@ function asignarManual() {
     MEM_TAM=$(recibirEntrada)
 
     while [[ $(entradaEsEntero "$MEM_TAM" "1") != "true" ]]; do
-      centrarEnPantalla "$(imprimirCuadro "80" "error" "Valor de tamaño de memoria no válido, mayor que 0")"
+      centrarEnPantalla "$(imprimirCuadro "80" "error" "Valor de tamaño de memoria no válido, mayor o igual que 1")"
       MEM_TAM=$(recibirEntrada)
     done
-  }
-
-  # Guarda el nombre del proceso i
-  # ----------------------------------
-  function guardarNombreDelProceso() {
-    local nombre
-
-    comienzoPregunta "$1" "Nombre del proceso $1"
-    nombre=$(recibirEntrada)
-
-    # Comprueba si el nombre esta repetido
-    function estaRepetido() {
-      local nombreRepetido="false"
-      for ((i = 0; i < NUM_FIL; i++)); do
-        if [ "$nombre" == "${array[$PROC_NUM, $i]}" ]; then
-          nombreRepetido="true"
-        fi
-      done
-
-      echo "$nombreRepetido"
-    }
-
-    while [[ $(entradaEsStringValido "$nombre") != "true" ]] || [[ "$(estaRepetido)" == "true" ]]; do
-      centrarEnPantalla "$(imprimirCuadro "80" "error" "Nombre del proceso erróneo, al menos una letra y no repetido")"
-      nombre=$(recibirEntrada)
-    done
-
-    array[$PROC_NUM, $1]="$nombre"
   }
 
   # Guarda el tiempo de llegada del proceso i
@@ -244,8 +222,8 @@ function asignarManual() {
     comienzoPregunta "$1" "Llegada del proceso $1"
     llegada=$(recibirEntrada)
 
-    while [[ $(entradaEsEntero "$llegada" "0") != "true" ]]; do
-      centrarEnPantalla "$(imprimirCuadro "80" "error" "Valor de llegada del proceso no válido, entero 0 o mayor")"
+    while [[ $(entradaEsEntero "$llegada" "1") != "true" ]]; do
+      centrarEnPantalla "$(imprimirCuadro "80" "error" "Valor de llegada del proceso no válido, entero 1 o mayor")"
       llegada=$(recibirEntrada)
     done
 
@@ -276,14 +254,17 @@ function asignarManual() {
     comienzoPregunta "$1" "Tamaño del proceso $1 - (Memoria: $MEM_TAM)"
     tam=$(recibirEntrada)
 
-    while [[ $(entradaEsEntero "$tam" "1") != "true" ]]; do
-      centrarEnPantalla "$(imprimirCuadro "80" "error" "Valor de tiempo de tamaño no válido, entero mayor que 0")"
+    while [[ $(entradaEsEntero "$tam" "1") != "true" || "$tam" -gt "$MEM_TAM" ]]; do
+      if [[ "$tam" -gt "$MEM_TAM" ]]; then
+        centrarEnPantalla "$(imprimirCuadro "80" "error" "⚠ ¡El tamaño del proceso es mayor que la memoria! No podrá ejecutarse ⚠")"
+      else
+        centrarEnPantalla "$(imprimirCuadro "80" "error" "Valor de tiempo de tamaño no válido, entero mayor que 0")"
+      fi
       tam=$(recibirEntrada)
     done
 
     if [[ "$tam" -gt "$MEM_TAM" ]]; then
       centrarEnPantalla "$(imprimirCuadro "80" "advertencia" "⚠ ¡El tamaño del proceso es mayor que la memoria! No podrá ejecutarse ⚠")"
-      avanzarAlgoritmo
     fi
 
     array[$PROC_TAM, $1]="$tam"
@@ -311,10 +292,10 @@ function asignarManual() {
 
   # Main de la asignación manual
   # ----------------------------------
+  asignarSerieDeColores
   NUM_FIL="1"
   tamMemoria
   while [[ "$masProcesos" != "false" && "$NUM_FIL" -lt "100" ]]; do
-    guardarNombreDelProceso "$NUM_FIL"
     guardarLlegadaProceso "$NUM_FIL"
     guardarTiempoEjecucion "$NUM_FIL"
     guardarTamMemoria "$NUM_FIL"
@@ -344,12 +325,11 @@ function asignarDesdeArchivo() {
   # Separador para leer datos
   IFS=","
 
-  while read -r proceso llegada ejecucion tam; do
+  while read -r llegada ejecucion tam; do
 
     if [ "$i" == "-1" ]; then
-      MEM_TAM="$(cut -d "=" -f 2 <<<"$proceso")"
+      MEM_TAM="$(cut -d "=" -f 2 <<<"$llegada")"
     elif [[ "$i" -ge "1" && "$i" -lt "100" ]]; then
-      array[$PROC_NUM, $i]=$proceso
       array[$PROC_LLE, $i]=$llegada
       array[$PROC_EJE, $i]=$ejecucion
       array[$PROC_TAM, $i]=$tam
@@ -358,7 +338,6 @@ function asignarDesdeArchivo() {
   done <"$archivo"
 
   # Leemos ultima linea
-  array[$PROC_NUM, $i]=$proceso
   array[$PROC_LLE, $i]=$llegada
   array[$PROC_EJE, $i]=$ejecucion
   array[$PROC_TAM, $i]=$tam
@@ -388,22 +367,14 @@ function asignarValoresAleatorios() {
   NUM_FIL=$numValAleatorios
 
   # Solo ponemos aleatorios los 4 primeros atributos, que son los que meteria el usuario por teclado
-  for ((i = 1; i <= 4; i++)); do
+  for ((i = 2; i <= 4; i++)); do
     for ((j = 1; j <= NUM_FIL; j++)); do
       case "$i" in
-      1)
-        if [[ "$j" -lt "10" ]]; then
-          array[$i, $j]="P0"${j} # Nombre
-        else
-          array[$i, $j]="P"${j}
-        fi
-        ;;
       2)
         array[$i, $j]=$((RANDOM % 20)) # Llegada [0-20]
         ;;
       3)
         array[$i, $j]=$(((RANDOM % 20) + 1)) # Ejecucion
-
         ;;
       4)
         array[$i, $j]=$(((RANDOM % (MEM_TAM + 2)) + 1)) # Tamaño
@@ -723,7 +694,7 @@ function imprimirLineaProcesos() {
 # ----------------------------------
 function asignarDatosInicial() {
   for ((i = 1; i <= NUM_FIL; i++)); do
-    array[$PROC_EST, $i]="Fuera"
+    array[$PROC_EST, $i]="${estados[0]}"
     array[$PROC_EJE_RES, $i]="${array[$PROC_EJE, $i]}"
     array[$PROC_RES, $i]="-"
     array[$PROC_ESP, $i]="-"
@@ -1065,31 +1036,34 @@ function imprimirCuadro() {
 # Imprime una tabla según el tamaño del array de datos
 # @param numeroFilasImprimir
 # @param numeroColumnasImprimir
+# @param numeroDeColumnaDelQueEmpezamos
 # ----------------------------------
 function imprimirTabla() {
   local titulos
   local colorEncabezado
-  local -a coloresTabla
+  local colorBordes
+  local -a serieColoresTabla_FG
   local estiloTabla
-  local anchoCelda
+  local -A anchoCelda
   local filasImprimir
   local columnasImprimir
   local encTabla
-  local interTabla
   local pieTabla
+  local numColComienzo
 
   # Asigna el titulo de la tabla
   # ----------------------------------
-  function asignarTitulosYNumCol() {
-    titulos=("Proceso" "Llegada" "Ejecución" "Tamaño" "Estado" "Respuesta" "Espera" "Restante")
+  function asignarTitulos() {
+    titulos=("Ref" "Tll" "Tej" "Mem" "Estado" "Tret" "Tesp" "Trej")
   }
 
-  # Guarda los colores aleatorio de la tabla
+  # Guarda los colores de la tabla
   # ----------------------------------
   function guardarColoresDeTabla() {
-    colorEncabezado=$(cc Neg default)
+    colorEncabezado=$(cc Sub blanco fg)
+    colorBordes=$(cc Neg blanco fg)
     for ((i = 1; i <= NUM_FIL; i++)); do
-      coloresTabla[$i]=$(cc Neg "$((i + 4))")
+      serieColoresTabla_FG[$i]=$(cc Nor "$((i + 4))" "fg")
     done
   }
 
@@ -1098,11 +1072,13 @@ function imprimirTabla() {
   function imprimirTitulos() {
     local longitudArray # Para centrar en la tabla
 
-    for ((i = 0; i < columnasImprimir; i++)); do
-      longitudArray=$(calcularLongitud "${titulos[$i]}")
-      printf "${estiloTabla[10]}%-*s" "$((anchoCelda / 2 - longitudArray / 2))" ""
-      printf "%s" "${titulos[$i]}" ""
-      printf "%*s" "$((anchoCelda / 2 - (longitudArray + 1) / 2))" ""
+    for ((i = numColComienzo; i <= columnasImprimir; i++)); do
+      longitudArray=$(calcularLongitud "${titulos[$((i - 1))]}")
+      printf "${estiloTabla[10]}%-*s" "$((anchoCelda[$i] / 2 - longitudArray / 2))" ""
+      printf "$colorEncabezado%s" ""
+      printf "%s" "${titulos[$((i - 1))]}" ""
+      printf "$(fc)%s" ""
+      printf "%*s" "$((anchoCelda[$i] / 2 - (longitudArray + 1) / 2))" ""
     done
 
     printf "${estiloTabla[10]}%s" ""
@@ -1115,58 +1091,73 @@ function imprimirTabla() {
     local longitudElemento
     filasImprimir="$1"
     columnasImprimir="$2"
-    anchoCelda="1" # 1 es la mínima posible, se ajustará al tamaño mayor que haya en la tabla, no se hará truncado porque es cuestión del usuario insertar datos viables
+    numColComienzo="$3"
 
-    if [ "$filasImprimir" -gt "$NUM_FIL" ]; then
-      filasImprimir="$NUM_FIL"
-    fi
+    # Comprueba que las entradas estén corectas
+    # ----------------------------------
+    function comprobaciones() {
+      if [ "$filasImprimir" -gt "$NUM_FIL" ]; then
+        filasImprimir="$NUM_FIL"
+      fi
+      if [ "$columnasImprimir" -gt "$NUM_COL" ]; then
+        columnasImprimir="$NUM_COL"
+      fi
+      if [[ "$numColComienzo" == "" || "$numColComienzo" -gt "$columnasImprimir" ]]; then
+        numColComienzo="1"
+      fi
+    }
 
-    if [ "$columnasImprimir" -gt "$NUM_COL" ]; then
-      columnasImprimir="$NUM_COL"
-    fi
+    # Calcula el ancho según la columna.
+    # ----------------------------------
+    function calcularAnchoSegunColumna() {
+      for ((i = numColComienzo; i <= columnasImprimir; i++)); do
+        anchoCelda[$i]="1"
+        for ((j = 0; j <= filasImprimir; j++)); do
+          if [[ "$j" == "0" ]]; then
+            longitudElemento=$(calcularLongitud "${titulos[$((i - 1))]}")
+          else
+            longitudElemento=$(calcularLongitud "${array[$i, $j]}")
+          fi
 
-    for ((i = 1; i <= columnasImprimir; i++)); do
-      for ((j = 0; j <= filasImprimir; j++)); do
-        if [[ "$j" == "0" ]]; then
-          longitudElemento=$(calcularLongitud "${titulos[$i]}")
+          if [[ "${anchoCelda[$i]}" -lt "$longitudElemento" ]]; then
+            anchoCelda[$i]="$longitudElemento"
+          fi
+        done
+        if [[ "$((anchoCelda[$i] % 2))" == "1" ]]; then
+          anchoCelda[$i]=$((anchoCelda[$i] + 3))
         else
-          longitudElemento=$(calcularLongitud "${array[$i, $j]}")
-        fi
-        if [[ "$anchoCelda" -lt "$longitudElemento" ]]; then
-          anchoCelda="$longitudElemento"
+          anchoCelda[$i]=$((anchoCelda[$i] + 4))
         fi
       done
-    done
+    }
 
-    if [ "$((anchoCelda % 2))" == "1" ]; then
-      ((anchoCelda++))
-    fi
+    comprobaciones
+    calcularAnchoSegunColumna
   }
 
   # Asigna un estilo a la tabla, de doble linea, linea basica,
   # esquinas redondeadas, etc...
   # ----------------------------------
   function asignarEstiloDeTabla() {
-    local simboloHorizontal
+    local -a simboloHorizontal
 
     estiloTabla=("${estiloGeneral[@]}")
 
-    for ((i = 1; i <= anchoCelda; i++)); do
-      simboloHorizontal+=${estiloTabla[0]}
+    for ((j = numColComienzo; j <= columnasImprimir; j++)); do
+      for ((i = 0; i < anchoCelda[$j]; i++)); do
+        simboloHorizontal[$j]+=${estiloTabla[0]}
+      done
     done
 
-    encTabla=${estiloTabla[1]}$simboloHorizontal
-    interTabla=${estiloTabla[2]}$simboloHorizontal
-    pieTabla=${estiloTabla[3]}$simboloHorizontal
+    encTabla=${estiloTabla[1]}${simboloHorizontal[$numColComienzo]}
+    pieTabla=${estiloTabla[3]}${simboloHorizontal[$numColComienzo]}
 
-    for ((i = 1; i < columnasImprimir; i++)); do
-      encTabla+=${estiloTabla[4]}$simboloHorizontal
-      interTabla+=${estiloTabla[5]}$simboloHorizontal
-      pieTabla+=${estiloTabla[6]}$simboloHorizontal
+    for ((i = ((numColComienzo + 1)); i <= columnasImprimir; i++)); do
+      encTabla+=${estiloTabla[4]}${simboloHorizontal[$i]}
+      pieTabla+=${estiloTabla[6]}${simboloHorizontal[$i]}
     done
 
     encTabla+=${estiloTabla[7]}
-    interTabla+=${estiloTabla[8]}
     pieTabla+=${estiloTabla[9]}
   }
 
@@ -1176,37 +1167,29 @@ function imprimirTabla() {
     local longitudArray
 
     # Encabezado
-    printf "$colorEncabezado%s" ""
+    printf "$colorBordes%s" ""
     printf "%s" "$encTabla"
     printf "$(fc)\n%s" ""
 
     # Fila de titulos
-    printf "$colorEncabezado%s" ""
-    printf "%s" ""
     imprimirTitulos
-    printf "$(fc)\n%s" ""
+    printf "\n%s" ""
 
+    # Fila de datos
     for ((k = 1; k <= filasImprimir; k++)); do
-      # Fila de datos
-      printf "${coloresTabla[$k]}%s" ""
-
-      # Interlinea -> Descomentar esto para dibujarla en la tala, se hace muy grande
-      #printf "%s" "$interTabla"
-      #printf "$(fc)\n%s" ""
-
-      printf "${coloresTabla[$k]}%s" ""
-      for ((j = 1; j <= columnasImprimir; j++)); do
+      for ((j = numColComienzo; j <= columnasImprimir; j++)); do
         # Celda
         longitudArray=$(calcularLongitud "${array[$j, $k]}")
-        printf "${estiloTabla[10]}%-*s" "$((anchoCelda / 2 - longitudArray / 2))" ""
+        printf "${estiloTabla[10]}%-*s" "$((anchoCelda[$j] / 2 - longitudArray / 2))" ""
+        printf "${serieColoresTabla_FG[$k]}%s" ""
         printf "%s" "${array[$j, $k]}" ""
-        printf "%*s" "$((anchoCelda / 2 - (longitudArray + 1) / 2))" ""
+        printf "$(fc)%s" ""
+        printf "%*s" "$((anchoCelda[$j] / 2 - (longitudArray + 1) / 2))" ""
       done
-      printf "${estiloTabla[10]}%s" ""
-      printf "$(fc)\n%s" ""
+      printf "${estiloTabla[10]}%s\n" ""
       if [ "$k" == "$filasImprimir" ]; then
         # Fila de pie
-        printf "${coloresTabla[$k]}%s" ""
+        printf "$colorBordes%s" ""
         printf "%s" "$pieTabla"
         printf "$(fc)\n%s" ""
       fi
@@ -1215,9 +1198,9 @@ function imprimirTabla() {
 
   # Main de impresion
   # ----------------------------------
-  asignarTitulosYNumCol
+  asignarTitulos
   guardarColoresDeTabla
-  asignarAnchoYFilasYColumnas "$1" "$2"
+  asignarAnchoYFilasYColumnas "$1" "$2" "$3"
   asignarEstiloDeTabla
   imprimir
 }
@@ -1384,7 +1367,7 @@ function main() {
   # Ejecuta Algoritmo
   # ------------------------------------------------
   function algoritmo() {
-    local -a estados=("Fuera" "En Espera" "En Memoria" "Bloqueado" "Ejecutando" "Terminado")
+    local -a estados=("Fuera del Sistema" "En Espera" "En Memoria" "Bloqueado" "En Ejecución" "Finalizado")
     local -a procesosEnMemoria
     local stringVacio
     local -A arrayCopia
@@ -1394,7 +1377,6 @@ function main() {
     local -a serieColores_FG
     local colorVacio
     acabarAlgoritmo="false"
-    instante="0"
     stringVacio="null"
 
     # Imprime una cabecera muy simple
@@ -1406,7 +1388,7 @@ function main() {
     # Calcula los siguientes datos a mostrar
     # ----------------------------------
     function algCalcularSigIns() {
-      centrarEnPantalla "$(imprimirCuadro "100" "3" "Instante $instante - Memoria usada: $MEM_USE/$MEM_TAM")"
+      centrarEnPantalla "$(printf "$(cc Neg 5 fg)%s$(fc)" "t=$instante - Memoria usada: $MEM_USE/$MEM_TAM")"
     }
 
     # Calcula los tiempos medios de respuesta y espera
@@ -1441,7 +1423,7 @@ function main() {
         printf "%.2f" "$((mediaEspera / NUM_FIL))e-2"
       }
 
-      centrarEnPantalla "$(imprimirCuadro "100" "3" "Tiempo Medio de Respuesta: $(sacarMediaRespuesta) - Tiempo Medio de Espera: $(sacarMediaEspera)")"
+      centrarEnPantalla "$(printf "$(cc Neg 4 fg)%s$(fc)" "Tiempo Medio de Retorno: $(sacarMediaRespuesta) - Tiempo Medio de Espera: $(sacarMediaEspera)")"
     }
 
     # Funcion que calcula el tiempo y estado de todos los proceos en cada instante,
@@ -1465,21 +1447,20 @@ function main() {
     # Imprime el dibujo de la tabla
     # ----------------------------------
     function algImprimirTabla() {
-      centrarEnPantalla "$(imprimirCuadro "100" "default" "TABLA DE PROCESOS")"
       centrarEnPantalla "$(imprimirTabla "$NUM_FIL" "10")"
     }
 
     # Imprime la linea de tiempo
     # ----------------------------------
     function algImprimirLineaTiempo() {
-      centrarEnPantalla "$(imprimirCuadro "100" "default" "LINEA DE TIEMPO")"
+      centrarEnPantalla "BT"
       imprimirLineaProcesos "$instante"
     }
 
     # Imprime el dibujo de la memoria
     # ----------------------------------
     function algImprimirMemoria() {
-      centrarEnPantalla "$(imprimirCuadro "100" "default" "USO DE MEMORIA")"
+      centrarEnPantalla "BM"
       imprimirMemoria
     }
 
@@ -1549,6 +1530,7 @@ function main() {
     # Main de las llamadas de la parte de calculo de algoritmo
     # ----------------------------------
     clear
+    instante="0"
     ordenarArray
     asignarDatosInicial
     algAsignarMemoriaInicial
@@ -1560,12 +1542,11 @@ function main() {
       algCalcularDatos
 
       # Si pasa algo importante lo mostramos en pantalla y/o sacamos por archivo
-      if [[ "$(algoImportantePasa)" == "true" ]]; then
+      if [[ "$(algoImportantePasa)" == "true" || "$instante" == "0" ]]; then
         calcularCambiosMemoria
         if [[ "$acabarAlgoritmo" == "true" ]]; then
           algCuerpoAlgoritmo >>"$archivoSalida"
         else
-          algCabecera
           algCuerpoAlgoritmo | sacarHaciaArchivo "$archivoSalida" -a
           algAvanzarAlgoritmo
         fi
@@ -1666,5 +1647,8 @@ function main() {
 
 main
 
-# TODO-> Añadir el truncado
-# TODO-> Ir donde lolo y que me diga que cambiar, y luego ezz
+# TODO: Añadir el truncado
+
+# Lolo
+#
+# TODO: Poner un ancho distinto a cada columna de la tabla
