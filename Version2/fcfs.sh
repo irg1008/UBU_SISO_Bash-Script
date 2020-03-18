@@ -370,14 +370,11 @@ function asignarValoresAleatorios() {
   for ((i = 2; i <= 4; i++)); do
     for ((j = 1; j <= NUM_FIL; j++)); do
       case "$i" in
-      2)
-        array[$i, $j]=$((RANDOM % 20)) # Llegada [0-20]
-        ;;
-      3)
-        array[$i, $j]=$(((RANDOM % 20) + 1)) # Ejecucion
-        ;;
       4)
         array[$i, $j]=$(((RANDOM % (MEM_TAM + 2)) + 1)) # Tamaño
+        ;;
+      *)
+        array[$i, $j]=$(((RANDOM % 20) + 1))
         ;;
       esac
     done
@@ -548,10 +545,7 @@ function imprimirMemoria() {
     for ((pos = 0; pos < MEM_TAM; pos++)); do
       if [[ "${procesosEnMemoria[$pos]}" != "${procesosEnMemoria[$((pos + 1))]}" ]]; then
         idProceso="${procesosEnMemoria[$pos]}"
-        printf "${serieColores_FG[$idProceso]}%*s$(fc)" "$(calcularLongitud "$espacios")" "$((pos + 0))" # Cambiar por pos + 1 si se quiere empezar por la posición 1
-      elif [[ "$pos" == "0" ]]; then
-        idProceso="${procesosEnMemoria[$pos]}"
-        printf "${serieColores_FG[$idProceso]}%-*s$(fc)" "$(calcularLongitud "$espacios")" "$((pos + 0))"
+        printf "${serieColores_FG[$idProceso]}%-*s$(fc)" "$(calcularLongitud "$espacios")" "$((pos + 0))" # Cambiar por pos + 1 si se quiere empezar por la posición 1
       else
         printf "%s" "$espacios"
       fi
@@ -577,9 +571,10 @@ function imprimirMemoria() {
     # anchoConColores="$(calcularLongitudConColores "${mem[1]}")"
 
     # printf "\t\t\t\t%s $anchoSinColores - $anchoConColores \n" ""
-    printf "\t\t\t\t%s\n" "${mem[1]}"
-    printf "\t\t\t\t%s\n" "${mem[2]}"
-    printf "\t\t\t\t%s\n" "${mem[3]}"
+    printf "\n"
+    printf "\t\t\t\t%s%s\n" "    " "${mem[1]}"
+    printf "\t\t\t\t$(cc Neg blanco fg)%s$(fc)%s\n" " BM " "${mem[2]}"
+    printf "\t\t\t\t%s%s\n" "    " "${mem[3]}"
   }
 
   # Main de cuadro de memoria
@@ -634,20 +629,14 @@ function imprimirLineaProcesos() {
     else
       # Si el proceso está "Terminado"
       if [[ "${array[$PROC_EST, $i]}" == "${estados[5]}" ]]; then
-        printf "%*s" "$(calcularLongitud "$espacios")" "$((array[$PROC_LLE, $i] + array[$PROC_RES, $i]))"
+        printf "%-*s" "$(calcularLongitud "$espacios")" "$((array[$PROC_LLE, $i] + array[$PROC_RES, $i]))"
         # Si el proceso está "Ejecutando"
       elif [[ "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
-        printf "%*s" "$(calcularLongitud "$espacios")" "$1"
+        printf "%-*s" "$(calcularLongitud "$espacios")" "$1"
       fi
     fi
 
     printf "$(fc)%s" ""
-  }
-
-  # Imprimir si no hay procesos en la linea
-  # ----------------------------------
-  function imprimirVacio() {
-    centrarEnPantalla "$(imprimirCuadro "100" "advertencia" "⚠ No hay procesos ejecutando o ya terminados ⚠")"
   }
 
   # Imprime la linea de procesos en la CPU
@@ -669,7 +658,9 @@ function imprimirLineaProcesos() {
     done
 
     if [[ "$procesosAMostrar" == "0" ]]; then
-      printf "%s" "$(imprimirVacio)"
+      printf "\n\t\t\t\t%s\n" "    "
+      printf "\t\t\t\t$(cc Neg blanco fg)%s$(fc)\n" " BT "
+      printf "\t\t\t\t%s%s\n" "    " "0"
     else
       for ((i = 1; i <= NUM_FIL; i++)); do
         if [[ "${array[$PROC_EST, $i]}" == "${estados[5]}" || "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
@@ -679,10 +670,11 @@ function imprimirLineaProcesos() {
           linea[2]+="$(imprimirTerceraFila "$1")"
         fi
       done
-      printf "\t\t\t\t%s\n" "${linea[0]}"
-      printf "\t\t\t\t%s\n" "${linea[1]}"
-      printf "\t\t\t\t%s\n" "${linea[2]}"
+      printf "\n\t\t\t\t%s%s\n" "    " "${linea[0]}"
+      printf "\t\t\t\t$(cc Neg blanco fg)%s$(fc)%s\n" " BT " "${linea[1]}"
+      printf "\t\t\t\t%s%s\n" "    " "${linea[2]}"
     fi
+    printf "\n"
   }
 
   # Main de cuadro de memoria
@@ -1388,7 +1380,7 @@ function main() {
     # Calcula los siguientes datos a mostrar
     # ----------------------------------
     function algCalcularSigIns() {
-      centrarEnPantalla "$(printf "$(cc Neg 5 fg)%s$(fc)" "t=$instante - Memoria usada: $MEM_USE/$MEM_TAM")"
+      centrarEnPantalla "$(printf "$(cc Neg 3)%s$(fc)" "t=$instante - Memoria usada: $MEM_USE/$MEM_TAM")"
     }
 
     # Calcula los tiempos medios de respuesta y espera
@@ -1423,7 +1415,7 @@ function main() {
         printf "%.2f" "$((mediaEspera / NUM_FIL))e-2"
       }
 
-      centrarEnPantalla "$(printf "$(cc Neg 4 fg)%s$(fc)" "Tiempo Medio de Retorno: $(sacarMediaRespuesta) - Tiempo Medio de Espera: $(sacarMediaEspera)")"
+      centrarEnPantalla "$(printf "$(cc Neg 3)%s$(fc)" "Tiempo Medio de Retorno: $(sacarMediaRespuesta) - Tiempo Medio de Espera: $(sacarMediaEspera)")"
     }
 
     # Funcion que calcula el tiempo y estado de todos los proceos en cada instante,
@@ -1448,20 +1440,6 @@ function main() {
     # ----------------------------------
     function algImprimirTabla() {
       centrarEnPantalla "$(imprimirTabla "$NUM_FIL" "10")"
-    }
-
-    # Imprime la linea de tiempo
-    # ----------------------------------
-    function algImprimirLineaTiempo() {
-      centrarEnPantalla "BT"
-      imprimirLineaProcesos "$instante"
-    }
-
-    # Imprime el dibujo de la memoria
-    # ----------------------------------
-    function algImprimirMemoria() {
-      centrarEnPantalla "BM"
-      imprimirMemoria
     }
 
     # Funcion para avanzar el algoritmo o terminarlo
@@ -1513,8 +1491,8 @@ function main() {
       algCalcularSigIns
       algImprimirTabla
       algTiemposMedios
-      algImprimirMemoria
-      algImprimirLineaTiempo
+      imprimirMemoria
+      imprimirLineaProcesos "$instante"
     }
 
     # Asigna los colores que llevaran los procesos y todas las lineas en las que esten presentados
@@ -1651,4 +1629,4 @@ main
 
 # Lolo
 #
-# TODO: Poner un ancho distinto a cada columna de la tabla
+# TODO:
