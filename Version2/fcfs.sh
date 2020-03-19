@@ -107,6 +107,43 @@ function recibirEntrada() {
   echo "$REPLY"
 }
 
+# Funcion que elimina las lineas de datos no validas.
+# Estas son las que tienen procesos cuyo tamaño es mayor a la memoria.
+# ----------------------------------
+function eliminarProcesosNoValidos() {
+
+  # Funcion que mueve la fila completa por la siguiente
+  # ----------------------------------
+  function eliminarFila() {
+    for ((fil = "$1"; fil < NUM_FIL; fil++)); do
+      for ((col = 1; col <= NUM_COL; col++)); do
+        array[$col, $fil]="${array[$col, $((fil + 1))]}"
+      done
+    done
+    ((NUM_FIL--))
+  }
+
+  # Imprime el mensaje con el dato pasado
+  # ----------------------------------
+  function mensaje() {
+    printf "La fila de datos %s no ha podido añadirse porque
+    el tamaño del proceso supera al tamaño de la memoria" "$1"
+  }
+
+  # Ejecuta el algoritmo burbuja
+  # ----------------------------------
+  function eliminarNoValido() {
+    for ((i = 1; i <= NUM_FIL; i++)); do
+      if [ "${array[$PROC_TAM, $i]}" -gt "$MEM_TAM" ]; then
+        eliminarFila "$i"
+        centrarEnPantalla "$(imprimirCuadro "70" "advertencia" "$(mensaje "$i")")" >>"$archivoSalida"
+      fi
+    done
+  }
+
+  eliminarNoValido
+}
+
 # Funcion para elegir el tipo de entrada de datos
 # @param archivo externo para la opcion de archivo
 # ----------------------------------
@@ -122,7 +159,7 @@ function elegirTipoDeEntrada() {
   )
 
   centrarEnPantalla "$(imprimirCuadro "50" "default" "MENÚ PRINCIPAL")" | sacarHaciaArchivo "$archivoSalida" -a
-  centrarEnPantalla "$(imprimirCuadro "50" "0" "${opcionesEntrada[@]}")" | sacarHaciaArchivo "$archivoSalida" -a
+  centrarEnPantalla "$(imprimirCuadro "50" "default" "${opcionesEntrada[@]}")" | sacarHaciaArchivo "$archivoSalida" -a
   tipo=$(recibirEntrada)
 
   while [[ ! "$tipo" =~ ^[0-4]$ ]]; do
@@ -137,18 +174,33 @@ function elegirTipoDeEntrada() {
     centrarEnPantalla "$(imprimirCuadro "50" "blanco" "Asignación de datos $1")" >>"$archivoSalida"
   }
 
+  # Funcion que vuelca los datos nuevos al archivo para su posterior reutilización
+  # @param Archivo
+  # ----------------------------------
+  function volcarDatosHaciaArchivo() {
+    printf "Memoria=%s" "$MEM_TAM" >"$1"
+    printf "\nLlegada,Ejecución,Tamaño" >>"$1"
+    for ((i = 1; i <= NUM_FIL; i++)); do
+      printf "\n%s,%s,%s" "${array[2, $i]}" "${array[3, $i]}" "${array[4, $i]}" >>"$1"
+    done
+
+  }
+
   case "$tipo" in
   1)
     guardaTipoEnArchivo "manual"
     asignarManual
+    volcarDatosHaciaArchivo "$1"
     ;;
   2)
     guardaTipoEnArchivo "automática desde archivo"
     asignarDesdeArchivo "$1"
+    eliminarProcesosNoValidos
     ;;
   3)
     guardaTipoEnArchivo "aleatoria"
     asignarValoresAleatorios
+    volcarDatosHaciaArchivo "$1"
     ;;
   4)
     imprimirAyuda
@@ -197,8 +249,8 @@ function asignarManual() {
   # ----------------------------------
   function comienzoPregunta() {
     clear
-    centrarEnPantalla "$(imprimirCuadro "50" "blanco" "$2")"
-    centrarEnPantalla "$(imprimirTabla "$1" "4" "2")" # Imprimir tabla desde la col 2 a la 4
+    centrarEnPantalla "$(imprimirCuadro "50" "blanco" "$2")" | sacarHaciaArchivo "$archivoSalida" -a
+    centrarEnPantalla "$(imprimirTabla "$1" "4" "2")" | sacarHaciaArchivo "$archivoSalida" -a # Imprimir tabla desde la col 2 a la 4 
   }
 
   # Guarda el tamaño de la memoria
@@ -371,7 +423,7 @@ function asignarValoresAleatorios() {
     for ((j = 1; j <= NUM_FIL; j++)); do
       case "$i" in
       4)
-        array[$i, $j]=$(((RANDOM % (MEM_TAM + 2)) + 1)) # Tamaño
+        array[$i, $j]=$(((RANDOM % MEM_TAM) + 1)) # Tamaño
         ;;
       *)
         array[$i, $j]=$(((RANDOM % 20) + 1))
@@ -390,7 +442,7 @@ function imprimirAyuda() {
     "Algoritmo FCFS según necesidades memoria no reubicable memoria no continua"
     " "
     "Este algoritmo funciona introduciendo los procesos en CPU según el orden de llegada de los mismos."
-    "Se ejecutarán los procesos siempre que entren en memoria, en caso contrario quedarán bloqueados"
+    "Se ejecutarán los procesos siempre que entren en memoria, en caso contrario no serán planteados."
   )
   ayuda=(
     "Puedes introducir los datos de tres formas:"
@@ -402,8 +454,8 @@ function imprimirAyuda() {
 
   clear
   centrarEnPantalla "$(imprimirCuadro "50" "default" "AYUDA")" | sacarHaciaArchivo "$archivoSalida" -a
-  centrarEnPantalla "$(imprimirCuadro "150" "random" "${funciona[@]}")" | sacarHaciaArchivo "$archivoSalida" -a
-  centrarEnPantalla "$(imprimirCuadro "150" "random" "${ayuda[@]}")" | sacarHaciaArchivo "$archivoSalida" -a
+  centrarEnPantalla "$(imprimirCuadro "120" "7" "${funciona[@]}")" | sacarHaciaArchivo "$archivoSalida" -a
+  centrarEnPantalla "$(imprimirCuadro "120" "advertencia" "${ayuda[@]}")" | sacarHaciaArchivo "$archivoSalida" -a
   read -r -p "$(centrarEnPantalla "$(imprimirCuadro "35" "default" "Pulsa intro para volver al menú")")"
   clear
   elegirTipoDeEntrada "$archivoEntrada"
@@ -687,7 +739,7 @@ function imprimirLineaProcesos() {
 function asignarDatosInicial() {
   for ((i = 1; i <= NUM_FIL; i++)); do
     array[$PROC_EST, $i]="${estados[0]}"
-    array[$PROC_EJE_RES, $i]="${array[$PROC_EJE, $i]}"
+    array[$PROC_EJE_RES, $i]="-"
     array[$PROC_RES, $i]="-"
     array[$PROC_ESP, $i]="-"
   done
@@ -727,8 +779,11 @@ function asignarEstadosSegunInstante() {
 
     # En Espera
     if [[ "${array[$PROC_EST, $i]}" == "${estados[1]}" ]]; then
-      # Si ningun proceso anterior esta en espera, ejecutamos
+      array[$PROC_EJE_RES, $i]="${array[$PROC_EJE, $i]}"
+      array[$PROC_ESP, $i]="0"
+      array[$PROC_RES, $i]="0"
 
+      # Si ningun proceso anterior esta en espera, ejecutamos
       for ((cola = 1; cola < i; cola++)); do
         if [[ "${array[$PROC_EST, $cola]}" == "${estados[1]}" ]]; then
           ningunProcesoEnCola="false"
@@ -760,9 +815,9 @@ function asignarEstadosSegunInstante() {
 
     # Ejecutando
     if [[ "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
+      array[$PROC_RES, $i]="$((instante - array[$PROC_LLE, $i]))" # Que coincide con el tiempo de ejcución por ser FCFS
       if [[ "${array[$PROC_EJE_RES, $i]}" == "0" ]]; then
         array[$PROC_EST, $i]="${estados[5]}"
-        array[$PROC_RES, $i]="$((instante - array[$PROC_LLE, $i]))" # Que coincide con el tiempo de ejcución por ser FCFS
       fi
     fi
 
@@ -931,8 +986,10 @@ function calcularLongitudConColores() {
 }
 
 # Imprime la introduccion del programa
-# @param Array del contenido del cuadro
 # @param Ancho del cuadro
+# @param Color
+# @param Array del contenido del cuadro
+# @param Tipo de texto
 # ----------------------------------
 function imprimirCuadro() {
   local estilo
@@ -1305,7 +1362,7 @@ function main() {
     # ------------------------------------------------
     function asignarConfigs() {
       configFile=$(dirname "$0")
-      configFile+="/config.toml"
+      configFile+="/Config/config.toml"
       introduccion=$(extraerDeConfig "introduccion")
       error=$(extraerDeConfig "error")
       acierto=$(extraerDeConfig "acierto")
@@ -1339,7 +1396,7 @@ function main() {
   # ------------------------------------------------
   function introduccion() {
     # Imprime introducción
-    centrarEnPantalla "$(imprimirCuadro "50" "0" "$introduccion")" | sacarHaciaArchivo "$archivoSalida"
+    centrarEnPantalla "$(imprimirCuadro "50" "default" "$introduccion")" | sacarHaciaArchivo "$archivoSalida"
     # Imprime mensaje error
     centrarEnPantalla "$(imprimirCuadro "100" "error" "$error")"
     # Imprime mensaje advertencia
@@ -1513,7 +1570,7 @@ function main() {
     asignarDatosInicial
     algAsignarMemoriaInicial
     algAsignarSerieDeColores
-    algCabecera >>"$archivoSalida"
+    algCabecera | sacarHaciaArchivo "$archivoSalida" -a
 
     while [[ $(procesosHanTerminado) != "true" ]]; do
       copiarArray
