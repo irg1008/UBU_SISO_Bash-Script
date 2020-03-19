@@ -101,7 +101,7 @@ function extraerDeConfig() {
 # ----------------------------------
 function recibirEntrada() {
   local mensaje
-  mensaje="$(printf "\n$(cc Neg 3)%15s$(fc)" "Respuesta:")"
+  mensaje="$(printf "\n$(cc Neg blanco)%15s$(fc)" "Respuesta: ")"
 
   read -r -p "$mensaje "
   echo "$REPLY"
@@ -676,7 +676,7 @@ function imprimirLineaProcesos() {
   # Imprime la primera fila
   # ----------------------------------
   function imprimirPrimeraFila() {
-    for ((pos = 0; pos < $instante; pos++)); do
+    for ((pos = 0; pos < instante; pos++)); do
       if [[ "${procesosEnCPU[$pos]}" == "" ]]; then
         printf "%s" "$espacios"
       else
@@ -703,7 +703,7 @@ function imprimirLineaProcesos() {
   # Imprime la segunda fila
   # ----------------------------------
   function imprimirSegundaFila() {
-    for ((pos = 0; pos < "$instante"; pos++)); do
+    for ((pos = 0; pos < instante; pos++)); do
       if [[ "${procesosEnCPU[$pos]}" == "" ]]; then
         printf "$colorVacio%s$(fc)" "$espacios"
       else
@@ -717,7 +717,7 @@ function imprimirLineaProcesos() {
   # Imprime la tercera fila
   # ----------------------------------
   function imprimirTerceraFila() {
-    for ((pos = 0; pos < $instante; pos++)); do
+    for ((pos = 0; pos < instante; pos++)); do
       if [[ "${procesosEnCPU[$pos]}" != "${procesosEnCPU[$((pos - 1))]}" && "$pos" != "0" ]]; then
         idProceso="${procesosEnCPU[$pos]}"
         printf "${serieColores_FG[$idProceso]}%-*s$(fc)" "$(calcularLongitud "$espacios")" "$pos"
@@ -770,7 +770,7 @@ function asignarDatosInicial() {
 }
 
 # Función que calcula la memoria restante
-# ------------------------------------------------
+# ----------------------------------
 function calcularMemoriaRestante() {
   MEM_USE="0"
 
@@ -1279,11 +1279,11 @@ function imprimirTabla() {
 }
 
 # Ordena el array según tiempo de llegada para mostrar la tabla
-# ------------------------------------------------
+# ----------------------------------
 function ordenarArray() {
 
   # Funcion que mueve la fila completa por la siguiente
-  # ------------------------------------------------
+  # ----------------------------------
   function moverFilaCompleta() {
     local temp
 
@@ -1295,7 +1295,7 @@ function ordenarArray() {
   }
 
   # Ejecuta el algoritmo burbuja
-  # ------------------------------------------------
+  # ----------------------------------
   function burbuja() {
     local tempOrigen
     local tempDestino
@@ -1383,7 +1383,7 @@ function main() {
   function asignaciones() {
 
     # Asigna las variables extraidas del archivo de ocnfiguración
-    # ------------------------------------------------
+    # ----------------------------------
     function asignarConfigs() {
       configFile=$(dirname "$0")
       configFile+="/Config/config.toml"
@@ -1396,7 +1396,7 @@ function main() {
     }
 
     # Asigna el numero de cada columna para asignarlo en las diferentes funciones
-    # ------------------------------------------------
+    # ----------------------------------
     function asignarPosicionYNumColumnas() {
       PROC_NUM="1"
       PROC_LLE="2"
@@ -1463,7 +1463,7 @@ function main() {
     # Calcula los siguientes datos a mostrar
     # ----------------------------------
     function algCalcularSigIns() {
-      centrarEnPantalla "$(printf "$(cc Neg 3)%s$(fc)" "t=$instante - Memoria usada: $MEM_USE/$MEM_TAM")"
+      centrarEnPantalla "$(printf "$(cc Neg 3) %s $(fc)" "t=$instante - Memoria usada: $MEM_USE/$MEM_TAM")"
     }
 
     # Calcula los tiempos medios de respuesta y espera
@@ -1498,7 +1498,7 @@ function main() {
         printf "%.2f" "$((mediaEspera / NUM_FIL))e-2"
       }
 
-      centrarEnPantalla "$(printf "$(cc Neg 3)%s$(fc)" "Tiempo Medio de Retorno: $(sacarMediaRespuesta) - Tiempo Medio de Espera: $(sacarMediaEspera)")"
+      centrarEnPantalla "$(printf "$(cc Neg 3) %s $(fc)" "Tiempo Medio de Retorno: $(sacarMediaRespuesta) - Tiempo Medio de Espera: $(sacarMediaEspera)")"
     }
 
     # Funcion que calcula el tiempo y estado de todos los proceos en cada instante,
@@ -1621,20 +1621,64 @@ function main() {
   # Pregunta al usuario si quiere salir del programa
   # ------------------------------------------------
   function preguntarSiQuiereInforme() {
-    local temp
 
-    clear
-    centrarEnPantalla "$(imprimirCuadro "50" "default" "¿Quieres ver el informe? [S/N]")"
-    temp=$(recibirEntrada)
+    # Funcion que saca el menu de salida
+    # ----------------------------------
+    function menuInforme() {
+      local tipo
+      local opcionesEntrada
+      opcionesEntrada=(
+        "1.- Informe en color"
+        "2.- Informe en blanco y negro"
+        "0.- Salir sin sacar informe"
+      )
 
-    while [[ ! "$temp" =~ ^([sS][iI]|[sS]|[nN][oO]|[nN])$ ]]; do
-      centrarEnPantalla "$(imprimirCuadro "80" "error" "Entrada de datos errónea")"
+      centrarEnPantalla "$(imprimirCuadro "50" "default" "MENU DE INFORME")" | sacarHaciaArchivo "$archivoSalida" -a
+      centrarEnPantalla "$(imprimirCuadro "50" "default" "${opcionesEntrada[@]}")" | sacarHaciaArchivo "$archivoSalida" -a
+      tipo=$(recibirEntrada)
+
+      while [[ ! "$tipo" =~ ^[0-2]$ ]]; do
+        centrarEnPantalla "$(imprimirCuadro "80" "error" "Inserta un valor numérico entre 0 y 4")"
+        tipo=$(recibirEntrada)
+      done
+
+      case "$tipo" in
+      1)
+        less -r "$archivoSalida"
+        ;;
+      2)
+        less "$archivoSalida"
+        ;;
+      0)
+        exit 99
+        ;;
+      *)
+        centrarEnPantalla "$(imprimirCuadro "100" "error" "Ha ocurrido algún tipo de error")" | sacarHaciaArchivo "$archivoSalida" -a
+        exit 99
+        ;;
+      esac
+    }
+
+    # Funcion que recoge si el usuario quiere o no el informe
+    # ----------------------------------
+    function salidaInforme() {
+      local temp
+
+      clear
+      centrarEnPantalla "$(imprimirCuadro "50" "default" "¿Quieres ver el informe? [S/N]")"
       temp=$(recibirEntrada)
-    done
 
-    if [[ $temp =~ [sS][iI]|[sS] ]]; then
-      less -r -N "$archivoSalida"
-    fi
+      while [[ ! "$temp" =~ ^([sS][iI]|[sS]|[nN][oO]|[nN])$ ]]; do
+        centrarEnPantalla "$(imprimirCuadro "80" "error" "Entrada de datos errónea")"
+        temp=$(recibirEntrada)
+      done
+
+      if [[ $temp =~ [sS][iI]|[sS] ]]; then
+        menuInforme
+      fi
+    }
+
+    salidaInforme
   }
   # ------------------------------------------------
 
@@ -1694,7 +1738,7 @@ function main() {
   # ------------------------------------------------
 
   # Main de main xD
-  # ------------------------------------------------
+  # ----------------------------------
   clear
   asignaciones
   introduccion
@@ -1710,7 +1754,3 @@ function main() {
 main
 
 # TODO: Añadir el truncado
-
-# Lolo
-#
-# TODO:
