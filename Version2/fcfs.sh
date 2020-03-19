@@ -250,7 +250,7 @@ function asignarManual() {
   function comienzoPregunta() {
     clear
     centrarEnPantalla "$(imprimirCuadro "50" "blanco" "$2")" | sacarHaciaArchivo "$archivoSalida" -a
-    centrarEnPantalla "$(imprimirTabla "$1" "4" "2")" | sacarHaciaArchivo "$archivoSalida" -a # Imprimir tabla desde la col 2 a la 4 
+    centrarEnPantalla "$(imprimirTabla "$1" "4" "2")" | sacarHaciaArchivo "$archivoSalida" -a # Imprimir tabla desde la col 2 a la 4
   }
 
   # Guarda el tamaño de la memoria
@@ -473,7 +473,7 @@ function calcularCambiosMemoria() {
     local i="$1"
 
     # Fuera|En Espera -> En Memoria|Ejecutando
-    if [[ "${arrayCopia[$PROC_EST, $i]}" == "${estados[0]}" || "${arrayCopia[$PROC_EST, $i]}" == "${estados[1]}" ]] && [[ "${array[$PROC_EST, $i]}" == "${estados[2]}" || "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
+    if [[ "${arrayCopia[$PROC_EST, $i]}" == "${estados[0]}" || "${arrayCopia[$PROC_EST, $i]}" == "${estados[1]}" ]] && [[ "${array[$PROC_EST, $i]}" == "${estados[2]}" || "${array[$PROC_EST, $i]}" == "${estados[3]}" ]]; then
       entra="true"
     fi
 
@@ -501,7 +501,7 @@ function calcularCambiosMemoria() {
     local i="$1"
 
     # En Memoria|Ejecutando -> Terminado
-    if [[ "${arrayCopia[$PROC_EST, $i]}" == "${estados[2]}" || "${arrayCopia[$PROC_EST, $i]}" == "${estados[4]}" ]] && [[ "${array[$PROC_EST, $i]}" == "${estados[5]}" ]]; then
+    if [[ "${arrayCopia[$PROC_EST, $i]}" == "${estados[2]}" || "${arrayCopia[$PROC_EST, $i]}" == "${estados[3]}" ]] && [[ "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
       sale="true"
     fi
 
@@ -537,6 +537,38 @@ function calcularCambiosMemoria() {
   # Main de cuadro de memoria
   # ----------------------------------
   comprobarMovimientosDeMemoria
+}
+
+# Calcula la linea de cpu hasta el momento
+# ----------------------------------
+function calcularCambiosCPU() {
+
+  # Comprueba si ningun proceso está ejecutandose
+  # ----------------------------------
+  function algoEstaEjecutandose() {
+    local algoEjecutandose="false"
+
+    for ((p = 1; p <= NUM_FIL; p++)); do
+      if [[ "${array[$PROC_EST, $p]}" == "${estados[3]}" ]]; then
+        algoEjecutandose="$p"
+      fi
+    done
+
+    echo "$algoEjecutandose"
+  }
+
+  # Comprueba si hay algun cambio en cpu
+  # ----------------------------------
+  function comprobarMovimientosDeCPU() {
+    local eseAlgo
+    eseAlgo="$(algoEstaEjecutandose)"
+
+    if [[ "$eseAlgo" != "false" ]]; then
+      procesosEnCPU[$instante]="$eseAlgo"
+    fi
+  }
+
+  comprobarMovimientosDeCPU
 }
 
 # Imprime el uso de la memoria según los procesos en ella
@@ -595,9 +627,9 @@ function imprimirMemoria() {
   # ----------------------------------
   function imprimirTerceraFila() {
     for ((pos = 0; pos < MEM_TAM; pos++)); do
-      if [[ "${procesosEnMemoria[$pos]}" != "${procesosEnMemoria[$((pos + 1))]}" ]]; then
+      if [[ "${procesosEnMemoria[$pos]}" != "${procesosEnMemoria[$((pos - 1))]}" && "$pos" != "0" ]]; then
         idProceso="${procesosEnMemoria[$pos]}"
-        printf "${serieColores_FG[$idProceso]}%-*s$(fc)" "$(calcularLongitud "$espacios")" "$((pos + 0))" # Cambiar por pos + 1 si se quiere empezar por la posición 1
+        printf "${serieColores_FG[$idProceso]}%-*s$(fc)" "$(calcularLongitud "$espacios")" "$pos" # Cambiar por pos + 1 si se quiere empezar por la posición 1
       else
         printf "%s" "$espacios"
       fi
@@ -624,9 +656,9 @@ function imprimirMemoria() {
 
     # printf "\t\t\t\t%s $anchoSinColores - $anchoConColores \n" ""
     printf "\n"
-    printf "\t\t\t\t%s%s\n" "    " "${mem[1]}"
-    printf "\t\t\t\t$(cc Neg blanco fg)%s$(fc)%s\n" " BM " "${mem[2]}"
-    printf "\t\t\t\t%s%s\n" "    " "${mem[3]}"
+    printf "\t\t\t\t%s%s\n" "$espacios" "${mem[1]}"
+    printf "\t\t\t\t$(cc Neg blanco fg)%-*s$(fc)%s\n" "$(calcularLongitud "$espacios")" "BM" "${mem[2]}"
+    printf "\t\t\t\t%s%s\n" "$espacios" "${mem[3]}"
   }
 
   # Main de cuadro de memoria
@@ -644,92 +676,84 @@ function imprimirLineaProcesos() {
   # Imprime la primera fila
   # ----------------------------------
   function imprimirPrimeraFila() {
-    printf "${serieColores_FG[$i]}%s" ""
-    printf "%-*s" "$(calcularLongitud "$espacios")" "${array[$PROC_NUM, $i]}"
-    for ((j = 1; j < ejec; j++)); do
-      printf "%s" "$espacios"
+    for ((pos = 0; pos < $instante; pos++)); do
+      if [[ "${procesosEnCPU[$pos]}" == "" ]]; then
+        printf "%s" "$espacios"
+      else
+        local nombreEstaPuesto="false"
+        idProceso="${procesosEnCPU[$pos]}"
+
+        # Comprobamos si ya hemos puesto el nombre
+        for ((i = 0; i < pos; i++)); do
+          if [[ "${procesosEnCPU[$i]}" == "$idProceso" ]]; then
+            nombreEstaPuesto="true"
+          fi
+        done
+
+        # Si no hemos puesto el nombre lo ponemos
+        if [[ "$nombreEstaPuesto" == "false" ]]; then
+          printf "${serieColores_FG[$idProceso]}%s$(fc)" "${array[$PROC_NUM, $idProceso]}"
+        else
+          printf "%s" "$espacios"
+        fi
+      fi
     done
-    printf "$(fc)%s" ""
   }
 
   # Imprime la segunda fila
   # ----------------------------------
   function imprimirSegundaFila() {
-    printf "${serieColores[$i]}%s" ""
-    if [[ "$(($1 - (array[$PROC_ESP, $i] + array[$PROC_LLE, $i])))" == "1" ]]; then
-      ejec="2"
-    fi
-    for ((j = 0; j < ejec; j++)); do
-      printf "%s" "$espacios"
+    for ((pos = 0; pos < "$instante"; pos++)); do
+      if [[ "${procesosEnCPU[$pos]}" == "" ]]; then
+        printf "$colorVacio%s$(fc)" "$espacios"
+      else
+        idProceso="${procesosEnCPU[$pos]}"
+        printf "${serieColores[$idProceso]}%s$(fc)" "$espacios"
+      fi
     done
-    printf "$(fc)%s" ""
+    printf "$(cc Nor blanco fg)%s$(fc)" " $instante"
   }
 
   # Imprime la tercera fila
   # ----------------------------------
   function imprimirTerceraFila() {
-    printf "${serieColores_FG[$i]}%s" ""
-
-    printf "%-*s" "$(calcularLongitud "$espacios")" "$((array[$PROC_LLE, $i] + array[$PROC_ESP, $i]))"
-
-    for ((j = 2; j < ejec; j++)); do
-      printf "%s" "$espacios"
-    done
-
-    if [[ "$((array[$PROC_ESP, $i] + array[$PROC_LLE, $i]))" == "$1" ]]; then
-      printf "%s" "$espacios"
-    else
-      # Si el proceso está "Terminado"
-      if [[ "${array[$PROC_EST, $i]}" == "${estados[5]}" ]]; then
-        printf "%-*s" "$(calcularLongitud "$espacios")" "$((array[$PROC_LLE, $i] + array[$PROC_RES, $i]))"
-        # Si el proceso está "Ejecutando"
-      elif [[ "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
-        printf "%-*s" "$(calcularLongitud "$espacios")" "$1"
+    for ((pos = 0; pos < $instante; pos++)); do
+      if [[ "${procesosEnCPU[$pos]}" != "${procesosEnCPU[$((pos - 1))]}" && "$pos" != "0" ]]; then
+        idProceso="${procesosEnCPU[$pos]}"
+        printf "${serieColores_FG[$idProceso]}%-*s$(fc)" "$(calcularLongitud "$espacios")" "$pos"
+      else
+        printf "%s" "$espacios"
       fi
-    fi
-
-    printf "$(fc)%s" ""
+    done
   }
 
   # Imprime la linea de procesos en la CPU
   # @param Instante
   # ----------------------------------
   function imprimir() {
-    local procesosAMostrar
+    local idProceso
     local -a linea
-    local ejec
     linea=()
-    procesosAMostrar="0"
     # local anchoTerm
     # anchoTerm="$(tput cols)"
 
-    for ((i = 1; i <= NUM_FIL; i++)); do
-      if [[ "${array[$PROC_EST, $i]}" == "${estados[5]}" || "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
-        ((procesosAMostrar++))
-      fi
-    done
+    linea[0]="$(imprimirPrimeraFila "$1")"
+    linea[1]="$(imprimirSegundaFila "$1")"
+    linea[2]="$(imprimirTerceraFila "$1")"
 
-    if [[ "$procesosAMostrar" == "0" ]]; then
-      printf "\n\t\t\t\t%s\n" "    "
-      printf "\t\t\t\t$(cc Neg blanco fg)%s$(fc)\n" " BT "
-      printf "\t\t\t\t%s%s\n" "    " "0"
+    if [[ "$instante" == "0" ]]; then
+      printf "\n\t\t\t\t%s\n" "$espacios"
+      printf "\t\t\t\t$(cc Neg blanco fg)%-*s$(fc)\n" "$(calcularLongitud "$espacios")" "BT"
+      printf "\t\t\t\t%s%s\n" "$espacios" "0"
     else
-      for ((i = 1; i <= NUM_FIL; i++)); do
-        if [[ "${array[$PROC_EST, $i]}" == "${estados[5]}" || "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
-          ejec="$((array[$PROC_EJE, $i] - array[$PROC_EJE_RES, $i]))"
-          linea[0]+="$(imprimirPrimeraFila "$1")"
-          linea[1]+="$(imprimirSegundaFila "$1")"
-          linea[2]+="$(imprimirTerceraFila "$1")"
-        fi
-      done
-      printf "\n\t\t\t\t%s%s\n" "    " "${linea[0]}"
-      printf "\t\t\t\t$(cc Neg blanco fg)%s$(fc)%s\n" " BT " "${linea[1]}"
-      printf "\t\t\t\t%s%s\n" "    " "${linea[2]}"
+      printf "\n\t\t\t\t%s%s\n" "$espacios" "${linea[0]}"
+      printf "\t\t\t\t$(cc Neg blanco fg)%-*s$(fc)%s\n" "$(calcularLongitud "$espacios")" "BT" "${linea[1]}"
+      printf "\t\t\t\t%s%s\n" "$espacios" "${linea[2]}"
     fi
     printf "\n"
   }
 
-  # Main de cuadro de memoria
+  # Main de cuadro de CPU
   # ----------------------------------
   imprimir "$1"
 }
@@ -751,7 +775,7 @@ function calcularMemoriaRestante() {
   MEM_USE="0"
 
   for ((k = 0; k <= NUM_FIL; k++)); do
-    if [[ "${array[$PROC_EST, $k]}" == "${estados[2]}" || "${array[$PROC_EST, $k]}" == "${estados[4]}" ]]; then
+    if [[ "${array[$PROC_EST, $k]}" == "${estados[2]}" || "${array[$PROC_EST, $k]}" == "${estados[3]}" ]]; then
       MEM_USE+="${array[$PROC_TAM, $k]}"
     fi
   done
@@ -802,22 +826,22 @@ function asignarEstadosSegunInstante() {
     # En Memoria
     if [[ "${array[$PROC_EST, $i]}" == "${estados[2]}" ]]; then
       for ((j = 1; j <= NUM_FIL; j++)); do
-        if [[ "${array[$PROC_EST, $j]}" == "${estados[4]}" ]]; then
+        if [[ "${array[$PROC_EST, $j]}" == "${estados[3]}" ]]; then
           procesoEjecutando="true"
         fi
       done
 
       if [[ "$procesoEjecutando" != "true" ]]; then
-        array[$PROC_EST, $i]="${estados[4]}"
+        array[$PROC_EST, $i]="${estados[3]}"
         array[$PROC_ESP, $i]="$((instante - array[$PROC_LLE, $i]))"
       fi
     fi
 
     # Ejecutando
-    if [[ "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
+    if [[ "${array[$PROC_EST, $i]}" == "${estados[3]}" ]]; then
       array[$PROC_RES, $i]="$((instante - array[$PROC_LLE, $i]))" # Que coincide con el tiempo de ejcución por ser FCFS
       if [[ "${array[$PROC_EJE_RES, $i]}" == "0" ]]; then
-        array[$PROC_EST, $i]="${estados[5]}"
+        array[$PROC_EST, $i]="${estados[4]}"
       fi
     fi
 
@@ -831,7 +855,7 @@ function procesosHanTerminado() {
   local procHanTerminado="true"
 
   for ((i = 1; i <= NUM_FIL; i++)); do
-    if [[ "${array[$PROC_EST, $i]}" != "${estados[5]}" && "${array[$PROC_EST, $i]}" != "${estados[3]}" ]]; then
+    if [[ "${array[$PROC_EST, $i]}" != "${estados[4]}" && "${array[$PROC_EST, $i]}" != "${estados[3]}" ]]; then
       procHanTerminado="false"
     fi
   done
@@ -843,7 +867,7 @@ function procesosHanTerminado() {
 # ----------------------------------
 function comprobarProcesosEjecutando() {
   for ((i = 1; i <= NUM_FIL; i++)); do
-    if [[ "${array[$PROC_EST, $i]}" == "${estados[4]}" ]]; then
+    if [[ "${array[$PROC_EST, $i]}" == "${estados[3]}" ]]; then
       ((array[$PROC_EJE_RES, $i]--))
     fi
   done
@@ -1416,8 +1440,9 @@ function main() {
   # Ejecuta Algoritmo
   # ------------------------------------------------
   function algoritmo() {
-    local -a estados=("Fuera del Sistema" "En Espera" "En Memoria" "Bloqueado" "En Ejecución" "Finalizado")
+    local -a estados=("Fuera del Sistema" "En Espera" "En Memoria" "En Ejecución" "Finalizado")
     local -a procesosEnMemoria
+    local -a procesosEnCPU
     local stringVacio
     local -A arrayCopia
     local instante
@@ -1425,6 +1450,7 @@ function main() {
     local -a serieColores
     local -a serieColores_FG
     local colorVacio
+    procesosEnCPU=()
     acabarAlgoritmo="false"
     stringVacio="null"
 
@@ -1575,6 +1601,7 @@ function main() {
     while [[ $(procesosHanTerminado) != "true" ]]; do
       copiarArray
       algCalcularDatos
+      calcularCambiosCPU
 
       # Si pasa algo importante lo mostramos en pantalla y/o sacamos por archivo
       if [[ "$(algoImportantePasa)" == "true" || "$instante" == "0" ]]; then
@@ -1630,7 +1657,7 @@ function main() {
     elif [[ "$temp" =~ [sS][iI]|[sS] ]]; then
       array=()
       clear | sacarHaciaArchivo "$archivoSalida" -a
-      centrarEnPantalla "$(imprimirCuadro "50" "random" "Ejecutando el algoritmo de nuevo")" | sacarHaciaArchivo "$archivoSalida" -a
+      centrarEnPantalla "$(imprimirCuadro "50" "blanco" "Ejecutando el algoritmo de nuevo")" | sacarHaciaArchivo "$archivoSalida" -a
     fi
   }
   # ------------------------------------------------
