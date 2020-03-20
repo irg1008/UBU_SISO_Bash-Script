@@ -1630,11 +1630,11 @@ function main() {
       opcionesEntrada=(
         "1.- Informe en color"
         "2.- Informe en blanco y negro"
-        "0.- Salir sin sacar informe"
+        "0.- No sacar informe"
       )
 
-      centrarEnPantalla "$(imprimirCuadro "50" "default" "MENU DE INFORME")" | sacarHaciaArchivo "$archivoSalida" -a
-      centrarEnPantalla "$(imprimirCuadro "50" "default" "${opcionesEntrada[@]}")" | sacarHaciaArchivo "$archivoSalida" -a
+      centrarEnPantalla "$(imprimirCuadro "50" "default" "MENU DE INFORME")"
+      centrarEnPantalla "$(imprimirCuadro "50" "default" "${opcionesEntrada[@]}")"
       tipo=$(recibirEntrada)
 
       while [[ ! "$tipo" =~ ^[0-2]$ ]]; do
@@ -1647,38 +1647,14 @@ function main() {
         less -r "$archivoSalida"
         ;;
       2)
-        less "$archivoSalida"
+        sed -r 's/\x1B\[([0-9]{1,3}((;[0-9]{1,3})*)?)?[m|K]//g' "$archivoSalida" | less
         ;;
-      0)
-        exit 99
-        ;;
-      *)
-        centrarEnPantalla "$(imprimirCuadro "100" "error" "Ha ocurrido algún tipo de error")" | sacarHaciaArchivo "$archivoSalida" -a
-        exit 99
-        ;;
+      0) ;;
       esac
     }
 
-    # Funcion que recoge si el usuario quiere o no el informe
-    # ----------------------------------
-    function salidaInforme() {
-      local temp
-
-      clear
-      centrarEnPantalla "$(imprimirCuadro "50" "default" "¿Quieres ver el informe? [S/N]")"
-      temp=$(recibirEntrada)
-
-      while [[ ! "$temp" =~ ^([sS][iI]|[sS]|[nN][oO]|[nN])$ ]]; do
-        centrarEnPantalla "$(imprimirCuadro "80" "error" "Entrada de datos errónea")"
-        temp=$(recibirEntrada)
-      done
-
-      if [[ $temp =~ [sS][iI]|[sS] ]]; then
-        menuInforme
-      fi
-    }
-
-    salidaInforme
+    clear
+    menuInforme
   }
   # ------------------------------------------------
 
@@ -1731,8 +1707,8 @@ function main() {
  █▄▄▄▄▄█ █▄▄█  ▀▀     ▀▄█▄▄▀▀ █▀▄ 
  "
     clear
-    centrarEnPantalla "$(imprimirCuadro "50" "acierto" "${gitSpam[@]}")" | sacarHaciaArchivo "$archivoSalida" -a
-    centrarEnPantalla "$(imprimirCuadro "38" "default" "$spam")" | sacarHaciaArchivo "$archivoSalida" -a
+    centrarEnPantalla "$(imprimirCuadro "50" "acierto" "${gitSpam[@]}")"
+    centrarEnPantalla "$(imprimirCuadro "38" "default" "$spam")"
     printf "\n"
   }
   # ------------------------------------------------
