@@ -24,6 +24,7 @@ function asignarEstiloGeneral() {
   local estilo1=("═" "╔" "╠" "╚" "╦" "╬" "╩" "╗" "╣" "╝" "║")
   local estilo2=("─" "╭" "├" "╰" "┬" "┼" "┴" "╮" "┤" "╯" "│")
   local estilo3=("━" "┏" "┣" "┗" "┳" "╋" "┻" "┓" "┫" "┛" "┃")
+  local estilo4=("─" "┌" "├" "└" "┬" "┼" "┴" "┐" "┤" "┘" "│")
 
   case "$1" in
   1)
@@ -35,8 +36,11 @@ function asignarEstiloGeneral() {
   3)
     estiloGeneral=("${estilo3[@]}")
     ;;
+  4)
+    estiloGeneral=("${estilo4[@]}")
+    ;;
   *)
-    estiloGeneral=("${estilo3[@]}")
+    estiloGeneral=("${estilo4[@]}")
     ;;
   esac
 }
@@ -1417,7 +1421,7 @@ function main() {
     }
 
     asignarConfigs
-    asignarEstiloGeneral "2"
+    asignarEstiloGeneral "4"
     asignarPosicionYNumColumnas
   }
   # ------------------------------------------------
@@ -1581,7 +1585,7 @@ function main() {
       local relleno
       local vacio
       espacios="   "
-      relleno="///"
+      relleno="╳╳╳"
       vacio="---"
 
       algCalcularSigIns
