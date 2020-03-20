@@ -574,9 +574,6 @@ function calcularCambiosCPU() {
 # Imprime el uso de la memoria según los procesos en ella
 # ----------------------------------
 function imprimirMemoria() {
-  local espacios
-  espacios="   "
-
   # Imprime la primera fila
   # ----------------------------------
   function imprimirPrimeraFila() {
@@ -612,15 +609,21 @@ function imprimirMemoria() {
   # Imprime la segunda fila
   # ----------------------------------
   function imprimirSegundaFila() {
+    local color
     for ((pos = 0; pos < MEM_TAM; pos++)); do
       if [[ "${procesosEnMemoria[$pos]}" == "$stringVacio" ]]; then
-        printf "$colorVacio%s$(fc)" "$espacios"
+        color="${colorVacio:0:6}"
+        color+="7"
+        color+="${colorVacio:7}"
+        printf "$color%s$(fc)" "$vacio"
       else
         idProceso="${procesosEnMemoria[$pos]}"
-        printf "${serieColores[$idProceso]}%s$(fc)" "$espacios"
+        color="${serieColores_FG[$idProceso]:0:7}"
+        color+="${serieColores[$idProceso]:7}"
+        printf "$color%s$(fc)" "$relleno"
       fi
     done
-    printf "$(cc Nor blanco fg)%s$(fc)" " $MEM_TAM"
+    printf "$(cc Neg blanco fg) %s$(fc)" "$MEM_TAM"
   }
 
   # Imprime la tercera fila
@@ -670,9 +673,6 @@ function imprimirMemoria() {
 # @param Instante actual
 # ----------------------------------
 function imprimirLineaProcesos() {
-  local espacios
-  espacios="   "
-
   # Imprime la primera fila
   # ----------------------------------
   function imprimirPrimeraFila() {
@@ -703,15 +703,21 @@ function imprimirLineaProcesos() {
   # Imprime la segunda fila
   # ----------------------------------
   function imprimirSegundaFila() {
+    local color
     for ((pos = 0; pos < instante; pos++)); do
       if [[ "${procesosEnCPU[$pos]}" == "" ]]; then
-        printf "$colorVacio%s$(fc)" "$espacios"
+        color="${colorVacio:0:6}"
+        color+="7"
+        color+="${colorVacio:7}"
+        printf "$color%s$(fc)" "$vacio"
       else
         idProceso="${procesosEnCPU[$pos]}"
-        printf "${serieColores[$idProceso]}%s$(fc)" "$espacios"
+        color="${serieColores_FG[$idProceso]:0:7}"
+        color+="${serieColores[$idProceso]:7}"
+        printf "$color%s$(fc)" "$relleno"
       fi
     done
-    printf "$(cc Nor blanco fg)%s$(fc)" " $instante"
+    printf "$(cc Neg blanco fg) %s$(fc)" "$instante"
   }
 
   # Imprime la tercera fila
@@ -1411,7 +1417,7 @@ function main() {
     }
 
     asignarConfigs
-    asignarEstiloGeneral "3"
+    asignarEstiloGeneral "2"
     asignarPosicionYNumColumnas
   }
   # ------------------------------------------------
@@ -1571,6 +1577,13 @@ function main() {
     # Main del cuerpo del algoritmo
     # ----------------------------------
     function algCuerpoAlgoritmo() {
+      local espacios
+      local relleno
+      local vacio
+      espacios="   "
+      relleno="///"
+      vacio="---"
+
       algCalcularSigIns
       algImprimirTabla
       algTiemposMedios
@@ -1581,7 +1594,7 @@ function main() {
     # Asigna los colores que llevaran los procesos y todas las lineas en las que esten presentados
     # ----------------------------------
     function algAsignarSerieDeColores() {
-      colorVacio="$(cc Neg blanco)" # Cuando la memoria esta vacia debe ser blanco
+      colorVacio="$(cc Nor blanco)" # Cuando la memoria esta vacia debe ser blanco
       for ((i = 1; i <= NUM_FIL; i++)); do
         serieColores[$i]=$(cc Nor "$((i + 4))")
         serieColores_FG[$i]=$(cc Nor "$((i + 4))" "fg")
