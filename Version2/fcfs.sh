@@ -68,30 +68,32 @@ function extraerDeConfig() {
     salida="$(leeConfigArray "1")"
     salida+=" "
     salida+="$(leeConfigArray "2")"
+    salida+=" "
+    salida+="$(leeConfigArray "3")"
 
     declare -a "salidaArray=( $(echo "$salida" | tr '`$<>' '????') )"
     for ((i = 0; i < ${#salidaArray[@]}; i++)); do
       echo "${salidaArray[$i]}"
-      if [[ "$i" == "2" || "$i" == "4" ]]; then
+      if [[ "$i" == "2" || "$i" == "3" ]]; then
         echo " "
       fi
     done
   else
     case "$1" in
     error)
-      salida=$(leeConfig "3")
-      ;;
-    acierto)
       salida=$(leeConfig "4")
       ;;
-    advertencia)
+    acierto)
       salida=$(leeConfig "5")
       ;;
-    archivoSalida)
+    advertencia)
       salida=$(leeConfig "6")
       ;;
-    archivoEntrada)
+    archivoSalida)
       salida=$(leeConfig "7")
+      ;;
+    archivoEntrada)
+      salida=$(leeConfig "8")
       ;;
     esac
 
@@ -412,7 +414,7 @@ function asignarValoresAleatorios() {
   MEM_TAM=$(((RANDOM % 40) + 5)) # 5-20
 
   clear
-  centrarEnPantalla "$(imprimirCuadro "50" "blanco" "¿Cuántos valores aleatorios quieres generar?")" | sacarHaciaArchivo "$archivoSalida" -a
+  centrarEnPantalla "$(imprimirCuadro "50" "blanco" "¿Cuántos valores aleatorios quieres generar?")"
   numValAleatorios=$(recibirEntrada)
 
   while [[ ! "$numValAleatorios" =~ ^[0-9]+$ || "$numValAleatorios" -lt "1" || "$numValAleatorios" -ge "100" ]]; do
@@ -648,9 +650,6 @@ function imprimirMemoria() {
   function imprimir() {
     local idProceso
 
-    local anchoTerm
-    anchoTerm="$(tput cols)"
-
     local posicion
     local posicionFinal
 
@@ -743,9 +742,6 @@ function imprimirLineaProcesos() {
   # ----------------------------------
   function imprimir() {
     local idProceso
-
-    local anchoTerm
-    anchoTerm="$(tput cols)"
 
     local posicion
     local posicionFinal

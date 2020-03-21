@@ -1,6 +1,7 @@
 [introduccion]
-Titulo = ["FCFS", "Memoria No Continua", "Memoria No Reubicable", "Sistemas Operativos", "2019-2020"]
-Autor = ["Iván Ruiz"]
+Titulo = ["FCFS", "Memoria No Continua", "Memoria No Reubicable"]
+Autor = ["Autor: Iván Ruiz"]
+Asignatura = ["Sistemas Operativos", "2019-2020"]
 
 [mensajes]
 errorGeneral = "☒ Si ves un mensaje como este, es que hasintroducido mal los datos o hay un problema ☒"
