@@ -655,9 +655,9 @@ function imprimirMemoria() {
     local posicionFinal
 
     printf "\n"
-    for ((i = 0; i < MEM_TAM; i = $((i + anchoTerm / 4)))); do
+    for ((i = 0; i < MEM_TAM; i = $((i + anchoTruncado)))); do
       posicion="$i"
-      posicionFinal="$((i + anchoTerm / 4))"
+      posicionFinal="$((i + anchoTruncado))"
 
       if [[ "$posicionFinal" -gt "$MEM_TAM" ]]; then
         posicionFinal="$MEM_TAM"
@@ -755,9 +755,9 @@ function imprimirLineaProcesos() {
       printf "\t\t\t\t$(cc Neg blanco fg)%-*s$(fc)\n" "$(calcularLongitud "$espacios")" "BT"
       printf "\t\t\t\t%s%s\n" "$espacios" "0"
     else
-      for ((i = 0; i < instante; i = $((i + anchoTerm / 4)))); do
+      for ((i = 0; i < instante; i = $((i + anchoTruncado)))); do
         posicion="$i"
-        posicionFinal="$((i + anchoTerm / 4))"
+        posicionFinal="$((i + anchoTruncado))"
 
         if [[ "$posicionFinal" -gt "$instante" ]]; then
           posicionFinal="$instante"
@@ -873,7 +873,7 @@ function procesosHanTerminado() {
   local procHanTerminado="true"
 
   for ((i = 1; i <= NUM_FIL; i++)); do
-    if [[ "${array[$PROC_EST, $i]}" != "${estados[4]}" && "${array[$PROC_EST, $i]}" != "${estados[3]}" ]]; then
+    if [[ "${array[$PROC_EST, $i]}" != "${estados[4]}" ]]; then
       procHanTerminado="false"
     fi
   done
@@ -1592,9 +1592,11 @@ function main() {
       local espacios
       local relleno
       local vacio
+      local anchoTruncado
       espacios="   "
       relleno="╳╳╳"
       vacio="---"
+      anchoTruncado="32"
 
       algCalcularSigIns
       algImprimirTabla
