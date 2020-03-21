@@ -581,7 +581,7 @@ function imprimirMemoria() {
   # Imprime la primera fila
   # ----------------------------------
   function imprimirPrimeraFila() {
-    for ((pos = 0; pos < MEM_TAM; pos++)); do
+    for ((pos = posicion; pos < posicionFinal; pos++)); do
       if [[ "${procesosEnMemoria[$pos]}" == "$stringVacio" ]]; then
         printf "%s" "$espacios"
       else
@@ -614,7 +614,7 @@ function imprimirMemoria() {
   # ----------------------------------
   function imprimirSegundaFila() {
     local color
-    for ((pos = 0; pos < MEM_TAM; pos++)); do
+    for ((pos = posicion; pos < posicionFinal; pos++)); do
       if [[ "${procesosEnMemoria[$pos]}" == "$stringVacio" ]]; then
         color="${colorVacio:0:6}"
         color+="7"
@@ -627,13 +627,13 @@ function imprimirMemoria() {
         printf "$color%s$(fc)" "$relleno"
       fi
     done
-    printf "$(cc Neg blanco fg) %s$(fc)" "$MEM_TAM"
+    printf "$(cc Neg blanco fg) %s$(fc)" "$posicionFinal"
   }
 
   # Imprime la tercera fila
   # ----------------------------------
   function imprimirTerceraFila() {
-    for ((pos = 0; pos < MEM_TAM; pos++)); do
+    for ((pos = posicion; pos < posicionFinal; pos++)); do
       if [[ "${procesosEnMemoria[$pos]}" != "${procesosEnMemoria[$((pos - 1))]}" && "$pos" != "0" ]]; then
         idProceso="${procesosEnMemoria[$pos]}"
         printf "${serieColores_FG[$idProceso]}%-*s$(fc)" "$(calcularLongitud "$espacios")" "$pos" # Cambiar por pos + 1 si se quiere empezar por la posición 1
@@ -647,25 +647,26 @@ function imprimirMemoria() {
   # ----------------------------------
   function imprimir() {
     local idProceso
-    local -a mem=()
-    # local anchoTerm
-    # anchoTerm="$(tput cols)"
 
-    # local anchoSinColores
-    # local anchoConColores
+    local anchoTerm
+    anchoTerm="$(tput cols)"
 
-    mem[1]="$(imprimirPrimeraFila)"
-    mem[2]="$(imprimirSegundaFila)"
-    mem[3]="$(imprimirTerceraFila)"
+    local posicion
+    local posicionFinal
 
-    # anchoSinColores="$(calcularLongitud "${mem[1]}")"
-    # anchoConColores="$(calcularLongitudConColores "${mem[1]}")"
-
-    # printf "\t\t\t\t%s $anchoSinColores - $anchoConColores \n" ""
     printf "\n"
-    printf "\t\t\t\t%s%s\n" "$espacios" "${mem[1]}"
-    printf "\t\t\t\t$(cc Neg blanco fg)%-*s$(fc)%s\n" "$(calcularLongitud "$espacios")" "BM" "${mem[2]}"
-    printf "\t\t\t\t%s%s\n" "$espacios" "${mem[3]}"
+    for ((i = 0; i < MEM_TAM; i = $((i + anchoTerm / 4)))); do
+      posicion="$i"
+      posicionFinal="$((i + anchoTerm / 4))"
+
+      if [[ "$posicionFinal" -gt "$MEM_TAM" ]]; then
+        posicionFinal="$MEM_TAM"
+      fi
+
+      printf "\t\t\t\t%s%s\n" "$espacios" "$(imprimirPrimeraFila)"
+      printf "\t\t\t\t$(cc Neg blanco fg)%-*s$(fc)%s\n" "$(calcularLongitud "$espacios")" "BM" "$(imprimirSegundaFila)"
+      printf "\t\t\t\t%s%s\n" "$espacios" "$(imprimirTerceraFila)"
+    done
   }
 
   # Main de cuadro de memoria
@@ -680,7 +681,7 @@ function imprimirLineaProcesos() {
   # Imprime la primera fila
   # ----------------------------------
   function imprimirPrimeraFila() {
-    for ((pos = 0; pos < instante; pos++)); do
+    for ((pos = posicion; pos < posicionFinal; pos++)); do
       if [[ "${procesosEnCPU[$pos]}" == "" ]]; then
         printf "%s" "$espacios"
       else
@@ -708,7 +709,7 @@ function imprimirLineaProcesos() {
   # ----------------------------------
   function imprimirSegundaFila() {
     local color
-    for ((pos = 0; pos < instante; pos++)); do
+    for ((pos = posicion; pos < posicionFinal; pos++)); do
       if [[ "${procesosEnCPU[$pos]}" == "" ]]; then
         color="${colorVacio:0:6}"
         color+="7"
@@ -721,13 +722,13 @@ function imprimirLineaProcesos() {
         printf "$color%s$(fc)" "$relleno"
       fi
     done
-    printf "$(cc Neg blanco fg) %s$(fc)" "$instante"
+    printf "$(cc Neg blanco fg) %s$(fc)" "$posicionFinal"
   }
 
   # Imprime la tercera fila
   # ----------------------------------
   function imprimirTerceraFila() {
-    for ((pos = 0; pos < instante; pos++)); do
+    for ((pos = posicion; pos < posicionFinal; pos++)); do
       if [[ "${procesosEnCPU[$pos]}" != "${procesosEnCPU[$((pos - 1))]}" && "$pos" != "0" ]]; then
         idProceso="${procesosEnCPU[$pos]}"
         printf "${serieColores_FG[$idProceso]}%-*s$(fc)" "$(calcularLongitud "$espacios")" "$pos"
@@ -742,23 +743,30 @@ function imprimirLineaProcesos() {
   # ----------------------------------
   function imprimir() {
     local idProceso
-    local -a linea
-    linea=()
-    # local anchoTerm
-    # anchoTerm="$(tput cols)"
 
-    linea[0]="$(imprimirPrimeraFila "$1")"
-    linea[1]="$(imprimirSegundaFila "$1")"
-    linea[2]="$(imprimirTerceraFila "$1")"
+    local anchoTerm
+    anchoTerm="$(tput cols)"
+
+    local posicion
+    local posicionFinal
 
     if [[ "$instante" == "0" ]]; then
       printf "\n\t\t\t\t%s\n" "$espacios"
       printf "\t\t\t\t$(cc Neg blanco fg)%-*s$(fc)\n" "$(calcularLongitud "$espacios")" "BT"
       printf "\t\t\t\t%s%s\n" "$espacios" "0"
     else
-      printf "\n\t\t\t\t%s%s\n" "$espacios" "${linea[0]}"
-      printf "\t\t\t\t$(cc Neg blanco fg)%-*s$(fc)%s\n" "$(calcularLongitud "$espacios")" "BT" "${linea[1]}"
-      printf "\t\t\t\t%s%s\n" "$espacios" "${linea[2]}"
+      for ((i = 0; i < instante; i = $((i + anchoTerm / 4)))); do
+        posicion="$i"
+        posicionFinal="$((i + anchoTerm / 4))"
+
+        if [[ "$posicionFinal" -gt "$instante" ]]; then
+          posicionFinal="$instante"
+        fi
+
+        printf "\n\t\t\t\t%s%s\n" "$espacios" "$(imprimirPrimeraFila "$1")"
+        printf "\t\t\t\t$(cc Neg blanco fg)%-*s$(fc)%s\n" "$(calcularLongitud "$espacios")" "BT" "$(imprimirSegundaFila "$1")"
+        printf "\t\t\t\t%s%s\n" "$espacios" "$(imprimirTerceraFila "$1")"
+      done
     fi
     printf "\n"
   }
@@ -1745,5 +1753,3 @@ function main() {
 }
 
 main
-
-# TODO: Añadir el truncado
