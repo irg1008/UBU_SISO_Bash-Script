@@ -1594,8 +1594,8 @@ function main() {
       local vacio
       local anchoTruncado
       espacios="   "
-      relleno="╳╳╳"
-      vacio="---"
+      relleno="██▊"
+      vacio="░░░"
       anchoTruncado="32"
 
       algCalcularSigIns
