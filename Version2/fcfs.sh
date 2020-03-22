@@ -781,6 +781,11 @@ function asignarDatosInicial() {
     array[$PROC_RES, $i]="-"
     array[$PROC_ESP, $i]="-"
   done
+
+  MEM_USE="0"
+  for ((i = 0; i < MEM_TAM; i++)); do
+    procesosEnMemoria[$i]="$stringVacio"
+  done
 }
 
 # Función que calcula la memoria restante
@@ -997,30 +1002,11 @@ function fc() {
   echo "\033[0m"
 }
 
-# Devuelve la longitud del string, primero quitandole los patrones de colores.
-# @param String del que queremos calcular la longitud
-# ----------------------------------
-function calcularLongitud() {
-  local elementoArray # Elemento a ser calculado
-  elementoArray=$1
-
-  # Quita los colores del string
-  function quitarColores() {
-    elementoArray="$(echo "$elementoArray" | sed -r 's/\x1B\[([0-9]{1,3}((;[0-9]{1,3})*)?)?[m|K]//g')"
-  }
-
-  quitarColores
-  echo ${#elementoArray}
-}
-
 # Devuelve la longitud del string, contando los patrones de colores.
 # @param String del que queremos calcular la longitud
 # ----------------------------------
-function calcularLongitudConColores() {
-  local elementoArray # Elemento a ser calculado
-  elementoArray=$1
-
-  echo ${#elementoArray}
+function calcularLongitud() {
+  echo ${#1}
 }
 
 # Imprime la introduccion del programa
@@ -1161,65 +1147,28 @@ function imprimirTabla() {
 
     for ((i = numColComienzo; i <= columnasImprimir; i++)); do
       longitudArray=$(calcularLongitud "${titulos[$((i - 1))]}")
-      printf "${estiloTabla[10]}%-*s" "$((anchoCelda[$i] / 2 - longitudArray / 2))" ""
-      printf "$colorEncabezado%s" ""
-      printf "%s" "${titulos[$((i - 1))]}" ""
-      printf "$(fc)%s" ""
-      printf "%*s" "$((anchoCelda[$i] / 2 - (longitudArray + 1) / 2))" ""
+      printf "${estiloTabla[10]}%-*s$colorEncabezado%s$(fc)%*s" "$((anchoCelda[$i] / 2 - longitudArray / 2))" "" "${titulos[$((i - 1))]}" "$((anchoCelda[$i] / 2 - (longitudArray + 1) / 2))" ""
     done
 
     printf "${estiloTabla[10]}%s" ""
   }
 
-  # Asigna el ancho de la celda y el numero de filas a mostrar
-  # desde el indice
+  # Comprueba que las entradas estén corectas
   # ----------------------------------
-  function asignarAnchoYFilasYColumnas() {
-    local longitudElemento
+  function comprobarFilasYColumnas() {
     filasImprimir="$1"
     columnasImprimir="$2"
     numColComienzo="$3"
 
-    # Comprueba que las entradas estén corectas
-    # ----------------------------------
-    function comprobaciones() {
-      if [ "$filasImprimir" -gt "$NUM_FIL" ]; then
-        filasImprimir="$NUM_FIL"
-      fi
-      if [ "$columnasImprimir" -gt "$NUM_COL" ]; then
-        columnasImprimir="$NUM_COL"
-      fi
-      if [[ "$numColComienzo" == "" || "$numColComienzo" -gt "$columnasImprimir" ]]; then
-        numColComienzo="1"
-      fi
-    }
-
-    # Calcula el ancho según la columna.
-    # ----------------------------------
-    function calcularAnchoSegunColumna() {
-      for ((i = numColComienzo; i <= columnasImprimir; i++)); do
-        anchoCelda[$i]="1"
-        for ((j = 0; j <= filasImprimir; j++)); do
-          if [[ "$j" == "0" ]]; then
-            longitudElemento=$(calcularLongitud "${titulos[$((i - 1))]}")
-          else
-            longitudElemento=$(calcularLongitud "${array[$i, $j]}")
-          fi
-
-          if [[ "${anchoCelda[$i]}" -lt "$longitudElemento" ]]; then
-            anchoCelda[$i]="$longitudElemento"
-          fi
-        done
-        if [[ "$((anchoCelda[$i] % 2))" == "1" ]]; then
-          anchoCelda[$i]=$((anchoCelda[$i] + 3))
-        else
-          anchoCelda[$i]=$((anchoCelda[$i] + 4))
-        fi
-      done
-    }
-
-    comprobaciones
-    calcularAnchoSegunColumna
+    if [ "$filasImprimir" -gt "$NUM_FIL" ]; then
+      filasImprimir="$NUM_FIL"
+    fi
+    if [ "$columnasImprimir" -gt "$NUM_COL" ]; then
+      columnasImprimir="$NUM_COL"
+    fi
+    if [[ "$numColComienzo" == "" || "$numColComienzo" -gt "$columnasImprimir" ]]; then
+      numColComienzo="1"
+    fi
   }
 
   # Asigna un estilo a la tabla, de doble linea, linea basica,
@@ -1248,46 +1197,84 @@ function imprimirTabla() {
     pieTabla+=${estiloTabla[9]}
   }
 
+  # Asigna el ancho de la celda y el numero de filas a mostrar
+  # desde el indice
+  # ----------------------------------
+  function asignarAnchos() {
+    local longitudElemento
+
+    # Asigna los anchos de forma dinamica según el ancho de la celda
+    # ----------------------------------
+    function asignarAnchosDinamicamente() {
+      for ((i = numColComienzo; i <= columnasImprimir; i++)); do
+        anchoCelda[$i]="1"
+        for ((j = 0; j <= filasImprimir; j++)); do
+          if [[ "$j" == "0" ]]; then
+            longitudElemento=$(calcularLongitud "${titulos[$((i - 1))]}")
+          else
+            longitudElemento=$(calcularLongitud "${array[$i, $j]}")
+          fi
+
+          if [[ "${anchoCelda[$i]}" -lt "$longitudElemento" ]]; then
+            anchoCelda[$i]="$longitudElemento"
+          fi
+        done
+
+        if [[ "$((anchoCelda[$i] % 2))" == "1" ]]; then
+          anchoCelda[$i]=$((anchoCelda[$i] + 3))
+        else
+          anchoCelda[$i]=$((anchoCelda[$i] + 4))
+        fi
+      done
+    }
+
+    asignarAnchosDinamicamente
+  }
+
   # Imprime la tabla final en orden
   # ----------------------------------
   function imprimir() {
     local longitudArray
 
-    # Encabezado
-    printf "$colorBordes%s" ""
-    printf "%s" "$encTabla"
-    printf "$(fc)\n%s" ""
+    # Encabezado Y Titulos
+    # ----------------------------------
+    function encabezadoYTitulos() {
+      printf "$colorBordes%s$(fc)\n" "$encTabla"
 
-    # Fila de titulos
-    imprimirTitulos
-    printf "\n%s" ""
+      imprimirTitulos
+      printf "\n"
+    }
 
     # Fila de datos
-    for ((k = 1; k <= filasImprimir; k++)); do
-      for ((j = numColComienzo; j <= columnasImprimir; j++)); do
-        # Celda
-        longitudArray=$(calcularLongitud "${array[$j, $k]}")
-        printf "${estiloTabla[10]}%-*s" "$((anchoCelda[$j] / 2 - longitudArray / 2))" ""
-        printf "${serieColoresTabla_FG[$k]}%s" ""
-        printf "%s" "${array[$j, $k]}" ""
-        printf "$(fc)%s" ""
-        printf "%*s" "$((anchoCelda[$j] / 2 - (longitudArray + 1) / 2))" ""
+    # ----------------------------------
+    function datos() {
+      for ((k = 1; k <= filasImprimir; k++)); do
+        for ((j = numColComienzo; j <= columnasImprimir; j++)); do
+          # Celda
+          longitudArray=$(calcularLongitud "${array[$j, $k]}")
+          printf "${estiloTabla[10]}%-*s${serieColoresTabla_FG[$k]}%s$(fc)%*s" "$((anchoCelda[$j] / 2 - longitudArray / 2))" "" "${array[$j, $k]}" "$((anchoCelda[$j] / 2 - (longitudArray + 1) / 2))" ""
+        done
+        printf "${estiloTabla[10]}%s\n" ""
       done
-      printf "${estiloTabla[10]}%s\n" ""
-      if [ "$k" == "$filasImprimir" ]; then
-        # Fila de pie
-        printf "$colorBordes%s" ""
-        printf "%s" "$pieTabla"
-        printf "$(fc)\n%s" ""
-      fi
-    done
+    }
+
+    # Fila de pie
+    # ----------------------------------
+    function pie() {
+      printf "$colorBordes%s$(fc)\n" "$pieTabla"
+    }
+
+    encabezadoYTitulos
+    datos
+    pie
   }
 
   # Main de impresion
   # ----------------------------------
   asignarTitulos
   guardarColoresDeTabla
-  asignarAnchoYFilasYColumnas "$1" "$2" "$3"
+  comprobarFilasYColumnas "$1" "$2" "$3"
+  asignarAnchos # Cambiar a calcular una sola vez
   asignarEstiloDeTabla
   imprimir
 }
@@ -1523,16 +1510,6 @@ function main() {
       asignarEstadosSegunInstante "$instante"
     }
 
-    # Funcion que asigna la memoria vacia
-    # ----------------------------------
-    function algAsignarMemoriaInicial() {
-      MEM_USE="0"
-
-      for ((i = 0; i < MEM_TAM; i++)); do
-        procesosEnMemoria[$i]="$stringVacio"
-      done
-    }
-
     # Imprime el dibujo de la tabla
     # ----------------------------------
     function algImprimirTabla() {
@@ -1617,7 +1594,6 @@ function main() {
     instante="0"
     ordenarArray
     asignarDatosInicial
-    algAsignarMemoriaInicial
     algAsignarSerieDeColores
     algCabecera | sacarHaciaArchivo "$archivoSalida" -a
 
