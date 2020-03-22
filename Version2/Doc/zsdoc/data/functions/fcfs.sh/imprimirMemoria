@@ -1,0 +1,71 @@
+function imprimirPrimeraFila() {
+  for ((pos = posicion; pos < posicionFinal; pos++)); do
+    if [[ "${procesosEnMemoria[$pos]}" == "$stringVacio" ]]; then
+      printf "%s" "$espacios"
+    else
+      local nombreEstaPuesto="false"
+      idProceso="${procesosEnMemoria[$pos]}"
+      for ((i = 0; i < pos; i++)); do
+        if [[ "${procesosEnMemoria[$i]}" == "$idProceso" ]]; then
+          nombreEstaPuesto="true"
+        fi
+      done
+      if [[ "${procesosEnMemoria[$((pos - 1))]}" == "$stringVacio" || "${procesosEnMemoria[$((pos - 1))]}" != "$idProceso" ]]; then
+        nombreEstaPuesto="false"
+      fi
+      if [[ "$nombreEstaPuesto" == "false" ]]; then
+        printf "${serieColores_FG[$idProceso]}%s$(fc)" "${array[$PROC_NUM, $idProceso]}"
+      else
+        printf "%s" "$espacios"
+      fi
+    fi
+  done
+}
+function imprimirSegundaFila() {
+  local color
+  for ((pos = posicion; pos < posicionFinal; pos++)); do
+    if [[ "${procesosEnMemoria[$pos]}" == "$stringVacio" ]]; then
+      color="${colorVacio:0:6}"
+      color+="7"
+      color+="${colorVacio:7}"
+      printf "$color%s$(fc)" "$vacio"
+    else
+      idProceso="${procesosEnMemoria[$pos]}"
+      color="${serieColores_FG[$idProceso]:0:7}"
+      color+="${serieColores[$idProceso]:7}"
+      printf "$color%s$(fc)" "$relleno"
+    fi
+  done
+  printf "$(cc Neg blanco fg) %s$(fc)" "$posicionFinal"
+}
+function imprimirTerceraFila() {
+  for ((pos = posicion; pos < posicionFinal; pos++)); do
+    if [[ "${procesosEnMemoria[$pos]}" != "${procesosEnMemoria[$((pos - 1))]}" && "$pos" != "0" ]]; then
+      idProceso="${procesosEnMemoria[$pos]}"
+      printf "${serieColores_FG[$idProceso]}%-*s$(fc)" "$(calcularLongitud "$espacios")" "$pos"
+    else
+      printf "%s" "$espacios"
+    fi
+  done
+}
+function imprimir() {
+  local idProceso
+
+  local posicion
+  local posicionFinal
+
+  printf "\n"
+  for ((i = 0; i < MEM_TAM; i = $((i + anchoTruncado)))); do
+    posicion="$i"
+    posicionFinal="$((i + anchoTruncado))"
+
+    if [[ "$posicionFinal" -gt "$MEM_TAM" ]]; then
+      posicionFinal="$MEM_TAM"
+    fi
+
+    printf "\t\t\t\t%s%s\n" "$espacios" "$(imprimirPrimeraFila)"
+    printf "\t\t\t\t$(cc Neg blanco fg)%-*s$(fc)%s\n" "$(calcularLongitud "$espacios")" "BM" "$(imprimirSegundaFila)"
+    printf "\t\t\t\t%s%s\n" "$espacios" "$(imprimirTerceraFila)"
+  done
+}
+imprimir

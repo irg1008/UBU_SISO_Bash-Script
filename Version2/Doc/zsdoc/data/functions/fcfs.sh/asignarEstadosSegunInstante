@@ -1,0 +1,51 @@
+local -i instante="$1"
+local procesoEjecutando="false"
+local ningunProcesoEnCola="true"
+local memRestante
+for ((i = 1; i <= NUM_FIL; i++)); do
+
+  memRestante=$((MEM_TAM - MEM_USE))
+  if [[ "${array[$PROC_EST, $i]}" == "${estados[0]}" ]]; then
+    if [[ "${array[$PROC_LLE, $i]}" -le "$instante" ]]; then
+      array[$PROC_EST, $i]="${estados[1]}"
+    fi
+  fi
+  if [[ "${array[$PROC_EST, $i]}" == "${estados[1]}" ]]; then
+    array[$PROC_EJE_RES, $i]="${array[$PROC_EJE, $i]}"
+    array[$PROC_ESP, $i]="0"
+    array[$PROC_RES, $i]="0"
+    for ((cola = 1; cola < i; cola++)); do
+      if [[ "${array[$PROC_EST, $cola]}" == "${estados[1]}" ]]; then
+        ningunProcesoEnCola="false"
+      fi
+    done
+
+    if [[ "$ningunProcesoEnCola" == "true" ]]; then
+      if [[ "${array[$PROC_TAM, $i]}" -gt "$MEM_TAM" ]]; then
+        array[$PROC_EST, $i]="${estados[3]}"
+      elif [[ "${array[$PROC_TAM, $i]}" -le "$memRestante" ]]; then
+        array[$PROC_EST, $i]="${estados[2]}"
+      fi
+    fi
+  fi
+  if [[ "${array[$PROC_EST, $i]}" == "${estados[2]}" ]]; then
+    for ((j = 1; j <= NUM_FIL; j++)); do
+      if [[ "${array[$PROC_EST, $j]}" == "${estados[3]}" ]]; then
+        procesoEjecutando="true"
+      fi
+    done
+
+    if [[ "$procesoEjecutando" != "true" ]]; then
+      array[$PROC_EST, $i]="${estados[3]}"
+      array[$PROC_ESP, $i]="$((instante - array[$PROC_LLE, $i]))"
+    fi
+  fi
+  if [[ "${array[$PROC_EST, $i]}" == "${estados[3]}" ]]; then
+    array[$PROC_RES, $i]="$((instante - array[$PROC_LLE, $i]))"
+    if [[ "${array[$PROC_EJE_RES, $i]}" == "0" ]]; then
+      array[$PROC_EST, $i]="${estados[4]}"
+    fi
+  fi
+
+  calcularMemoriaRestante
+done

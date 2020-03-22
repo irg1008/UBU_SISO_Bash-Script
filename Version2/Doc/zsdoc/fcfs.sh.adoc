@@ -1,0 +1,549 @@
+fcfs.sh(1)
+==========
+:compat-mode!:
+
+NAME
+----
+fcfs.sh - a shell script
+
+SYNOPSIS
+--------
+FCFS según necesidades memoria no continua y no reubicable
+
+FUNCTIONS
+---------
+
+ asignarDatosInicial
+ asignarDesdeArchivo
+ asignarEstadosSegunInstante
+ asignarEstiloGeneral
+ asignarManual
+ asignarValoresAleatorios
+ avanzarAlgoritmo
+ calcularCambiosCPU
+ calcularCambiosMemoria
+ calcularLongitud
+ calcularMemoriaRestante
+ cc
+ centrarEnPantalla
+ colocarNombreAProcesos
+ comprobarProcesosEjecutando
+ elegirTipoDeEntrada
+ eliminarProcesosNoValidos
+ extraerDeConfig
+ fc
+ imprimirAyuda
+ imprimirCuadro
+ imprimirLineaProcesos
+ imprimirMemoria
+ imprimirTabla
+ main
+ ordenarArray
+ procesosHanTerminado
+ recibirEntrada
+ sacarHaciaArchivo
+
+DETAILS
+-------
+
+Script Body
+~~~~~~~~~~~
+
+Has 3 line(s). Calls functions:
+
+ Script-Body
+ `-- main
+
+asignarDatosInicial
+~~~~~~~~~~~~~~~~~~~
+
+____
+ 
+ Asigna los estados de los procesos
+ ----------------------------------
+____
+
+Has 11 line(s). Doesn't call other functions.
+
+Not called by script or any function (may be e.g. command_not_found_handle or called indirectly in other way).
+
+asignarDesdeArchivo
+~~~~~~~~~~~~~~~~~~~
+
+____
+ 
+ Devuelve los datos del archivo de entrada en un array
+ ----------------------------------
+____
+
+Has 28 line(s). Calls functions:
+
+ asignarDesdeArchivo
+ |-- avanzarAlgoritmo
+ |-- centrarEnPantalla
+ |-- elegirTipoDeEntrada
+ |   |-- asignarManual
+ |   |-- asignarValoresAleatorios
+ |   |   `-- centrarEnPantalla
+ |   |-- centrarEnPantalla
+ |   |-- colocarNombreAProcesos
+ |   |-- eliminarProcesosNoValidos
+ |   |-- imprimirAyuda
+ |   |   |-- centrarEnPantalla
+ |   |   `-- sacarHaciaArchivo
+ |   `-- sacarHaciaArchivo
+ `-- sacarHaciaArchivo
+
+Uses feature(s): _read_
+
+Called by:
+
+ elegirTipoDeEntrada
+
+asignarEstadosSegunInstante
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+____
+ 
+ Asigna los estados segun avanza el algoritmo
+ ----------------------------------
+____
+
+Has 51 line(s). Calls functions:
+
+ asignarEstadosSegunInstante
+ `-- calcularMemoriaRestante
+
+Not called by script or any function (may be e.g. command_not_found_handle or called indirectly in other way).
+
+asignarEstiloGeneral
+~~~~~~~~~~~~~~~~~~~~
+
+____
+ 
+ Almacen de los estilos de las tablas con sus códigos ASCII
+ @param Numero de estilo
+ ----------------------------------
+____
+
+Has 22 line(s). Doesn't call other functions.
+
+Not called by script or any function (may be e.g. command_not_found_handle or called indirectly in other way).
+
+asignarManual
+~~~~~~~~~~~~~
+
+____
+ 
+ Asigna valores en el array de forma manual
+ ----------------------------------
+____
+
+Has 94 line(s). Doesn't call other functions.
+
+Called by:
+
+ elegirTipoDeEntrada
+
+asignarValoresAleatorios
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+____
+ 
+ Crea un array con valores aleatorio para fase desarrollo o entrada
+ de datos automatica, (ni manual ni por archivo)
+ @param Numero de filas a generar de manera aleatorio (num. proceos)
+ ----------------------------------
+____
+
+Has 25 line(s). Calls functions:
+
+ asignarValoresAleatorios
+ `-- centrarEnPantalla
+
+Called by:
+
+ elegirTipoDeEntrada
+
+avanzarAlgoritmo
+~~~~~~~~~~~~~~~~
+
+____
+ 
+ Funcion basica de avance de algoritmo
+ ----------------------------------
+____
+
+Has 2 line(s). Doesn't call other functions.
+
+Uses feature(s): _read_
+
+Called by:
+
+ asignarDesdeArchivo
+
+calcularCambiosCPU
+~~~~~~~~~~~~~~~~~~
+
+____
+ 
+ Calcula la linea de cpu hasta el momento
+ ----------------------------------
+____
+
+Has 21 line(s). Doesn't call other functions.
+
+Not called by script or any function (may be e.g. command_not_found_handle or called indirectly in other way).
+
+calcularCambiosMemoria
+~~~~~~~~~~~~~~~~~~~~~~
+
+____
+ 
+ ####################### 3. ALGORITMO
+ Calcula los cambios en memoria para no hacerlo en la misma funcion de impresion
+ ----------------------------------
+____
+
+Has 46 line(s). Doesn't call other functions.
+
+Not called by script or any function (may be e.g. command_not_found_handle or called indirectly in other way).
+
+calcularLongitud
+~~~~~~~~~~~~~~~~
+
+____
+ 
+ Devuelve la longitud del string, contando los patrones de colores.
+ @param String del que queremos calcular la longitud
+ ----------------------------------
+____
+
+Has 1 line(s). Doesn't call other functions.
+
+Not called by script or any function (may be e.g. command_not_found_handle or called indirectly in other way).
+
+calcularMemoriaRestante
+~~~~~~~~~~~~~~~~~~~~~~~
+
+____
+ 
+ Función que calcula la memoria restante
+ ----------------------------------
+____
+
+Has 7 line(s). Doesn't call other functions.
+
+Called by:
+
+ asignarEstadosSegunInstante
+
+cc
+~~
+
+____
+ 
+ Devuelve la expresión completa de color, pasándole los parámetros
+ que queremos en orden
+ @param tipoEspecial (Negrita=Neg, Subrayado=Sub, Normal=Nor, Parpadeo=Par)
+ @param (valor random, default,  error, acierto, fg aleatorio sobre bg negro
+ o lista de colores en orden)
+ ----------------------------------
+____
+
+Has 73 line(s). Doesn't call other functions.
+
+Not called by script or any function (may be e.g. command_not_found_handle or called indirectly in other way).
+
+centrarEnPantalla
+~~~~~~~~~~~~~~~~~
+
+____
+ 
+ Centra en pantalla el valor pasado, si es un string, divide por saltos de
+ linea y coloca cada linea en el centro
+ @param string a centrar
+ ----------------------------------
+____
+
+Has 15 line(s). Doesn't call other functions.
+
+Called by:
+
+ asignarDesdeArchivo
+ asignarValoresAleatorios
+ elegirTipoDeEntrada
+ imprimirAyuda
+
+colocarNombreAProcesos
+~~~~~~~~~~~~~~~~~~~~~~
+
+____
+ 
+ Funcion que pone los nombres a los procesos con el estándar pedido
+ ----------------------------------
+____
+
+Has 7 line(s). Doesn't call other functions.
+
+Called by:
+
+ elegirTipoDeEntrada
+
+comprobarProcesosEjecutando
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+____
+ 
+ Comprueba los procesos que se estan ejecutando
+ ----------------------------------
+____
+
+Has 5 line(s). Doesn't call other functions.
+
+Not called by script or any function (may be e.g. command_not_found_handle or called indirectly in other way).
+
+elegirTipoDeEntrada
+~~~~~~~~~~~~~~~~~~~
+
+____
+ 
+ Funcion para elegir el tipo de entrada de datos
+ @param archivo externo para la opcion de archivo
+ ----------------------------------
+____
+
+Has 60 line(s). Calls functions:
+
+ elegirTipoDeEntrada
+ |-- asignarDesdeArchivo
+ |   |-- avanzarAlgoritmo
+ |   |-- centrarEnPantalla
+ |   `-- sacarHaciaArchivo
+ |-- asignarManual
+ |-- asignarValoresAleatorios
+ |   `-- centrarEnPantalla
+ |-- centrarEnPantalla
+ |-- colocarNombreAProcesos
+ |-- eliminarProcesosNoValidos
+ |-- imprimirAyuda
+ |   |-- centrarEnPantalla
+ |   `-- sacarHaciaArchivo
+ `-- sacarHaciaArchivo
+
+Called by:
+
+ asignarDesdeArchivo
+ imprimirAyuda
+
+eliminarProcesosNoValidos
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+____
+ 
+ Funcion que elimina las lineas de datos no validas.
+ Estas son las que tienen procesos cuyo tamaño es mayor a la memoria.
+ ----------------------------------
+____
+
+Has 22 line(s). Doesn't call other functions.
+
+Called by:
+
+ elegirTipoDeEntrada
+
+extraerDeConfig
+~~~~~~~~~~~~~~~
+
+____
+ 
+ Devuelve los datos extraidos del archivo de configuracion
+ @param parametro a leer del config
+ ----------------------------------
+____
+
+Has 44 line(s). Doesn't call other functions.
+
+Not called by script or any function (may be e.g. command_not_found_handle or called indirectly in other way).
+
+fc
+~~
+
+____
+ 
+ Finaliza el uso de colores
+ ----------------------------------
+____
+
+Has 1 line(s). Doesn't call other functions.
+
+Not called by script or any function (may be e.g. command_not_found_handle or called indirectly in other way).
+
+imprimirAyuda
+~~~~~~~~~~~~~
+
+____
+ 
+ Ayuda del algoritmo
+ ----------------------------------
+____
+
+Has 23 line(s). Calls functions:
+
+ imprimirAyuda
+ |-- centrarEnPantalla
+ |-- elegirTipoDeEntrada
+ |   |-- asignarDesdeArchivo
+ |   |   |-- avanzarAlgoritmo
+ |   |   |-- centrarEnPantalla
+ |   |   `-- sacarHaciaArchivo
+ |   |-- asignarManual
+ |   |-- asignarValoresAleatorios
+ |   |   `-- centrarEnPantalla
+ |   |-- centrarEnPantalla
+ |   |-- colocarNombreAProcesos
+ |   |-- eliminarProcesosNoValidos
+ |   `-- sacarHaciaArchivo
+ `-- sacarHaciaArchivo
+
+Uses feature(s): _read_
+
+Called by:
+
+ elegirTipoDeEntrada
+
+imprimirCuadro
+~~~~~~~~~~~~~~
+
+____
+ 
+ Imprime la introduccion del programa
+ @param Ancho del cuadro
+ @param Color
+ @param Array del contenido del cuadro
+ @param Tipo de texto
+ ----------------------------------
+____
+
+Has 64 line(s). Doesn't call other functions.
+
+Not called by script or any function (may be e.g. command_not_found_handle or called indirectly in other way).
+
+imprimirLineaProcesos
+~~~~~~~~~~~~~~~~~~~~~
+
+____
+ 
+ Imprime la linea de procesos de CPU
+ @param Instante actual
+ ----------------------------------
+____
+
+Has 74 line(s). Doesn't call other functions.
+
+Not called by script or any function (may be e.g. command_not_found_handle or called indirectly in other way).
+
+imprimirMemoria
+~~~~~~~~~~~~~~~
+
+____
+ 
+ Imprime el uso de la memoria según los procesos en ella
+ ----------------------------------
+____
+
+Has 71 line(s). Doesn't call other functions.
+
+Not called by script or any function (may be e.g. command_not_found_handle or called indirectly in other way).
+
+imprimirTabla
+~~~~~~~~~~~~~
+
+____
+ 
+ Imprime una tabla según el tamaño del array de datos
+ @param numeroFilasImprimir
+ @param numeroColumnasImprimir
+ @param numeroDeColumnaDelQueEmpezamos
+ ----------------------------------
+____
+
+Has 126 line(s). Doesn't call other functions.
+
+Not called by script or any function (may be e.g. command_not_found_handle or called indirectly in other way).
+
+main
+~~~~
+
+____
+ 
+ ####################### Main
+ Main, eje central del algoritmo, única llamada en cuerpo
+ ----------------------------------
+____
+
+Has 279 line(s). Doesn't call other functions.
+
+Called by:
+
+ Script-Body
+
+ordenarArray
+~~~~~~~~~~~~
+
+____
+ 
+ Ordena el array según tiempo de llegada para mostrar la tabla
+ ----------------------------------
+____
+
+Has 26 line(s). Doesn't call other functions.
+
+Not called by script or any function (may be e.g. command_not_found_handle or called indirectly in other way).
+
+procesosHanTerminado
+~~~~~~~~~~~~~~~~~~~~
+
+____
+ 
+ Comprueba si el programa ha acabado
+ ----------------------------------
+____
+
+Has 9 line(s). Doesn't call other functions.
+
+Not called by script or any function (may be e.g. command_not_found_handle or called indirectly in other way).
+
+recibirEntrada
+~~~~~~~~~~~~~~
+
+____
+ 
+ Funcion tipo de entrada de datos comun a todas las peticiones del programa
+ ----------------------------------
+____
+
+Has 5 line(s). Doesn't call other functions.
+
+Uses feature(s): _read_
+
+Not called by script or any function (may be e.g. command_not_found_handle or called indirectly in other way).
+
+sacarHaciaArchivo
+~~~~~~~~~~~~~~~~~
+
+____
+ 
+ Saca la información del comando que acompaña
+ @param "-a" para append
+ ----------------------------------
+____
+
+Has 9 line(s). Doesn't call other functions.
+
+Called by:
+
+ asignarDesdeArchivo
+ elegirTipoDeEntrada
+ imprimirAyuda
+

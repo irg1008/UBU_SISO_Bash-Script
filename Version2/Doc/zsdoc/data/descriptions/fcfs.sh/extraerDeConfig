@@ -1,0 +1,3 @@
+# Devuelve los datos extraidos del archivo de configuracion
+# @param parametro a leer del config
+# ----------------------------------

@@ -1,0 +1,279 @@
+ declare -a estiloGeneral
+ declare -A array
+ declare -i NUM_COL
+ declare -i NUM_FIL
+ declare -i MEM_TAM
+ declare -i MEM_USE
+ declare -i PROC_NUM
+ declare -i PROC_LLE
+ declare -i PROC_EJE
+ declare -i PROC_TAM
+ declare -i PROC_EST
+ declare -i PROC_RES
+ declare -i PROC_ESP
+ declare -i PROC_EJE_RES
+ local configFile
+ local introduccion
+ local error
+ local acierto
+ local advertencia
+ local archivoSalida
+ local archivoEntrada
+ local salirDePractica
+ function asignaciones() {
+   function asignarConfigs() {
+     configFile=$(dirname "$0")
+     configFile+="/Config/config.toml"
+     introduccion=$(extraerDeConfig "introduccion")
+     error=$(extraerDeConfig "error")
+     acierto=$(extraerDeConfig "acierto")
+     advertencia=$(extraerDeConfig "advertencia")
+     archivoSalida=$(extraerDeConfig "archivoSalida")
+     archivoEntrada=$(extraerDeConfig "archivoEntrada")
+   }
+   function asignarPosicionYNumColumnas() {
+     PROC_NUM="1"
+     PROC_LLE="2"
+     PROC_EJE="3"
+     PROC_TAM="4"
+     PROC_EST="5"
+     PROC_RES="6"
+     PROC_ESP="7"
+     PROC_EJE_RES="8"
+
+     NUM_COL="$PROC_EJE_RES"
+   }
+
+   asignarConfigs
+   asignarEstiloGeneral "4"
+   asignarPosicionYNumColumnas
+ }
+ function introduccion() {
+   centrarEnPantalla "$(imprimirCuadro "50" "default" "$introduccion")" | sacarHaciaArchivo "$archivoSalida"
+   centrarEnPantalla "$(imprimirCuadro "100" "error" "$error")"
+   centrarEnPantalla "$(imprimirCuadro "100" "advertencia" "$advertencia")"
+   avanzarAlgoritmo
+ }
+ function menu() {
+   elegirTipoDeEntrada "$archivoEntrada"
+ }
+ function algoritmo() {
+   local -a estados=("Fuera del Sistema" "En Espera" "En Memoria" "En Ejecución" "Finalizado")
+   local -a procesosEnMemoria
+   local -a procesosEnCPU
+   local stringVacio
+   local -A arrayCopia
+   local instante
+   local acabarAlgoritmo
+   local -a serieColores
+   local -a serieColores_FG
+   local colorVacio
+   procesosEnCPU=()
+   acabarAlgoritmo="false"
+   stringVacio="null"
+   function algCabecera() {
+     centrarEnPantalla "$(imprimirCuadro "100" "acierto" "$acierto")"
+   }
+   function algCalcularSigIns() {
+     centrarEnPantalla "$(printf "$(cc Neg 3) %s $(fc)" "t=$instante - Memoria usada: $MEM_USE/$MEM_TAM")"
+   }
+   function algTiemposMedios() {
+     local -i mediaRespuesta
+     local -i mediaEspera
+     mediaEspera="0"
+     mediaRespuesta="0"
+
+     for ((i = 1; i <= NUM_FIL; i++)); do
+       if [[ "${array[$PROC_RES, $i]}" != "-" ]]; then
+         mediaRespuesta+="${array[$PROC_RES, $i]}"
+       fi
+       if [[ "${array[$PROC_ESP, $i]}" != "-" ]]; then
+         mediaEspera+="${array[$PROC_ESP, $i]}"
+       fi
+     done
+
+     mediaRespuesta="$((mediaRespuesta * 100))"
+     mediaEspera="$((mediaEspera * 100))"
+     function sacarMediaRespuesta() {
+       printf "%.2f" "$((mediaRespuesta / NUM_FIL))e-2"
+     }
+     function sacarMediaEspera() {
+       printf "%.2f" "$((mediaEspera / NUM_FIL))e-2"
+     }
+
+     centrarEnPantalla "$(printf "$(cc Neg 3) %s $(fc)" "Tiempo Medio de Retorno: $(sacarMediaRespuesta) - Tiempo Medio de Espera: $(sacarMediaEspera)")"
+   }
+   function algCalcularDatos() {
+     comprobarProcesosEjecutando
+     asignarEstadosSegunInstante "$instante"
+   }
+   function algImprimirTabla() {
+     centrarEnPantalla "$(imprimirTabla "$NUM_FIL" "10")"
+   }
+   function algAvanzarAlgoritmo() {
+     local temp
+     temp=""
+
+     read -r -p "$(centrarEnPantalla "$(imprimirCuadro "50" "blanco" "Pulsa intro para avanzar o [F] para finalizar")")" temp
+     clear
+     clear
+
+     if [[ "$temp" =~ ^([fF])$ ]]; then
+       acabarAlgoritmo="true"
+       centrarEnPantalla "$(imprimirCuadro "100" "3" "Ejecutando y exportando algoritmo en segundo plano. Serán solo unos segundos")"
+     fi
+   }
+   function copiarArray() {
+     for ((i = 1; i <= NUM_FIL; i++)); do
+       for ((j = 1; j <= NUM_COL; j++)); do
+         arrayCopia[$j, $i]="${array[$j, $i]}"
+       done
+     done
+   }
+   function algoImportantePasa() {
+     local algoImportantePasa="false"
+
+     for ((i = 1; i <= NUM_FIL; i++)); do
+       if [[ "${array[$PROC_EST, $i]}" != "${arrayCopia[$PROC_EST, $i]}" ]]; then
+         algoImportantePasa="true"
+       fi
+     done
+
+     echo "$algoImportantePasa"
+   }
+   function algCuerpoAlgoritmo() {
+     local espacios
+     local relleno
+     local vacio
+     local anchoTruncado
+     espacios="   "
+     relleno="██▊"
+     vacio="░░░"
+     anchoTruncado="32"
+
+     algCalcularSigIns
+     algImprimirTabla
+     algTiemposMedios
+     imprimirMemoria
+     imprimirLineaProcesos "$instante"
+   }
+   function algAsignarSerieDeColores() {
+     colorVacio="$(cc Nor blanco)"
+     for ((i = 1; i <= NUM_FIL; i++)); do
+       serieColores[$i]=$(cc Nor "$((i + 4))")
+       serieColores_FG[$i]=$(cc Nor "$((i + 4))" "fg")
+     done
+   }
+   clear
+   instante="0"
+   ordenarArray
+   asignarDatosInicial
+   algAsignarSerieDeColores
+   algCabecera | sacarHaciaArchivo "$archivoSalida" -a
+
+   while [[ $(procesosHanTerminado) != "true" ]]; do
+     copiarArray
+     algCalcularDatos
+     calcularCambiosCPU
+     if [[ "$(algoImportantePasa)" == "true" || "$instante" == "0" ]]; then
+       calcularCambiosMemoria
+       if [[ "$acabarAlgoritmo" == "true" ]]; then
+         algCuerpoAlgoritmo >>"$archivoSalida"
+       else
+         algCuerpoAlgoritmo | sacarHaciaArchivo "$archivoSalida" -a
+         algAvanzarAlgoritmo
+       fi
+     fi
+     ((instante++))
+   done
+ }
+ function preguntarSiQuiereInforme() {
+   function menuInforme() {
+     local tipo
+     local opcionesEntrada
+     opcionesEntrada=(
+       "1.- Informe en color"
+       "2.- Informe en blanco y negro"
+       "0.- No sacar informe"
+     )
+
+     centrarEnPantalla "$(imprimirCuadro "50" "default" "MENU DE INFORME")"
+     centrarEnPantalla "$(imprimirCuadro "50" "default" "${opcionesEntrada[@]}")"
+     tipo=$(recibirEntrada)
+
+     while [[ ! "$tipo" =~ ^[0-2]$ ]]; do
+       centrarEnPantalla "$(imprimirCuadro "80" "error" "Inserta un valor numérico entre 0 y 4")"
+       tipo=$(recibirEntrada)
+     done
+
+     case "$tipo" in
+     1)
+       less -r "$archivoSalida"
+       ;;
+     2)
+       sed -r 's/\x1B\[([0-9]{1,3}((;[0-9]{1,3})*)?)?[m|K]//g' "$archivoSalida" | less
+       ;;
+     0) ;;
+     esac
+   }
+
+   clear
+   menuInforme
+ }
+ function preguntarSiQuiereSalir() {
+   local temp
+
+   clear
+   centrarEnPantalla "$(imprimirCuadro "50" "default" "¿Quieres volver a ejecutar el algoritmo? [S/N]")"
+   temp=$(recibirEntrada)
+
+   while [[ ! "$temp" =~ ^([sS][iI]|[sS]|[nN][oO]|[nN])$ ]]; do
+     centrarEnPantalla "$(imprimirCuadro "80" "error" "Entrada de datos errónea")"
+     temp=$(recibirEntrada)
+   done
+
+   if [[ $temp =~ [nN][oO]|[nN] ]]; then
+     salirDePractica="true"
+   elif [[ "$temp" =~ [sS][iI]|[sS] ]]; then
+     array=()
+     clear | sacarHaciaArchivo "$archivoSalida" -a
+     centrarEnPantalla "$(imprimirCuadro "50" "blanco" "Ejecutando el algoritmo de nuevo")" | sacarHaciaArchivo "$archivoSalida" -a
+   fi
+ }
+ function imprimirSpam() {
+   local spam
+   local gitSpam=("¡Gracias por usar nuestro algoritmo!" "Visita nuestro repositorio aquí abajo")
+   spam="
+▄▄▄▄▄▄▄   ▄ ▄▄▄▄   ▄▄  ▄▄ ▄▄▄▄▄▄▄
+█ ▄▄▄ █ ▀ ▀ ▄█▀█▀ █ ▀▄█▄▀ █ ▄▄▄ █
+█ ███ █ ▀█▀ ▀ ▀█▄▀ █▄▄█▄  █ ███ █
+█▄▄▄▄▄█ █▀▄▀█ ▄ ▄ ▄ ▄ ▄ ▄ █▄▄▄▄▄█
+▄▄▄▄▄ ▄▄▄█▀█  ▀ █▄█▀▄▀█ ▄▄ ▄ ▄ ▄ 
+▀▄▄ ▀▄▄▄▄ █ ▀███▄█▀▀█▄ ▀▄ ▀▄▄▄▀█▀
+█▀██ ▄▄ ▄▄▄ █▀▄█ ▄ ▀ ▀█ ▄█▀▄█▄▀  
+█▄█ █ ▄ ██▄▄▄  ▀▀  ▀█▀▀  ▄██▄  █▀
+▄▄▀▄██▄▄█▄▀█  ▀ ▀▄▀▀▄▀█  █▀█▄ ▀▄ 
+ ▀▄▀▄█▄█ █▀ ▀███ ▄▄▀█ ▄▀▄▄█  █ █▀
+▄▄▄  ▀▄█ █▀ █▀▄ ▀▄▀▄▀▀██▄▀  ▄ ▀▄ 
+█ █  █▄▄▀██▄▄  ▄█ ▀▀ █▀▀ ▄█▄ █ █▀
+█ ▄███▄▀█ ▄█  ▀█ ▄ ▄ ▀  █████▀▀ ▄
+▄▄▄▄▄▄▄ █▀█ ▀██▄▀ ▀▀█▄▄▄█ ▄ ██▀▄▀
+█ ▄▄▄ █ ▄█▄ █▀▄▄█▄▄▀▄▀█▀█▄▄▄█▀▀█▀
+█ ███ █ █ █▄▄  ▄██▀▀█▀ ▄▄▀▄▀▀▄▄▀▀
+█▄▄▄▄▄█ █▄▄█  ▀▀     ▀▄█▄▄▀▀ █▀▄ 
+"
+   clear
+   centrarEnPantalla "$(imprimirCuadro "50" "acierto" "${gitSpam[@]}")"
+   centrarEnPantalla "$(imprimirCuadro "38" "default" "$spam")"
+   printf "\n"
+ }
+ clear
+ asignaciones
+ introduccion
+ while [[ "$salirDePractica" != "true" ]]; do
+   menu
+   algoritmo
+   preguntarSiQuiereInforme
+   preguntarSiQuiereSalir
+ done
+ imprimirSpam

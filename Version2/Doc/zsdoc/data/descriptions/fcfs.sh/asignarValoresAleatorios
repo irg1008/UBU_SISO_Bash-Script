@@ -1,0 +1,4 @@
+# Crea un array con valores aleatorio para fase desarrollo o entrada
+# de datos automatica, (ni manual ni por archivo)
+# @param Numero de filas a generar de manera aleatorio (num. proceos)
+# ----------------------------------

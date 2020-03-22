@@ -1,0 +1,94 @@
+local masProcesos
+function entradaEsEntero() {
+  if [[ "$1" =~ ^[0-9]+$ ]] && [[ "$1" -ge "$2" ]]; then
+    echo "true"
+  fi
+}
+function comienzoPregunta() {
+  clear
+  centrarEnPantalla "$(imprimirCuadro "50" "blanco" "$2")" | sacarHaciaArchivo "$archivoSalida" -a
+  centrarEnPantalla "$(imprimirTabla "$1" "4" "2")" | sacarHaciaArchivo "$archivoSalida" -a
+}
+function tamMemoria() {
+  clear
+  centrarEnPantalla "$(imprimirCuadro "50" "blanco" "Tamaño de la memoria")"
+  MEM_TAM=$(recibirEntrada)
+
+  while [[ $(entradaEsEntero "$MEM_TAM" "1") != "true" ]]; do
+    centrarEnPantalla "$(imprimirCuadro "80" "error" "Valor de tamaño de memoria no válido, mayor o igual que 1")"
+    MEM_TAM=$(recibirEntrada)
+  done
+}
+function guardarLlegadaProceso() {
+  local llegada
+
+  comienzoPregunta "$1" "Llegada del proceso $1"
+  llegada=$(recibirEntrada)
+
+  while [[ $(entradaEsEntero "$llegada" "1") != "true" ]]; do
+    centrarEnPantalla "$(imprimirCuadro "80" "error" "Valor de llegada del proceso no válido, entero 1 o mayor")"
+    llegada=$(recibirEntrada)
+  done
+
+  array[$PROC_LLE, $1]="$llegada"
+}
+function guardarTiempoEjecucion() {
+  local ejecucion
+
+  comienzoPregunta "$1" "Tiempo ejecución proceso $1"
+  ejecucion=$(recibirEntrada)
+
+  while [[ $(entradaEsEntero "$ejecucion" "1") != "true" ]]; do
+    centrarEnPantalla "$(imprimirCuadro "80" "error" "Valor de tiempo de ejecución no válido, entero mayor que 0")"
+    ejecucion=$(recibirEntrada)
+  done
+
+  array[$PROC_EJE, $1]="$ejecucion"
+}
+function guardarTamMemoria() {
+  local tam
+
+  comienzoPregunta "$1" "Tamaño del proceso $1 - (Memoria: $MEM_TAM)"
+  tam=$(recibirEntrada)
+
+  while [[ $(entradaEsEntero "$tam" "1") != "true" || "$tam" -gt "$MEM_TAM" ]]; do
+    if [[ "$tam" -gt "$MEM_TAM" ]]; then
+      centrarEnPantalla "$(imprimirCuadro "80" "error" "⚠ ¡El tamaño del proceso es mayor que la memoria! No podrá ejecutarse ⚠")"
+    else
+      centrarEnPantalla "$(imprimirCuadro "80" "error" "Valor de tiempo de tamaño no válido, entero mayor que 0")"
+    fi
+    tam=$(recibirEntrada)
+  done
+
+  if [[ "$tam" -gt "$MEM_TAM" ]]; then
+    centrarEnPantalla "$(imprimirCuadro "80" "advertencia" "⚠ ¡El tamaño del proceso es mayor que la memoria! No podrá ejecutarse ⚠")"
+  fi
+
+  array[$PROC_TAM, $1]="$tam"
+}
+function comprobarSiMasProcesos() {
+  local temp
+
+  comienzoPregunta "$1" "¿Quieres introducir otro proceso? [S/N]"
+  temp=$(recibirEntrada)
+
+  while [[ ! "$temp" =~ ^([sS][iI]|[sS]|[nN][oO]|[nN])$ ]]; do
+    centrarEnPantalla "$(imprimirCuadro "80" "error" "Entrada de datos errónea")"
+    temp=$(recibirEntrada)
+  done
+
+  if [[ $temp =~ [nN][oO]|[nN] ]]; then
+    masProcesos="false"
+  elif [[ $temp =~ [sS][iI]|[sS] ]]; then
+    ((NUM_FIL++))
+  fi
+}
+asignarSerieDeColores
+NUM_FIL="1"
+tamMemoria
+while [[ "$masProcesos" != "false" && "$NUM_FIL" -lt "100" ]]; do
+  guardarLlegadaProceso "$NUM_FIL"
+  guardarTiempoEjecucion "$NUM_FIL"
+  guardarTamMemoria "$NUM_FIL"
+  comprobarSiMasProcesos "$NUM_FIL"
+done

@@ -1,0 +1,23 @@
+local ayuda
+local funciona
+funciona=(
+  "Algoritmo FCFS según necesidades memoria no reubicable memoria no continua"
+  " "
+  "Este algoritmo funciona introduciendo los procesos en CPU según el orden de llegada de los mismos."
+  "Se ejecutarán los procesos siempre que entren en memoria, en caso contrario no serán planteados."
+)
+ayuda=(
+  "Puedes introducir los datos de tres formas:"
+  " "
+  "- Forma manual: Inserta el valor de memoria y despues todos los procesos uno a uno"
+  "- Forma automática desde archivo: Introduce los datos desde el archivo externo de datos"
+  "- Forma automática: Asigna todos los valores de forma automática"
+)
+
+clear
+centrarEnPantalla "$(imprimirCuadro "50" "default" "AYUDA")" | sacarHaciaArchivo "$archivoSalida" -a
+centrarEnPantalla "$(imprimirCuadro "120" "7" "${funciona[@]}")" | sacarHaciaArchivo "$archivoSalida" -a
+centrarEnPantalla "$(imprimirCuadro "120" "advertencia" "${ayuda[@]}")" | sacarHaciaArchivo "$archivoSalida" -a
+read -r -p "$(centrarEnPantalla "$(imprimirCuadro "35" "default" "Pulsa intro para volver al menú")")"
+clear
+elegirTipoDeEntrada "$archivoEntrada"

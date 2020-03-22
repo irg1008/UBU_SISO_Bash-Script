@@ -1,0 +1,126 @@
+local titulos
+local colorEncabezado
+local colorBordes
+local -a serieColoresTabla_FG
+local estiloTabla
+local -A anchoCelda
+local filasImprimir
+local columnasImprimir
+local encTabla
+local pieTabla
+local numColComienzo
+function asignarTitulos() {
+  titulos=("Ref" "Tll" "Tej" "Mem" "Estado" "Tret" "Tesp" "Trej")
+}
+function guardarColoresDeTabla() {
+  colorEncabezado=$(cc Sub blanco fg)
+  colorBordes=$(cc Neg blanco fg)
+  for ((i = 1; i <= NUM_FIL; i++)); do
+    serieColoresTabla_FG[$i]=$(cc Nor "$((i + 4))" "fg")
+  done
+}
+function imprimirTitulos() {
+  local longitudArray
+
+  for ((i = numColComienzo; i <= columnasImprimir; i++)); do
+    longitudArray=$(calcularLongitud "${titulos[$((i - 1))]}")
+    printf "${estiloTabla[10]}%-*s$colorEncabezado%s$(fc)%*s" "$((anchoCelda[$i] / 2 - longitudArray / 2))" "" "${titulos[$((i - 1))]}" "$((anchoCelda[$i] / 2 - (longitudArray + 1) / 2))" ""
+  done
+
+  printf "${estiloTabla[10]}%s" ""
+}
+function comprobarFilasYColumnas() {
+  filasImprimir="$1"
+  columnasImprimir="$2"
+  numColComienzo="$3"
+
+  if [ "$filasImprimir" -gt "$NUM_FIL" ]; then
+    filasImprimir="$NUM_FIL"
+  fi
+  if [ "$columnasImprimir" -gt "$NUM_COL" ]; then
+    columnasImprimir="$NUM_COL"
+  fi
+  if [[ "$numColComienzo" == "" || "$numColComienzo" -gt "$columnasImprimir" ]]; then
+    numColComienzo="1"
+  fi
+}
+function asignarEstiloDeTabla() {
+  local -a simboloHorizontal
+
+  estiloTabla=("${estiloGeneral[@]}")
+
+  for ((j = numColComienzo; j <= columnasImprimir; j++)); do
+    for ((i = 0; i < anchoCelda[$j]; i++)); do
+      simboloHorizontal[$j]+=${estiloTabla[0]}
+    done
+  done
+
+  encTabla=${estiloTabla[1]}${simboloHorizontal[$numColComienzo]}
+  pieTabla=${estiloTabla[3]}${simboloHorizontal[$numColComienzo]}
+
+  for ((i = ((numColComienzo + 1)); i <= columnasImprimir; i++)); do
+    encTabla+=${estiloTabla[4]}${simboloHorizontal[$i]}
+    pieTabla+=${estiloTabla[6]}${simboloHorizontal[$i]}
+  done
+
+  encTabla+=${estiloTabla[7]}
+  pieTabla+=${estiloTabla[9]}
+}
+function asignarAnchos() {
+  local longitudElemento
+  function asignarAnchosDinamicamente() {
+    for ((i = numColComienzo; i <= columnasImprimir; i++)); do
+      anchoCelda[$i]="1"
+      for ((j = 0; j <= filasImprimir; j++)); do
+        if [[ "$j" == "0" ]]; then
+          longitudElemento=$(calcularLongitud "${titulos[$((i - 1))]}")
+        else
+          longitudElemento=$(calcularLongitud "${array[$i, $j]}")
+        fi
+
+        if [[ "${anchoCelda[$i]}" -lt "$longitudElemento" ]]; then
+          anchoCelda[$i]="$longitudElemento"
+        fi
+      done
+
+      if [[ "$((anchoCelda[$i] % 2))" == "1" ]]; then
+        anchoCelda[$i]=$((anchoCelda[$i] + 3))
+      else
+        anchoCelda[$i]=$((anchoCelda[$i] + 4))
+      fi
+    done
+  }
+
+  asignarAnchosDinamicamente
+}
+function imprimir() {
+  local longitudArray
+  function encabezadoYTitulos() {
+    printf "$colorBordes%s$(fc)\n" "$encTabla"
+
+    imprimirTitulos
+    printf "\n"
+  }
+  function datos() {
+    for ((k = 1; k <= filasImprimir; k++)); do
+      for ((j = numColComienzo; j <= columnasImprimir; j++)); do
+        longitudArray=$(calcularLongitud "${array[$j, $k]}")
+        printf "${estiloTabla[10]}%-*s${serieColoresTabla_FG[$k]}%s$(fc)%*s" "$((anchoCelda[$j] / 2 - longitudArray / 2))" "" "${array[$j, $k]}" "$((anchoCelda[$j] / 2 - (longitudArray + 1) / 2))" ""
+      done
+      printf "${estiloTabla[10]}%s\n" ""
+    done
+  }
+  function pie() {
+    printf "$colorBordes%s$(fc)\n" "$pieTabla"
+  }
+
+  encabezadoYTitulos
+  datos
+  pie
+}
+asignarTitulos
+guardarColoresDeTabla
+comprobarFilasYColumnas "$1" "$2" "$3"
+asignarAnchos
+asignarEstiloDeTabla
+imprimir

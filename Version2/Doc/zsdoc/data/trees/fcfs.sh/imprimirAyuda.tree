@@ -1,0 +1,17 @@
+imprimirAyuda
+|-- centrarEnPantalla
+|-- elegirTipoDeEntrada
+|   |-- asignarDesdeArchivo
+|   |   |-- avanzarAlgoritmo
+|   |   |-- centrarEnPantalla
+|   |   `-- sacarHaciaArchivo
+|   |-- asignarManual
+|   |-- asignarValoresAleatorios
+|   |   `-- centrarEnPantalla
+|   |-- centrarEnPantalla
+|   |-- colocarNombreAProcesos
+|   |-- eliminarProcesosNoValidos
+|   `-- sacarHaciaArchivo
+`-- sacarHaciaArchivo
+
+14 directories, 0 files

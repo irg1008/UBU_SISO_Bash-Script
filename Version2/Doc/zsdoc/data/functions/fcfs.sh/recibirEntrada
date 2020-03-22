@@ -1,0 +1,5 @@
+local mensaje
+mensaje="$(printf "\n$(cc Neg blanco)%15s$(fc)" "Respuesta: ")"
+
+read -r -p "$mensaje "
+echo "$REPLY"

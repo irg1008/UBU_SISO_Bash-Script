@@ -1,0 +1,64 @@
+local estilo
+local titulos
+local encTabla
+local pieTabla
+local anchoCuadro
+local color
+function asignarEstiloCuadro() {
+  local simboloHorizontal
+
+  estilo=("${estiloGeneral[@]}")
+
+  for ((i = 1; i <= anchoCuadro; i++)); do
+    simboloHorizontal+=${estilo[0]}
+  done
+
+  encTabla=${estilo[1]}$simboloHorizontal
+  pieTabla=${estilo[3]}$simboloHorizontal
+
+  encTabla+=${estilo[7]}
+  pieTabla+=${estilo[9]}
+}
+function asignacolor() {
+  if [[ "$2" == "" ]]; then
+    color=$(cc Neg "$1")
+  else
+    color=$(cc "$2" "$1")
+  fi
+}
+function asignarAncho() {
+  anchoCuadro="$1"
+
+  if [ "$((anchoCuadro % 2))" == "1" ]; then
+    ((anchoCuadro++))
+  fi
+}
+function imprimirTitulos() {
+
+  IFS=$'\n' titulos=($@)
+  local longitudArray
+
+  for ((i = 2; i < ${#titulos[@]}; i++)); do
+    longitudArray=$(calcularLongitud "${titulos[$i]}")
+    printf "$color%s" ""
+    printf "${estilo[10]}%-*s" "$((anchoCuadro / 2 - longitudArray / 2))" ""
+    printf "%s" "${titulos[$i]}" ""
+    printf "$color%s" ""
+    printf "%*s${estilo[10]}" "$((anchoCuadro / 2 - (longitudArray + 1) / 2))" ""
+    printf "$(fc)\n%s" ""
+  done
+}
+function imprimir() {
+  local longitudArray
+  printf "$color%s" ""
+  printf "%s" "$encTabla"
+  printf "$(fc)\n%s" ""
+  imprimirTitulos "$@"
+  printf "$color%s" ""
+  printf "%s" "$pieTabla"
+  printf "$(fc)\n%s" ""
+}
+asignarAncho "$1"
+asignacolor "$2" "$4"
+asignarEstiloCuadro
+imprimir "$@"

@@ -1,0 +1,28 @@
+local archivo
+archivo=$(dirname "$0")
+archivo+="/$1"
+[ ! -f "$archivo" ] && {
+  centrarEnPantalla "$(imprimirCuadro "100" "error" "Archivo no encontrado")" | sacarHaciaArchivo "$archivoSalida" -a
+  avanzarAlgoritmo
+  elegirTipoDeEntrada "$archivoEntrada"
+}
+local i
+i="-1"
+IFS=","
+
+while read -r llegada ejecucion tam; do
+
+  if [ "$i" == "-1" ]; then
+    MEM_TAM="$(cut -d "=" -f 2 <<<"$llegada")"
+  elif [[ "$i" -ge "1" && "$i" -lt "100" ]]; then
+    array[$PROC_LLE, $i]=$llegada
+    array[$PROC_EJE, $i]=$ejecucion
+    array[$PROC_TAM, $i]=$tam
+  fi
+  ((i++))
+done <"$archivo"
+array[$PROC_LLE, $i]=$llegada
+array[$PROC_EJE, $i]=$ejecucion
+array[$PROC_TAM, $i]=$tam
+
+NUM_FIL="$((i))"

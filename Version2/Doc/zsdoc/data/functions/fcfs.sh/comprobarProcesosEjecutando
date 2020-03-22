@@ -1,0 +1,5 @@
+for ((i = 1; i <= NUM_FIL; i++)); do
+  if [[ "${array[$PROC_EST, $i]}" == "${estados[3]}" ]]; then
+    ((array[$PROC_EJE_RES, $i]--))
+  fi
+done

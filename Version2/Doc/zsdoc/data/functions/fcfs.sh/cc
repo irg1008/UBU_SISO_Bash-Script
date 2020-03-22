@@ -1,0 +1,73 @@
+function generarColor() {
+  if [ "$1" == "fg" ]; then
+    echo $((RANDOM % 7 + 31))
+  elif [ "$1" == "fg_negro" ]; then
+    echo "30"
+  elif [ "$1" == "bg" ]; then
+    echo $((RANDOM % 7 + 41))
+  elif [ "$1" == "bg_negro" ]; then
+    echo "40"
+  fi
+}
+
+local salida
+salida="\e["
+
+case "$1" in
+Neg)
+  salida+="1;"
+  ;;
+Sub)
+  salida+="4;"
+  ;;
+Nor)
+  salida+="0;"
+  ;;
+Par)
+  salida+="5;"
+  ;;
+*)
+  salida+="1;"
+  ;;
+esac
+
+if [[ "$2" != "" && "$3" == "" ]]; then
+  case "$2" in
+  random)
+    salida+="$(generarColor fg_negro);$(generarColor bg)m"
+    ;;
+  default)
+    salida+="$(($(generarColor fg_negro) + 7));$(generarColor bg_negro)m"
+    ;;
+  error)
+    salida+="$(($(generarColor fg_negro) + 7));$(($(generarColor bg_negro) + 1))m"
+    ;;
+  acierto)
+    salida+="$(($(generarColor fg_negro)));$(($(generarColor bg_negro) + 2))m"
+    ;;
+  advertencia)
+    salida+="$(($(generarColor fg_negro)));$(($(generarColor bg_negro) + 3))m"
+    ;;
+  0)
+    salida+="$(generarColor fg);$(generarColor bg_negro)m"
+    ;;
+  blanco)
+    salida+="$(generarColor fg_negro);$(($(generarColor bg_negro) + 7))m"
+    ;;
+  *)
+    salida+="$(generarColor fg_negro);$(($(generarColor bg_negro) + 1 + $(($2 % 6))))m"
+    ;;
+  esac
+elif [[ "$3" == "fg" ]]; then
+  case "$2" in
+  blanco)
+    salida+="$(($(generarColor fg_negro) + 7))m"
+    ;;
+  *)
+    salida+="$(($(generarColor fg_negro) + 1 + $(($2 % 6))))m"
+    ;;
+  esac
+
+fi
+
+echo "$salida"

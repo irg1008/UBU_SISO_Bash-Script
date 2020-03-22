@@ -1,0 +1,25 @@
+local numValAleatorios
+MEM_TAM=$(((RANDOM % 40) + 5))
+
+clear
+centrarEnPantalla "$(imprimirCuadro "50" "blanco" "¿Cuántos valores aleatorios quieres generar?")"
+numValAleatorios=$(recibirEntrada)
+
+while [[ ! "$numValAleatorios" =~ ^[0-9]+$ || "$numValAleatorios" -lt "1" || "$numValAleatorios" -ge "100" ]]; do
+  centrarEnPantalla "$(imprimirCuadro "80" "error" "Inserta un valor numérico entre 1 y 99, recomendamos menos de 30")"
+  numValAleatorios=$(recibirEntrada)
+done
+
+NUM_FIL=$numValAleatorios
+for ((i = 2; i <= 4; i++)); do
+  for ((j = 1; j <= NUM_FIL; j++)); do
+    case "$i" in
+    4)
+      array[$i, $j]=$(((RANDOM % MEM_TAM) + 1))
+      ;;
+    *)
+      array[$i, $j]=$(((RANDOM % 20) + 1))
+      ;;
+    esac
+  done
+done

@@ -1,0 +1,26 @@
+function moverFilaCompleta() {
+  local temp
+
+  for ((col = 1; col <= NUM_COL; col++)); do
+    temp="${array[$col, $1]}"
+    array[$col, $1]="${array[$col, $(($1 + 1))]}"
+    array[$col, $(($1 + 1))]="$temp"
+  done
+}
+function burbuja() {
+  local tempOrigen
+  local tempDestino
+
+  for ((i = 1; i <= NUM_FIL; i++)); do
+    for ((j = 1; j < NUM_FIL; j++)); do
+      tempOrigen="${array[$PROC_LLE, $j]}"
+      tempDestino="${array[$PROC_LLE, $((j + 1))]}"
+
+      if [ "$tempOrigen" -gt "$tempDestino" ]; then
+        moverFilaCompleta "$j"
+      fi
+    done
+  done
+}
+
+burbuja

@@ -1,0 +1,3 @@
+# Devuelve la longitud del string, contando los patrones de colores.
+# @param String del que queremos calcular la longitud
+# ----------------------------------
