@@ -730,7 +730,7 @@ function imprimirLineaProcesos() {
         idProceso="${procesosEnCPU[$pos]}"
 
         # Comprobamos si ya hemos puesto el nombre
-        for ((i = 0; i < pos; i++)); do
+        for ((i = posicion; i < pos; i++)); do
           if [[ "${procesosEnCPU[$i]}" == "$idProceso" ]]; then
             nombreEstaPuesto="true"
           fi
@@ -1806,3 +1806,5 @@ function main() {
 }
 
 main
+
+# TODO: Limpiar un poco la función de imprimir la linea de CPU, o reinventarla para que funcione mejor. Tras las mejoras de Lolo se ha ensuciado...
