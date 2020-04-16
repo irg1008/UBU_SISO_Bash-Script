@@ -276,8 +276,8 @@ function asignarManual() {
   function comienzoPregunta() {
     clear
     colocarNombreAProcesos
-    centrarEnPantalla "$(imprimirCuadro "50" "blanco" "$2")" "n" | sacarHaciaArchivo "$archivoSalida" -a
-    centrarEnPantalla "$(imprimirTabla "$1" "4" "1")" "n" | sacarHaciaArchivo "$archivoSalida" -a # Imprimir tabla desde la col 2 a la 4
+    centrarEnPantalla "$(imprimirCuadro "50" "blanco" "$1")" "n" | sacarHaciaArchivo "$archivoSalida" -a
+    centrarEnPantalla "$(imprimirTabla "4" "1")" "n" | sacarHaciaArchivo "$archivoSalida" -a # Imprimir tabla desde la col 2 a la 4
   }
 
   # Guarda el tamaño de la memoria
@@ -298,7 +298,7 @@ function asignarManual() {
   function guardarLlegadaProceso() {
     local llegada
 
-    comienzoPregunta "$1" "Llegada del proceso $1"
+    comienzoPregunta "Llegada del proceso $1"
     llegada=$(recibirEntrada)
 
     while [[ $(entradaEsEntero "$llegada" "0") != "true" ]]; do
@@ -314,7 +314,7 @@ function asignarManual() {
   function guardarTiempoEjecucion() {
     local ejecucion
 
-    comienzoPregunta "$1" "Tiempo ejecución proceso $1"
+    comienzoPregunta "Tiempo ejecución proceso $1"
     ejecucion=$(recibirEntrada)
 
     while [[ $(entradaEsEntero "$ejecucion" "1") != "true" ]]; do
@@ -338,7 +338,7 @@ function asignarManual() {
       "válido, entero mayor que 0"
     )
 
-    comienzoPregunta "$1" "Tamaño del proceso $1 - (Memoria: $MEM_TAM)"
+    comienzoPregunta "Tamaño del proceso $1 - (Memoria: $MEM_TAM)"
     tam=$(recibirEntrada)
 
     while [[ $(entradaEsEntero "$tam" "1") != "true" || "$tam" -gt "$MEM_TAM" ]]; do
@@ -358,7 +358,7 @@ function asignarManual() {
   function comprobarSiMasProcesos() {
     local temp
 
-    comienzoPregunta "$1" "¿Quieres introducir otro proceso? [S/N]"
+    comienzoPregunta "¿Quieres introducir otro proceso? [S/N]"
     temp=$(recibirEntrada)
 
     while [[ ! "$temp" =~ ^([sS][iI]|[sS]|[nN][oO]|[nN])$ ]]; do
@@ -752,7 +752,7 @@ function imprimirLineaProcesos() {
   # ----------------------------------
   function imprimirSegundaFila() {
     local color
-    local siguienteEntra="▌"
+    local siguienteEntra="▎"
     for ((pos = posicion; pos <= posicionFinal; pos++)); do
       if [[ "${procesosEnCPU[$pos]}" == "" && "$pos" != "$posicionFinal" && "$((pos % anchoTruncado))" != "0" ]]; then
         color="${colorVacio:0:6}"
@@ -770,8 +770,10 @@ function imprimirLineaProcesos() {
             color="${colorVacio:0:6}"
             color+="7"
             color+="${colorVacio:7}"
+            printf "$color%s$(fc)" "$vacio"
+          else
+            printf "$color%s$(fc)" "$relleno"
           fi
-          printf "$color%s$(fc)" "$relleno"
         elif [[ "$pos" == "0" && "$idProceso" == "" ]] || [[ "$pos" == "$posicion" && "$idProceso" != "" ]] || [[ "$idProceso" != "" && "${procesosEnCPU[$pos]}" != "${procesosEnCPU[$((pos - 1))]}" && "$((pos % anchoTruncado))" != "0" ]]; then
           printf "${serieColores_FG[$idProceso]}%s$(fc)" "$siguienteEntra"
         fi
@@ -836,6 +838,8 @@ function asignarDatosInicial() {
     array[$PROC_EJE_RES, $i]="--"
     array[$PROC_RES, $i]="--"
     array[$PROC_ESP, $i]="--"
+    array[$PROC_TAM_INI, $i]="--"
+    array[$PROC_TAM_FIN, $i]="--"
   done
 
   MEM_USE="0"
@@ -949,6 +953,16 @@ function comprobarProcesosEjecutando() {
 }
 
 ######################## 4. OTRAS FUNCIONES UTILES USADAS EN TODO EL PROGRAMA
+
+# Hace una copia del array antes de cambiarlo en la ejecucion
+# ----------------------------------
+function copiarArray() {
+  for ((i = 1; i <= NUM_FIL; i++)); do
+    for ((j = 1; j <= NUM_COL; j++)); do
+      arrayCopia[$j, $i]="${array[$j, $i]}"
+    done
+  done
+}
 
 # Saca la información del comando que acompaña
 # @param "-a" para append
@@ -1179,10 +1193,88 @@ function imprimirTabla() {
   local pieTabla
   local numColComienzo
 
+  # Función que añade filas para todos los procesos indicando de que hueco de memoria a que hueco ocupan
+  # ----------------------------------
+  function modificarArrayConCachosDeMemoriaUsados() {
+
+    # Movemos los datos de la copia del array todo una hacia arriba y
+    # tambiñen movemos los colores una hacia arriba.
+    # Los huecos se rellenan con los datos de inicio y final de memoria
+    # y los colores con la fila anterior a la que movemos.
+    # @param Fila desde la que movemos para arriba
+    # @param Salto
+    # ----------------------------------
+    function hacerHuecos() {
+      local proc="$1"
+      local salto="$2"
+      # Otorgamos un nuevo hueco y movemos todo hacia arriba
+      # La linea pasada se limpia para poder ser escrita con los nuevos datos.
+      for ((numFila = filasImprimir; numFila > proc; numFila--)); do
+        serieColoresTabla_FG[$numFila]="${serieColoresTabla_FG[((numFila - salto))]}"
+        for ((numColum = 1; numColum <= NUM_COL; numColum++)); do
+          arrayCopia[$numColum, $numFila]="${arrayCopia[$numColum, $((numFila - salto))]}"
+        done
+      done
+      for ((numColum = 1; numColum <= NUM_COL; numColum++)); do
+        arrayCopia[$numColum, $((proc + 1))]=""
+      done
+    }
+
+    # Añade tantas filas como huecos disntintos ocupe el proceso en memoria.
+    # @param "Proceso a añadir las líneas"
+    # ----------------------------------
+    function colocarHuecosMemoria() {
+      local proceso="$1"
+      local -a ini
+      ini[0]=0
+      local -a fin
+      local huecos
+      huecos="-1"
+
+      for ((itMem = 0; itMem < MEM_TAM; itMem++)); do
+        # Inicio de memoria
+        if [[ "${procesosEnMemoria[$itMem]}" == "$((proceso-huecosTotales))" && "${procesosEnMemoria[$((itMem - 1))]}" != "$((proceso-huecosTotales))" ]]; then
+          ini[$((huecos + 1))]="$itMem"
+        fi
+        # Final de memoria
+        if [[ "${procesosEnMemoria[$itMem]}" == "$((proceso-huecosTotales))" && "${procesosEnMemoria[$((itMem + 1))]}" != "$((proceso-huecosTotales))" ]]; then
+          fin[$((huecos + 1))]="$itMem"
+          ((huecos++))
+          if [[ "$huecos" -gt "0" ]]; then
+            ((huecosTotales++))
+          fi
+        fi
+      done
+
+      if [[ "$huecos" -gt "0" ]]; then
+        filasImprimir=$((filasImprimir + huecos))
+        i=$((i + huecos))
+        hacerHuecos "$proceso" "$huecos"
+      fi
+      for ((numHuecos = 0; numHuecos <= huecos; numHuecos++)); do
+        arrayCopia[$PROC_TAM_INI, $((proceso + numHuecos))]="${ini[$numHuecos]}"
+        arrayCopia[$PROC_TAM_FIN, $((proceso + numHuecos))]="${fin[$numHuecos]}"
+      done
+    }
+
+    # Actualizamos la copia del array al actual, y modificaremos este para no tocar el otro
+    # ----------------------------------
+    function comprobarMemoria() {
+      local huecosTotales="0"
+      for ((i = 1; i <= filasImprimir; i++)); do
+        if [[ "${arrayCopia[$PROC_EST, $i]}" == "${estados[2]}" || "${arrayCopia[$PROC_EST, $i]}" == "${estados[3]}" ]]; then
+          colocarHuecosMemoria "$i"
+        fi
+      done
+    }
+
+    comprobarMemoria
+  }
+
   # Asigna el titulo de la tabla
   # ----------------------------------
   function asignarTitulos() {
-    titulos=("Ref" "Tll" "Tej" "Mem" "Tesp" "Tret" "Trej" "Estado")
+    titulos=("Ref" "Tll" "Tej" "Mem" "IniMem" "FinMem" "Tesp" "Tret" "Trej" "Estado")
   }
 
   # Guarda los colores de la tabla
@@ -1211,13 +1303,10 @@ function imprimirTabla() {
   # Comprueba que las entradas estén corectas
   # ----------------------------------
   function comprobarFilasYColumnas() {
-    filasImprimir="$1"
-    columnasImprimir="$2"
-    numColComienzo="$3"
+    columnasImprimir="$1"
+    numColComienzo="$2"
+    filasImprimir="$NUM_FIL"
 
-    if [ "$filasImprimir" -gt "$NUM_FIL" ]; then
-      filasImprimir="$NUM_FIL"
-    fi
     if [ "$columnasImprimir" -gt "$NUM_COL" ]; then
       columnasImprimir="$NUM_COL"
     fi
@@ -1267,7 +1356,7 @@ function imprimirTabla() {
           if [[ "$j" == "0" ]]; then
             longitudElemento=$(calcularLongitud "${titulos[$((i - 1))]}")
           else
-            longitudElemento=$(calcularLongitud "${array[$i, $j]}")
+            longitudElemento=$(calcularLongitud "${arrayCopia[$i, $j]}")
           fi
 
           if [[ "${anchoCelda[$i]}" -lt "$longitudElemento" ]]; then
@@ -1306,11 +1395,11 @@ function imprimirTabla() {
       for ((k = 1; k <= filasImprimir; k++)); do
         for ((j = numColComienzo; j <= columnasImprimir; j++)); do
           # Celda
-          longitudArray=$(calcularLongitud "${array[$j, $k]}")
+          longitudArray=$(calcularLongitud "${arrayCopia[$j, $k]}")
           if [[ "$j" -gt "1" && "$j" -lt "5" ]]; then
-            printf "${estiloTabla[10]}${serieColoresTabla_FG[$k]}%*s$(fc)" "${anchoCelda[$j]}" "${array[$j, $k]}"
+            printf "${estiloTabla[10]}${serieColoresTabla_FG[$k]}%*s$(fc)" "${anchoCelda[$j]}" "${arrayCopia[$j, $k]}"
           else
-            printf "${estiloTabla[10]}%-*s${serieColoresTabla_FG[$k]}%s$(fc)%*s" "$((anchoCelda[$j] / 2 - longitudArray / 2))" "" "${array[$j, $k]}" "$(((anchoCelda[$j] + 1) / 2 - (longitudArray + 1) / 2))" ""
+            printf "${estiloTabla[10]}%-*s${serieColoresTabla_FG[$k]}%s$(fc)%*s" "$((anchoCelda[$j] / 2 - longitudArray / 2))" "" "${arrayCopia[$j, $k]}" "$(((anchoCelda[$j] + 1) / 2 - (longitudArray + 1) / 2))" ""
           fi
         done
         printf "${estiloTabla[10]}%s\n" ""
@@ -1330,9 +1419,13 @@ function imprimirTabla() {
 
   # Main de impresion
   # ----------------------------------
-  asignarTitulos
+  copiarArray
   guardarColoresDeTabla
-  comprobarFilasYColumnas "$1" "$2" "$3"
+  asignarTitulos
+  comprobarFilasYColumnas "$1" "$2"
+  if [[ "$algoritmoComienza" == "true" ]]; then
+    modificarArrayConCachosDeMemoriaUsados
+  fi
   asignarAnchos
   asignarEstiloDeTabla
   imprimir
@@ -1420,6 +1513,7 @@ function main() {
   # ----------------------------------
   declare -a estiloGeneral
   declare -A array
+  declare -A arrayCopia
   declare -i NUM_COL
   declare -i NUM_FIL
   declare -i MEM_TAM
@@ -1430,6 +1524,8 @@ function main() {
   declare -i PROC_LLE
   declare -i PROC_EJE
   declare -i PROC_TAM
+  declare -i PROC_TAM_INI
+  declare -i PROC_TAM_FIN
   declare -i PROC_EST
   declare -i PROC_RES
   declare -i PROC_ESP
@@ -1445,6 +1541,7 @@ function main() {
   local archivoSalidaBN
   local archivoEntrada
   local salirDePractica
+  local algoritmoComienza
 
   # Extraccion de variables del archivo de config
   # ------------------------------------------------
@@ -1473,10 +1570,12 @@ function main() {
       PROC_LLE="2"
       PROC_EJE="3"
       PROC_TAM="4"
-      PROC_ESP="5"
-      PROC_RES="6"
-      PROC_EJE_RES="7"
-      PROC_EST="8"
+      PROC_TAM_INI="5"
+      PROC_TAM_FIN="6"
+      PROC_ESP="7"
+      PROC_RES="8"
+      PROC_EJE_RES="9"
+      PROC_EST="10"
 
       NUM_COL="$PROC_EST" # Ya que siempre esta columna va a ser la última
     }
@@ -1515,7 +1614,6 @@ function main() {
     local -a procesosEnMemoria
     local -a procesosEnCPU
     local stringVacio
-    local -A arrayCopia
     local instante
     local acabarAlgoritmo
     local -a serieColores
@@ -1583,7 +1681,7 @@ function main() {
     # Imprime el dibujo de la tabla
     # ----------------------------------
     function algImprimirTabla() {
-      centrarEnPantalla "$(imprimirTabla "$NUM_FIL" "10")"
+      centrarEnPantalla "$(imprimirTabla "20")"
     }
 
     # Funcion para avanzar el algoritmo o terminarlo
@@ -1603,16 +1701,6 @@ function main() {
         acabarAlgoritmo="true"
         centrarEnPantalla "$(imprimirCuadro "50" "3" "${mensajeSalto[@]}")" "n"
       fi
-    }
-
-    # Hace una copia del array antes de cambiarlo en la ejecucion
-    # ----------------------------------
-    function copiarArray() {
-      for ((i = 1; i <= NUM_FIL; i++)); do
-        for ((j = 1; j <= NUM_COL; j++)); do
-          arrayCopia[$j, $i]="${array[$j, $i]}"
-        done
-      done
     }
 
     # Comprueba si en el instante de ejucion pasa algo importante para mostrar o no
@@ -1663,6 +1751,7 @@ function main() {
     # ----------------------------------
     clear
     instante="0"
+    algoritmoComienza="true"
     ordenarArray
     asignarDatosInicial
     algAsignarSerieDeColores
