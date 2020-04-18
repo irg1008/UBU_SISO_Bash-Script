@@ -1,1893 +1,1281 @@
+	┌──────────────────────────────────────────────────┐
+	│                       FCFS                       │
+	│                Memoria No Continua               │
+	│               Memoria No Reubicable              │
+	│                                                  │
+	│                 Autor: Iván Ruiz                 │
+	│                                                  │
+	│                Sistemas Operativos               │
+	│                     2019-2020                    │
+	└──────────────────────────────────────────────────┘
 
-        ┌──────────────────────────────────────────────────┐         
-        │                       FCFS                       │         
-        │                Memoria No Continua               │         
-        │               Memoria No Reubicable              │         
-        │                                                  │         
-        │                 Autor: Iván Ruiz                 │         
-        │                                                  │         
-        │                Sistemas Operativos               │         
-        │                     2019-2020                    │         
-        └──────────────────────────────────────────────────┘         
+	┌──────────────────────────────────────────────────┐
+	│                  MENÚ PRINCIPAL                  │
+	└──────────────────────────────────────────────────┘
 
-        ┌──────────────────────────────────────────────────┐         
-        │                  MENÚ PRINCIPAL                  │         
-        └──────────────────────────────────────────────────┘         
+	┌──────────────────────────────────────────────────┐
+	│          1.- Entrada manual por teclado          │
+	│        2.- Entrada automática por archivo        │
+	│   3.- Entrada automática con valores aleatorios  │
+	│                     4.- Ayuda                    │
+	│                     0.- Salir                    │
+	└──────────────────────────────────────────────────┘
 
-        ┌──────────────────────────────────────────────────┐         
-        │          1.- Entrada manual por teclado          │         
-        │        2.- Entrada automática por archivo        │         
-        │   3.- Entrada automática con valores aleatorios  │         
-        │                     4.- Ayuda                    │         
-        │                     0.- Salir                    │         
-        └──────────────────────────────────────────────────┘         
+	┌──────────────────────────────────────────────────┐
+	│           Asignación de datos aleatoria          │
+	└──────────────────────────────────────────────────┘
 
-        ┌──────────────────────────────────────────────────┐         
-        │   Asignación de datos automática desde archivo   │         
-        └──────────────────────────────────────────────────┘         
+	┌──────────────────────────────────────────────────┐
+	│      ☑ Ejecutando algoritmo | FCFS-SN-NCNR ☑     │
+	└──────────────────────────────────────────────────┘
 
-        ┌──────────────────────────────────────────────────┐         
-        │      ☑ Ejecutando algoritmo | FCFS-SN-NCNR ☑     │         
-        └──────────────────────────────────────────────────┘         
+	 T=0 - Memoria usada: 9/9 
+	┌───┬───┬───┬───┬────┬────┬────┬────┬────┬─────────────────┐
+	│Ref│Tll│Tej│Mem│MIni│MFin│Tesp│Tret│Trej│     Estado      │
+	│P10│  0│  4│  9│  0 │  8 │  0 │  0 │  4 │  En Ejecución   │
+	│P12│  1│ 17│  9│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P18│  1│ 16│  7│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P20│  2│  5│  6│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P05│  3│ 10│  7│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P09│  3│ 11│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P14│  3│  7│  4│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P02│  5│ 13│  9│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P17│  5│ 13│  2│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P19│  5│ 14│  8│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P13│  6│ 16│  6│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P16│  8│  4│  1│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P07│ 10│ 11│  4│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P06│ 11│ 10│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P01│ 12│ 12│  3│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P08│ 13│  7│  6│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P04│ 16│  9│  3│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P15│ 17│ 18│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P03│ 18│  4│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P11│ 18│ 11│  4│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	└───┴───┴───┴───┴────┴────┴────┴────┴────┴─────────────────┘
+	 Tiempo Medio de Retorno: 0,00 - Tiempo Medio de Espera: 0,00 
 
-                      T=0 - Memoria usada: 6/14                      
-    ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬─────────────────┐    
-    │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│     Estado      │    
-    │P05│  0│  7│  6│   0  │   5  │  0 │  0 │  7 │  En Ejecución   │    
-    │P08│  0│ 18│ 14│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P09│  1│  9│ 13│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P04│  2│  5│  3│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P14│  3│ 18│ 11│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P11│  9│  2│  8│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P15│ 10│  4│  9│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P13│ 11│  7│  7│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P07│ 12│ 10│ 12│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P10│ 14│  3│  5│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P01│ 15│  6│ 10│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P03│ 15│ 18│  1│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P12│ 16│ 15│ 12│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P02│ 17│ 13│ 13│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P06│ 17│  4│  6│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴─────────────────┘    
-    Tiempo Medio de Retorno: 0,00 - Tiempo Medio de Espera: 0,00     
-
-	   P05                                       
-	BM ██▊██▊██▊██▊██▊██▊░░░░░░░░░░░░░░░░░░░░░░░░ 14
-	   0                 6                       
-	   P05
+	   P10                        
+	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊ 9
+	     0                        
+	   P10
 	BT ▎
-	   0  
+	     0
 
-                      T=1 - Memoria usada: 6/14                      
-    ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬─────────────────┐    
-    │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│     Estado      │    
-    │P05│  0│  7│  6│   0  │   5  │  0 │  1 │  6 │  En Ejecución   │    
-    │P08│  0│ 18│ 14│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P09│  1│  9│ 13│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P04│  2│  5│  3│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P14│  3│ 18│ 11│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P11│  9│  2│  8│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P15│ 10│  4│  9│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P13│ 11│  7│  7│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P07│ 12│ 10│ 12│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P10│ 14│  3│  5│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P01│ 15│  6│ 10│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P03│ 15│ 18│  1│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P12│ 16│ 15│ 12│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P02│ 17│ 13│ 13│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P06│ 17│  4│  6│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴─────────────────┘    
-    Tiempo Medio de Retorno: 0,06 - Tiempo Medio de Espera: 0,00     
+	 T=1 - Memoria usada: 9/9 
+	┌───┬───┬───┬───┬────┬────┬────┬────┬────┬─────────────────┐
+	│Ref│Tll│Tej│Mem│MIni│MFin│Tesp│Tret│Trej│     Estado      │
+	│P10│  0│  4│  9│  0 │  8 │  0 │  1 │  3 │  En Ejecución   │
+	│P12│  1│ 17│  9│ -- │ -- │  0 │  0 │ -- │    En Espera    │
+	│P18│  1│ 16│  7│ -- │ -- │  0 │  0 │ -- │    En Espera    │
+	│P20│  2│  5│  6│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P05│  3│ 10│  7│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P09│  3│ 11│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P14│  3│  7│  4│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P02│  5│ 13│  9│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P17│  5│ 13│  2│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P19│  5│ 14│  8│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P13│  6│ 16│  6│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P16│  8│  4│  1│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P07│ 10│ 11│  4│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P06│ 11│ 10│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P01│ 12│ 12│  3│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P08│ 13│  7│  6│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P04│ 16│  9│  3│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P15│ 17│ 18│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P03│ 18│  4│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P11│ 18│ 11│  4│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	└───┴───┴───┴───┴────┴────┴────┴────┴────┴─────────────────┘
+	 Tiempo Medio de Retorno: 0,05 - Tiempo Medio de Espera: 0,00 
 
-	   P05                                       
-	BM ██▊██▊██▊██▊██▊██▊░░░░░░░░░░░░░░░░░░░░░░░░ 14
-	   0                 6                       
-	   P05   
+	   P10                        
+	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊ 9
+	     0                        
+	   P10   
 	BT ██▊
-	   0  1  
+	     0  1
 
-                      T=2 - Memoria usada: 6/14                      
-    ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬─────────────────┐    
-    │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│     Estado      │    
-    │P05│  0│  7│  6│   0  │   5  │  0 │  2 │  5 │  En Ejecución   │    
-    │P08│  0│ 18│ 14│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P09│  1│  9│ 13│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P04│  2│  5│  3│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P14│  3│ 18│ 11│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P11│  9│  2│  8│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P15│ 10│  4│  9│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P13│ 11│  7│  7│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P07│ 12│ 10│ 12│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P10│ 14│  3│  5│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P01│ 15│  6│ 10│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P03│ 15│ 18│  1│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P12│ 16│ 15│ 12│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P02│ 17│ 13│ 13│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P06│ 17│  4│  6│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴─────────────────┘    
-    Tiempo Medio de Retorno: 0,13 - Tiempo Medio de Espera: 0,00     
+	 T=2 - Memoria usada: 9/9 
+	┌───┬───┬───┬───┬────┬────┬────┬────┬────┬─────────────────┐
+	│Ref│Tll│Tej│Mem│MIni│MFin│Tesp│Tret│Trej│     Estado      │
+	│P10│  0│  4│  9│  0 │  8 │  0 │  2 │  2 │  En Ejecución   │
+	│P12│  1│ 17│  9│ -- │ -- │  1 │  0 │ -- │    En Espera    │
+	│P18│  1│ 16│  7│ -- │ -- │  1 │  0 │ -- │    En Espera    │
+	│P20│  2│  5│  6│ -- │ -- │  0 │  0 │ -- │    En Espera    │
+	│P05│  3│ 10│  7│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P09│  3│ 11│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P14│  3│  7│  4│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P02│  5│ 13│  9│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P17│  5│ 13│  2│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P19│  5│ 14│  8│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P13│  6│ 16│  6│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P16│  8│  4│  1│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P07│ 10│ 11│  4│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P06│ 11│ 10│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P01│ 12│ 12│  3│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P08│ 13│  7│  6│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P04│ 16│  9│  3│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P15│ 17│ 18│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P03│ 18│  4│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P11│ 18│ 11│  4│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	└───┴───┴───┴───┴────┴────┴────┴────┴────┴─────────────────┘
+	 Tiempo Medio de Retorno: 0,10 - Tiempo Medio de Espera: 0,10 
 
-	   P05                                       
-	BM ██▊██▊██▊██▊██▊██▊░░░░░░░░░░░░░░░░░░░░░░░░ 14
-	   0                 6                       
-	   P05      
+	   P10                        
+	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊ 9
+	     0                        
+	   P10      
 	BT ██▊██▊
-	   0     2  
+	     0     2
 
-                      T=3 - Memoria usada: 6/14                      
-    ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬─────────────────┐    
-    │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│     Estado      │    
-    │P05│  0│  7│  6│   0  │   5  │  0 │  3 │  4 │  En Ejecución   │    
-    │P08│  0│ 18│ 14│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P09│  1│  9│ 13│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P04│  2│  5│  3│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P14│  3│ 18│ 11│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P11│  9│  2│  8│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P15│ 10│  4│  9│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P13│ 11│  7│  7│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P07│ 12│ 10│ 12│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P10│ 14│  3│  5│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P01│ 15│  6│ 10│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P03│ 15│ 18│  1│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P12│ 16│ 15│ 12│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P02│ 17│ 13│ 13│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P06│ 17│  4│  6│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴─────────────────┘    
-    Tiempo Medio de Retorno: 0,20 - Tiempo Medio de Espera: 0,00     
+	 T=3 - Memoria usada: 9/9 
+	┌───┬───┬───┬───┬────┬────┬────┬────┬────┬─────────────────┐
+	│Ref│Tll│Tej│Mem│MIni│MFin│Tesp│Tret│Trej│     Estado      │
+	│P10│  0│  4│  9│  0 │  8 │  0 │  3 │  1 │  En Ejecución   │
+	│P12│  1│ 17│  9│ -- │ -- │  2 │  0 │ -- │    En Espera    │
+	│P18│  1│ 16│  7│ -- │ -- │  2 │  0 │ -- │    En Espera    │
+	│P20│  2│  5│  6│ -- │ -- │  1 │  0 │ -- │    En Espera    │
+	│P05│  3│ 10│  7│ -- │ -- │  0 │  0 │ -- │    En Espera    │
+	│P09│  3│ 11│  5│ -- │ -- │  0 │  0 │ -- │    En Espera    │
+	│P14│  3│  7│  4│ -- │ -- │  0 │  0 │ -- │    En Espera    │
+	│P02│  5│ 13│  9│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P17│  5│ 13│  2│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P19│  5│ 14│  8│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P13│  6│ 16│  6│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P16│  8│  4│  1│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P07│ 10│ 11│  4│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P06│ 11│ 10│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P01│ 12│ 12│  3│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P08│ 13│  7│  6│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P04│ 16│  9│  3│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P15│ 17│ 18│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P03│ 18│  4│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P11│ 18│ 11│  4│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	└───┴───┴───┴───┴────┴────┴────┴────┴────┴─────────────────┘
+	 Tiempo Medio de Retorno: 0,15 - Tiempo Medio de Espera: 0,25 
 
-	   P05                                       
-	BM ██▊██▊██▊██▊██▊██▊░░░░░░░░░░░░░░░░░░░░░░░░ 14
-	   0                 6                       
-	   P05         
+	   P10                        
+	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊ 9
+	     0                        
+	   P10         
 	BT ██▊██▊██▊
-	   0        3  
+	     0        3
 
-                     T=7 - Memoria usada: 14/14                      
-    ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬─────────────────┐    
-    │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│     Estado      │    
-    │P05│  0│  7│  6│  --  │  --  │  0 │  7 │  0 │   Finalizado    │    
-    │P08│  0│ 18│ 14│   0  │  13  │  7 │  7 │ 18 │  En Ejecución   │    
-    │P09│  1│  9│ 13│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P04│  2│  5│  3│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P14│  3│ 18│ 11│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P11│  9│  2│  8│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P15│ 10│  4│  9│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P13│ 11│  7│  7│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P07│ 12│ 10│ 12│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P10│ 14│  3│  5│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P01│ 15│  6│ 10│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P03│ 15│ 18│  1│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P12│ 16│ 15│ 12│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P02│ 17│ 13│ 13│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P06│ 17│  4│  6│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴─────────────────┘    
-    Tiempo Medio de Retorno: 0,93 - Tiempo Medio de Espera: 0,46     
+	 T=4 - Memoria usada: 9/9 
+	┌───┬───┬───┬───┬────┬────┬────┬────┬────┬─────────────────┐
+	│Ref│Tll│Tej│Mem│MIni│MFin│Tesp│Tret│Trej│     Estado      │
+	│P10│  0│  4│  9│ -- │ -- │  0 │  4 │  0 │   Finalizado    │
+	│P12│  1│ 17│  9│  0 │  8 │  3 │  3 │ 17 │  En Ejecución   │
+	│P18│  1│ 16│  7│ -- │ -- │  3 │  0 │ -- │    En Espera    │
+	│P20│  2│  5│  6│ -- │ -- │  2 │  0 │ -- │    En Espera    │
+	│P05│  3│ 10│  7│ -- │ -- │  1 │  0 │ -- │    En Espera    │
+	│P09│  3│ 11│  5│ -- │ -- │  1 │  0 │ -- │    En Espera    │
+	│P14│  3│  7│  4│ -- │ -- │  1 │  0 │ -- │    En Espera    │
+	│P02│  5│ 13│  9│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P17│  5│ 13│  2│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P19│  5│ 14│  8│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P13│  6│ 16│  6│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P16│  8│  4│  1│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P07│ 10│ 11│  4│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P06│ 11│ 10│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P01│ 12│ 12│  3│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P08│ 13│  7│  6│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P04│ 16│  9│  3│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P15│ 17│ 18│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P03│ 18│  4│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P11│ 18│ 11│  4│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	└───┴───┴───┴───┴────┴────┴────┴────┴────┴─────────────────┘
+	 Tiempo Medio de Retorno: 0,35 - Tiempo Medio de Espera: 0,55 
 
-	   P08                                       
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊ 14
-	   0                                         
-	   P05                  P08
-	BT ██▊██▊██▊██▊██▊██▊██▊▎
-	   0                    7  
+	   P12                        
+	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊ 9
+	     0                        
+	   P10         P12
+	BT ██▊██▊██▊██▊▎
+	     0           4
 
-                     T=9 - Memoria usada: 14/14                      
-    ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬─────────────────┐    
-    │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│     Estado      │    
-    │P05│  0│  7│  6│  --  │  --  │  0 │  7 │  0 │   Finalizado    │    
-    │P08│  0│ 18│ 14│   0  │  13  │  7 │  9 │ 16 │  En Ejecución   │    
-    │P09│  1│  9│ 13│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P04│  2│  5│  3│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P14│  3│ 18│ 11│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P11│  9│  2│  8│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P15│ 10│  4│  9│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P13│ 11│  7│  7│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P07│ 12│ 10│ 12│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P10│ 14│  3│  5│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P01│ 15│  6│ 10│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P03│ 15│ 18│  1│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P12│ 16│ 15│ 12│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P02│ 17│ 13│ 13│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P06│ 17│  4│  6│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴─────────────────┘    
-    Tiempo Medio de Retorno: 1,06 - Tiempo Medio de Espera: 0,46     
+	 T=5 - Memoria usada: 9/9 
+	┌───┬───┬───┬───┬────┬────┬────┬────┬────┬─────────────────┐
+	│Ref│Tll│Tej│Mem│MIni│MFin│Tesp│Tret│Trej│     Estado      │
+	│P10│  0│  4│  9│ -- │ -- │  0 │  4 │  0 │   Finalizado    │
+	│P12│  1│ 17│  9│  0 │  8 │  3 │  4 │ 16 │  En Ejecución   │
+	│P18│  1│ 16│  7│ -- │ -- │  4 │  0 │ -- │    En Espera    │
+	│P20│  2│  5│  6│ -- │ -- │  3 │  0 │ -- │    En Espera    │
+	│P05│  3│ 10│  7│ -- │ -- │  2 │  0 │ -- │    En Espera    │
+	│P09│  3│ 11│  5│ -- │ -- │  2 │  0 │ -- │    En Espera    │
+	│P14│  3│  7│  4│ -- │ -- │  2 │  0 │ -- │    En Espera    │
+	│P02│  5│ 13│  9│ -- │ -- │  0 │  0 │ -- │    En Espera    │
+	│P17│  5│ 13│  2│ -- │ -- │  0 │  0 │ -- │    En Espera    │
+	│P19│  5│ 14│  8│ -- │ -- │  0 │  0 │ -- │    En Espera    │
+	│P13│  6│ 16│  6│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P16│  8│  4│  1│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P07│ 10│ 11│  4│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P06│ 11│ 10│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P01│ 12│ 12│  3│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P08│ 13│  7│  6│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P04│ 16│  9│  3│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P15│ 17│ 18│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P03│ 18│  4│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P11│ 18│ 11│  4│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	└───┴───┴───┴───┴────┴────┴────┴────┴────┴─────────────────┘
+	 Tiempo Medio de Retorno: 0,40 - Tiempo Medio de Espera: 0,80 
 
-	   P08                                       
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊ 14
-	   0                                         
-	   P05                  P08      
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7     9  
-
-                     T=10 - Memoria usada: 14/14                     
-    ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬─────────────────┐    
-    │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│     Estado      │    
-    │P05│  0│  7│  6│  --  │  --  │  0 │  7 │  0 │   Finalizado    │    
-    │P08│  0│ 18│ 14│   0  │  13  │  7 │ 10 │ 15 │  En Ejecución   │    
-    │P09│  1│  9│ 13│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P04│  2│  5│  3│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P14│  3│ 18│ 11│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P11│  9│  2│  8│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P15│ 10│  4│  9│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P13│ 11│  7│  7│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P07│ 12│ 10│ 12│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P10│ 14│  3│  5│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P01│ 15│  6│ 10│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P03│ 15│ 18│  1│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P12│ 16│ 15│ 12│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P02│ 17│ 13│ 13│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P06│ 17│  4│  6│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴─────────────────┘    
-    Tiempo Medio de Retorno: 1,13 - Tiempo Medio de Espera: 0,46     
-
-	   P08                                       
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊ 14
-	   0                                         
-	   P05                  P08         
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7        10 
-
-                     T=11 - Memoria usada: 14/14                     
-    ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬─────────────────┐    
-    │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│     Estado      │    
-    │P05│  0│  7│  6│  --  │  --  │  0 │  7 │  0 │   Finalizado    │    
-    │P08│  0│ 18│ 14│   0  │  13  │  7 │ 11 │ 14 │  En Ejecución   │    
-    │P09│  1│  9│ 13│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P04│  2│  5│  3│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P14│  3│ 18│ 11│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P11│  9│  2│  8│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P15│ 10│  4│  9│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P13│ 11│  7│  7│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P07│ 12│ 10│ 12│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P10│ 14│  3│  5│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P01│ 15│  6│ 10│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P03│ 15│ 18│  1│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P12│ 16│ 15│ 12│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P02│ 17│ 13│ 13│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P06│ 17│  4│  6│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴─────────────────┘    
-    Tiempo Medio de Retorno: 1,20 - Tiempo Medio de Espera: 0,46     
-
-	   P08                                       
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊ 14
-	   0                                         
-	   P05                  P08            
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7           11 
-
-                     T=12 - Memoria usada: 14/14                     
-    ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬─────────────────┐    
-    │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│     Estado      │    
-    │P05│  0│  7│  6│  --  │  --  │  0 │  7 │  0 │   Finalizado    │    
-    │P08│  0│ 18│ 14│   0  │  13  │  7 │ 12 │ 13 │  En Ejecución   │    
-    │P09│  1│  9│ 13│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P04│  2│  5│  3│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P14│  3│ 18│ 11│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P11│  9│  2│  8│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P15│ 10│  4│  9│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P13│ 11│  7│  7│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P07│ 12│ 10│ 12│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P10│ 14│  3│  5│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P01│ 15│  6│ 10│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P03│ 15│ 18│  1│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P12│ 16│ 15│ 12│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P02│ 17│ 13│ 13│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P06│ 17│  4│  6│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴─────────────────┘    
-    Tiempo Medio de Retorno: 1,26 - Tiempo Medio de Espera: 0,46     
-
-	   P08                                       
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊ 14
-	   0                                         
-	   P05                  P08               
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7              12 
-
-                     T=14 - Memoria usada: 14/14                     
-    ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬─────────────────┐    
-    │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│     Estado      │    
-    │P05│  0│  7│  6│  --  │  --  │  0 │  7 │  0 │   Finalizado    │    
-    │P08│  0│ 18│ 14│   0  │  13  │  7 │ 14 │ 11 │  En Ejecución   │    
-    │P09│  1│  9│ 13│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P04│  2│  5│  3│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P14│  3│ 18│ 11│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P11│  9│  2│  8│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P15│ 10│  4│  9│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P13│ 11│  7│  7│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P07│ 12│ 10│ 12│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P10│ 14│  3│  5│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P01│ 15│  6│ 10│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P03│ 15│ 18│  1│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P12│ 16│ 15│ 12│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P02│ 17│ 13│ 13│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P06│ 17│  4│  6│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴─────────────────┘    
-    Tiempo Medio de Retorno: 1,40 - Tiempo Medio de Espera: 0,46     
-
-	   P08                                       
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊ 14
-	   0                                         
-	   P05                  P08                     
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7                    14 
-
-                     T=15 - Memoria usada: 14/14                     
-    ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬─────────────────┐    
-    │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│     Estado      │    
-    │P05│  0│  7│  6│  --  │  --  │  0 │  7 │  0 │   Finalizado    │    
-    │P08│  0│ 18│ 14│   0  │  13  │  7 │ 15 │ 10 │  En Ejecución   │    
-    │P09│  1│  9│ 13│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P04│  2│  5│  3│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P14│  3│ 18│ 11│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P11│  9│  2│  8│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P15│ 10│  4│  9│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P13│ 11│  7│  7│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P07│ 12│ 10│ 12│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P10│ 14│  3│  5│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P01│ 15│  6│ 10│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P03│ 15│ 18│  1│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P12│ 16│ 15│ 12│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P02│ 17│ 13│ 13│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P06│ 17│  4│  6│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴─────────────────┘    
-    Tiempo Medio de Retorno: 1,46 - Tiempo Medio de Espera: 0,46     
-
-	   P08                                       
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊ 14
-	   0                                         
-	   P05                  P08                        
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7                       15 
-
-                     T=16 - Memoria usada: 14/14                     
-    ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬─────────────────┐    
-    │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│     Estado      │    
-    │P05│  0│  7│  6│  --  │  --  │  0 │  7 │  0 │   Finalizado    │    
-    │P08│  0│ 18│ 14│   0  │  13  │  7 │ 16 │  9 │  En Ejecución   │    
-    │P09│  1│  9│ 13│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P04│  2│  5│  3│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P14│  3│ 18│ 11│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P11│  9│  2│  8│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P15│ 10│  4│  9│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P13│ 11│  7│  7│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P07│ 12│ 10│ 12│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P10│ 14│  3│  5│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P01│ 15│  6│ 10│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P03│ 15│ 18│  1│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P12│ 16│ 15│ 12│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P02│ 17│ 13│ 13│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P06│ 17│  4│  6│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴─────────────────┘    
-    Tiempo Medio de Retorno: 1,53 - Tiempo Medio de Espera: 0,46     
-
-	   P08                                       
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊ 14
-	   0                                         
-	   P05                  P08                           
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7                          16 
-
-                     T=17 - Memoria usada: 14/14                     
-      ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬────────────┐       
-      │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│   Estado   │       
-      │P05│  0│  7│  6│  --  │  --  │  0 │  7 │  0 │ Finalizado │       
-      │P08│  0│ 18│ 14│   0  │  13  │  7 │ 17 │  8 │En Ejecución│       
-      │P09│  1│  9│ 13│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P04│  2│  5│  3│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P14│  3│ 18│ 11│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P11│  9│  2│  8│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P15│ 10│  4│  9│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P13│ 11│  7│  7│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P07│ 12│ 10│ 12│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P10│ 14│  3│  5│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P01│ 15│  6│ 10│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P03│ 15│ 18│  1│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P12│ 16│ 15│ 12│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P02│ 17│ 13│ 13│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P06│ 17│  4│  6│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴────────────┘       
-    Tiempo Medio de Retorno: 1,60 - Tiempo Medio de Espera: 0,46     
-
-	   P08                                       
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊ 14
-	   0                                         
-	   P05                  P08                              
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7                             17 
-
-                     T=25 - Memoria usada: 13/14                     
-      ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬────────────┐       
-      │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│   Estado   │       
-      │P05│  0│  7│  6│  --  │  --  │  0 │  7 │  0 │ Finalizado │       
-      │P08│  0│ 18│ 14│  --  │  --  │  7 │ 25 │  0 │ Finalizado │       
-      │P09│  1│  9│ 13│   0  │  12  │ 24 │ 24 │  9 │En Ejecución│       
-      │P04│  2│  5│  3│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P14│  3│ 18│ 11│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P11│  9│  2│  8│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P15│ 10│  4│  9│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P13│ 11│  7│  7│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P07│ 12│ 10│ 12│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P10│ 14│  3│  5│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P01│ 15│  6│ 10│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P03│ 15│ 18│  1│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P12│ 16│ 15│ 12│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P02│ 17│ 13│ 13│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P06│ 17│  4│  6│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴────────────┘       
-    Tiempo Medio de Retorno: 3,73 - Tiempo Medio de Espera: 2,06     
-
-	   P09                                       
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊░░░ 14
-	   0                                      13 
-	   P05                  P08                                       
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7                                      20 
-	   P08            P09
-	   ██▊██▊██▊██▊██▊▎
-	   20             25 
-
-                     T=34 - Memoria usada: 14/14                     
-      ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬────────────┐       
-      │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│   Estado   │       
-      │P05│  0│  7│  6│  --  │  --  │  0 │  7 │  0 │ Finalizado │       
-      │P08│  0│ 18│ 14│  --  │  --  │  7 │ 25 │  0 │ Finalizado │       
-      │P09│  1│  9│ 13│  --  │  --  │ 24 │ 33 │  0 │ Finalizado │       
-      │P04│  2│  5│  3│   0  │   2  │ 32 │ 32 │  5 │En Ejecución│       
-      │P14│  3│ 18│ 11│   3  │  13  │  0 │  0 │ 18 │ En Memoria │       
-      │P11│  9│  2│  8│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P15│ 10│  4│  9│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P13│ 11│  7│  7│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P07│ 12│ 10│ 12│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P10│ 14│  3│  5│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P01│ 15│  6│ 10│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P03│ 15│ 18│  1│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P12│ 16│ 15│ 12│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P02│ 17│ 13│ 13│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P06│ 17│  4│  6│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴────────────┘       
-    Tiempo Medio de Retorno: 6,46 - Tiempo Medio de Espera: 4,20     
-
-	   P04      P14                              
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊ 14
-	   0        3                                
-	   P05                  P08                                       
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7                                      20 
-	   P08            P09                        P04
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊▎
-	   20             25                         34 
-
-                     T=39 - Memoria usada: 11/14                     
-      ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬────────────┐       
-      │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│   Estado   │       
-      │P05│  0│  7│  6│  --  │  --  │  0 │  7 │  0 │ Finalizado │       
-      │P08│  0│ 18│ 14│  --  │  --  │  7 │ 25 │  0 │ Finalizado │       
-      │P09│  1│  9│ 13│  --  │  --  │ 24 │ 33 │  0 │ Finalizado │       
-      │P04│  2│  5│  3│  --  │  --  │ 32 │ 37 │  0 │ Finalizado │       
-      │P14│  3│ 18│ 11│   3  │  13  │ 36 │ 36 │ 18 │En Ejecución│       
-      │P11│  9│  2│  8│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P15│ 10│  4│  9│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P13│ 11│  7│  7│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P07│ 12│ 10│ 12│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P10│ 14│  3│  5│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P01│ 15│  6│ 10│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P03│ 15│ 18│  1│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P12│ 16│ 15│ 12│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P02│ 17│ 13│ 13│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P06│ 17│  4│  6│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴────────────┘       
-    Tiempo Medio de Retorno: 9,20 - Tiempo Medio de Espera: 6,60     
-
-	            P14                              
-	BM ░░░░░░░░░██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊ 14
-	   0        3                                
-	   P05                  P08                                       
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7                                      20 
-	   P08            P09                        P04            P14
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊▎
-	   20             25                         34             39 
-
-                     T=57 - Memoria usada: 8/14                      
-      ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬────────────┐       
-      │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│   Estado   │       
-      │P05│  0│  7│  6│  --  │  --  │  0 │  7 │  0 │ Finalizado │       
-      │P08│  0│ 18│ 14│  --  │  --  │  7 │ 25 │  0 │ Finalizado │       
-      │P09│  1│  9│ 13│  --  │  --  │ 24 │ 33 │  0 │ Finalizado │       
-      │P04│  2│  5│  3│  --  │  --  │ 32 │ 37 │  0 │ Finalizado │       
-      │P14│  3│ 18│ 11│  --  │  --  │ 36 │ 54 │  0 │ Finalizado │       
-      │P11│  9│  2│  8│   0  │   7  │ 48 │ 48 │  2 │En Ejecución│       
-      │P15│ 10│  4│  9│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P13│ 11│  7│  7│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P07│ 12│ 10│ 12│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P10│ 14│  3│  5│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P01│ 15│  6│ 10│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P03│ 15│ 18│  1│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P12│ 16│ 15│ 12│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P02│ 17│ 13│ 13│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P06│ 17│  4│  6│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴────────────┘       
-    Tiempo Medio de Retorno: 13,60 - Tiempo Medio de Espera: 9,80    
-
-	   P11                                       
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊░░░░░░░░░░░░░░░░░░ 14
-	   0                       8                 
-	   P05                  P08                                       
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7                                      20 
-	   P08            P09                        P04            P14   
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   20             25                         34             39 40 
-	   P14                                                P11
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊▎
-	   40                                                 57 
-
-                     T=59 - Memoria usada: 9/14                      
-      ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬────────────┐       
-      │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│   Estado   │       
-      │P05│  0│  7│  6│  --  │  --  │  0 │  7 │  0 │ Finalizado │       
-      │P08│  0│ 18│ 14│  --  │  --  │  7 │ 25 │  0 │ Finalizado │       
-      │P09│  1│  9│ 13│  --  │  --  │ 24 │ 33 │  0 │ Finalizado │       
-      │P04│  2│  5│  3│  --  │  --  │ 32 │ 37 │  0 │ Finalizado │       
-      │P14│  3│ 18│ 11│  --  │  --  │ 36 │ 54 │  0 │ Finalizado │       
-      │P11│  9│  2│  8│  --  │  --  │ 48 │ 50 │  0 │ Finalizado │       
-      │P15│ 10│  4│  9│   0  │   8  │ 49 │ 49 │  4 │En Ejecución│       
-      │P13│ 11│  7│  7│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P07│ 12│ 10│ 12│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P10│ 14│  3│  5│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P01│ 15│  6│ 10│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P03│ 15│ 18│  1│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P12│ 16│ 15│ 12│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P02│ 17│ 13│ 13│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P06│ 17│  4│  6│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴────────────┘       
-   Tiempo Medio de Retorno: 17,00 - Tiempo Medio de Espera: 13,06    
-
-	   P15                                       
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊░░░░░░░░░░░░░░░ 14
-	   0                          9              
-	   P05                  P08                                       
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7                                      20 
-	   P08            P09                        P04            P14   
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   20             25                         34             39 40 
-	   P14                                                P11   P15
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊▎
-	   40                                                 57    59 
-
-                     T=63 - Memoria usada: 7/14                      
-      ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬────────────┐       
-      │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│   Estado   │       
-      │P05│  0│  7│  6│  --  │  --  │  0 │  7 │  0 │ Finalizado │       
-      │P08│  0│ 18│ 14│  --  │  --  │  7 │ 25 │  0 │ Finalizado │       
-      │P09│  1│  9│ 13│  --  │  --  │ 24 │ 33 │  0 │ Finalizado │       
-      │P04│  2│  5│  3│  --  │  --  │ 32 │ 37 │  0 │ Finalizado │       
-      │P14│  3│ 18│ 11│  --  │  --  │ 36 │ 54 │  0 │ Finalizado │       
-      │P11│  9│  2│  8│  --  │  --  │ 48 │ 50 │  0 │ Finalizado │       
-      │P15│ 10│  4│  9│  --  │  --  │ 49 │ 53 │  0 │ Finalizado │       
-      │P13│ 11│  7│  7│   0  │   6  │ 52 │ 52 │  7 │En Ejecución│       
-      │P07│ 12│ 10│ 12│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P10│ 14│  3│  5│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P01│ 15│  6│ 10│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P03│ 15│ 18│  1│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P12│ 16│ 15│ 12│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P02│ 17│ 13│ 13│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P06│ 17│  4│  6│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴────────────┘       
-   Tiempo Medio de Retorno: 20,73 - Tiempo Medio de Espera: 16,53    
-
-	   P13                                       
-	BM ██▊██▊██▊██▊██▊██▊██▊░░░░░░░░░░░░░░░░░░░░░ 14
-	   0                    7                    
-	   P05                  P08                                       
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7                                      20 
-	   P08            P09                        P04            P14   
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   20             25                         34             39 40 
-	   P14                                                P11   P15   
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   40                                                 57    59 60 
-	   P15      P13
-	   ██▊██▊██▊▎
-	   60       63 
-
-                     T=70 - Memoria usada: 12/14                     
-      ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬────────────┐       
-      │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│   Estado   │       
-      │P05│  0│  7│  6│  --  │  --  │  0 │  7 │  0 │ Finalizado │       
-      │P08│  0│ 18│ 14│  --  │  --  │  7 │ 25 │  0 │ Finalizado │       
-      │P09│  1│  9│ 13│  --  │  --  │ 24 │ 33 │  0 │ Finalizado │       
-      │P04│  2│  5│  3│  --  │  --  │ 32 │ 37 │  0 │ Finalizado │       
-      │P14│  3│ 18│ 11│  --  │  --  │ 36 │ 54 │  0 │ Finalizado │       
-      │P11│  9│  2│  8│  --  │  --  │ 48 │ 50 │  0 │ Finalizado │       
-      │P15│ 10│  4│  9│  --  │  --  │ 49 │ 53 │  0 │ Finalizado │       
-      │P13│ 11│  7│  7│  --  │  --  │ 52 │ 59 │  0 │ Finalizado │       
-      │P07│ 12│ 10│ 12│   0  │  11  │ 58 │ 58 │ 10 │En Ejecución│       
-      │P10│ 14│  3│  5│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P01│ 15│  6│ 10│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P03│ 15│ 18│  1│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P12│ 16│ 15│ 12│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P02│ 17│ 13│ 13│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P06│ 17│  4│  6│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴────────────┘       
-   Tiempo Medio de Retorno: 25,06 - Tiempo Medio de Espera: 20,40    
-
-	   P07                                       
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊░░░░░░ 14
-	   0                                   12    
-	   P05                  P08                                       
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7                                      20 
-	   P08            P09                        P04            P14   
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   20             25                         34             39 40 
-	   P14                                                P11   P15   
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   40                                                 57    59 60 
-	   P15      P13                  P07
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊▎
-	   60       63                   70 
-
-                     T=80 - Memoria usada: 5/14                      
-      ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬────────────┐       
-      │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│   Estado   │       
-      │P05│  0│  7│  6│  --  │  --  │  0 │  7 │  0 │ Finalizado │       
-      │P08│  0│ 18│ 14│  --  │  --  │  7 │ 25 │  0 │ Finalizado │       
-      │P09│  1│  9│ 13│  --  │  --  │ 24 │ 33 │  0 │ Finalizado │       
-      │P04│  2│  5│  3│  --  │  --  │ 32 │ 37 │  0 │ Finalizado │       
-      │P14│  3│ 18│ 11│  --  │  --  │ 36 │ 54 │  0 │ Finalizado │       
-      │P11│  9│  2│  8│  --  │  --  │ 48 │ 50 │  0 │ Finalizado │       
-      │P15│ 10│  4│  9│  --  │  --  │ 49 │ 53 │  0 │ Finalizado │       
-      │P13│ 11│  7│  7│  --  │  --  │ 52 │ 59 │  0 │ Finalizado │       
-      │P07│ 12│ 10│ 12│  --  │  --  │ 58 │ 68 │  0 │ Finalizado │       
-      │P10│ 14│  3│  5│   0  │   4  │ 66 │ 66 │  3 │En Ejecución│       
-      │P01│ 15│  6│ 10│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P03│ 15│ 18│  1│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P12│ 16│ 15│ 12│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P02│ 17│ 13│ 13│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P06│ 17│  4│  6│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴────────────┘       
-   Tiempo Medio de Retorno: 30,13 - Tiempo Medio de Espera: 24,80    
-
-	   P10                                       
-	BM ██▊██▊██▊██▊██▊░░░░░░░░░░░░░░░░░░░░░░░░░░░ 14
-	   0              5                          
-	   P05                  P08                                       
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7                                      20 
-	   P08            P09                        P04            P14   
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   20             25                         34             39 40 
-	   P14                                                P11   P15   
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   40                                                 57    59 60 
-	   P15      P13                  P07                           
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   60       63                   70                            80 
-
-                     T=83 - Memoria usada: 11/14                     
-      ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬────────────┐       
-      │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│   Estado   │       
-      │P05│  0│  7│  6│  --  │  --  │  0 │  7 │  0 │ Finalizado │       
-      │P08│  0│ 18│ 14│  --  │  --  │  7 │ 25 │  0 │ Finalizado │       
-      │P09│  1│  9│ 13│  --  │  --  │ 24 │ 33 │  0 │ Finalizado │       
-      │P04│  2│  5│  3│  --  │  --  │ 32 │ 37 │  0 │ Finalizado │       
-      │P14│  3│ 18│ 11│  --  │  --  │ 36 │ 54 │  0 │ Finalizado │       
-      │P11│  9│  2│  8│  --  │  --  │ 48 │ 50 │  0 │ Finalizado │       
-      │P15│ 10│  4│  9│  --  │  --  │ 49 │ 53 │  0 │ Finalizado │       
-      │P13│ 11│  7│  7│  --  │  --  │ 52 │ 59 │  0 │ Finalizado │       
-      │P07│ 12│ 10│ 12│  --  │  --  │ 58 │ 68 │  0 │ Finalizado │       
-      │P10│ 14│  3│  5│  --  │  --  │ 66 │ 69 │  0 │ Finalizado │       
-      │P01│ 15│  6│ 10│   0  │   9  │ 68 │ 68 │  6 │En Ejecución│       
-      │P03│ 15│ 18│  1│  10  │  10  │  0 │  0 │ 18 │ En Memoria │       
-      │P12│ 16│ 15│ 12│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P02│ 17│ 13│ 13│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P06│ 17│  4│  6│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴────────────┘       
-   Tiempo Medio de Retorno: 34,86 - Tiempo Medio de Espera: 29,33    
-
-	   P01                           P03         
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊░░░░░░░░░ 14
-	   0                             10 11       
-	   P05                  P08                                       
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7                                      20 
-	   P08            P09                        P04            P14   
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   20             25                         34             39 40 
-	   P14                                                P11   P15   
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   40                                                 57    59 60 
-	   P15      P13                  P07                           
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   60       63                   70                            80 
-	   P10      P01
-	   ██▊██▊██▊▎
-	   80       83 
-
-                     T=89 - Memoria usada: 13/14                     
-      ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬────────────┐       
-      │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│   Estado   │       
-      │P05│  0│  7│  6│  --  │  --  │  0 │  7 │  0 │ Finalizado │       
-      │P08│  0│ 18│ 14│  --  │  --  │  7 │ 25 │  0 │ Finalizado │       
-      │P09│  1│  9│ 13│  --  │  --  │ 24 │ 33 │  0 │ Finalizado │       
-      │P04│  2│  5│  3│  --  │  --  │ 32 │ 37 │  0 │ Finalizado │       
-      │P14│  3│ 18│ 11│  --  │  --  │ 36 │ 54 │  0 │ Finalizado │       
-      │P11│  9│  2│  8│  --  │  --  │ 48 │ 50 │  0 │ Finalizado │       
-      │P15│ 10│  4│  9│  --  │  --  │ 49 │ 53 │  0 │ Finalizado │       
-      │P13│ 11│  7│  7│  --  │  --  │ 52 │ 59 │  0 │ Finalizado │       
-      │P07│ 12│ 10│ 12│  --  │  --  │ 58 │ 68 │  0 │ Finalizado │       
-      │P10│ 14│  3│  5│  --  │  --  │ 66 │ 69 │  0 │ Finalizado │       
-      │P01│ 15│  6│ 10│  --  │  --  │ 68 │ 74 │  0 │ Finalizado │       
-      │P03│ 15│ 18│  1│  10  │  10  │ 74 │ 74 │ 18 │En Ejecución│       
-      │P12│ 16│ 15│ 12│   0  │   9  │  0 │  0 │ 15 │ En Memoria │       
-      │   │   │   │   │  11  │  12  │    │    │    │            │       
-      │P02│ 17│ 13│ 13│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P06│ 17│  4│  6│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴────────────┘       
-   Tiempo Medio de Retorno: 40,20 - Tiempo Medio de Espera: 34,26    
-
-	   P12                           P03P12      
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊░░░ 14
-	   0                             10 11    13 
-	   P05                  P08                                       
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7                                      20 
-	   P08            P09                        P04            P14   
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   20             25                         34             39 40 
-	   P14                                                P11   P15   
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   40                                                 57    59 60 
-	   P15      P13                  P07                           
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   60       63                   70                            80 
-	   P10      P01               P03
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊▎
-	   80       83                89 
-
-                    T=107 - Memoria usada: 12/14                     
-      ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬────────────┐       
-      │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│   Estado   │       
-      │P05│  0│  7│  6│  --  │  --  │  0 │  7 │  0 │ Finalizado │       
-      │P08│  0│ 18│ 14│  --  │  --  │  7 │ 25 │  0 │ Finalizado │       
-      │P09│  1│  9│ 13│  --  │  --  │ 24 │ 33 │  0 │ Finalizado │       
-      │P04│  2│  5│  3│  --  │  --  │ 32 │ 37 │  0 │ Finalizado │       
-      │P14│  3│ 18│ 11│  --  │  --  │ 36 │ 54 │  0 │ Finalizado │       
-      │P11│  9│  2│  8│  --  │  --  │ 48 │ 50 │  0 │ Finalizado │       
-      │P15│ 10│  4│  9│  --  │  --  │ 49 │ 53 │  0 │ Finalizado │       
-      │P13│ 11│  7│  7│  --  │  --  │ 52 │ 59 │  0 │ Finalizado │       
-      │P07│ 12│ 10│ 12│  --  │  --  │ 58 │ 68 │  0 │ Finalizado │       
-      │P10│ 14│  3│  5│  --  │  --  │ 66 │ 69 │  0 │ Finalizado │       
-      │P01│ 15│  6│ 10│  --  │  --  │ 68 │ 74 │  0 │ Finalizado │       
-      │P03│ 15│ 18│  1│  --  │  --  │ 74 │ 92 │  0 │ Finalizado │       
-      │P12│ 16│ 15│ 12│   0  │   9  │ 91 │ 91 │ 15 │En Ejecución│       
-      │   │   │   │   │  11  │  12  │    │    │    │            │       
-      │P02│ 17│ 13│ 13│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P06│ 17│  4│  6│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴────────────┘       
-   Tiempo Medio de Retorno: 47,46 - Tiempo Medio de Espera: 40,33    
-
-	   P12                              P12      
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊░░░██▊██▊░░░ 14
-	   0                             10 11    13 
-	   P05                  P08                                       
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7                                      20 
-	   P08            P09                        P04            P14   
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   20             25                         34             39 40 
-	   P14                                                P11   P15   
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   40                                                 57    59 60 
-	   P15      P13                  P07                           
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   60       63                   70                            80 
-	   P10      P01               P03                                 
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   80       83                89                               100
-	   P03                  P12
-	   ██▊██▊██▊██▊██▊██▊██▊▎
-	   100                  107
-
-                    T=122 - Memoria usada: 13/14                     
-      ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬────────────┐       
-      │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│   Estado   │       
-      │P05│  0│  7│  6│  --  │  --  │  0 │  7 │  0 │ Finalizado │       
-      │P08│  0│ 18│ 14│  --  │  --  │  7 │ 25 │  0 │ Finalizado │       
-      │P09│  1│  9│ 13│  --  │  --  │ 24 │ 33 │  0 │ Finalizado │       
-      │P04│  2│  5│  3│  --  │  --  │ 32 │ 37 │  0 │ Finalizado │       
-      │P14│  3│ 18│ 11│  --  │  --  │ 36 │ 54 │  0 │ Finalizado │       
-      │P11│  9│  2│  8│  --  │  --  │ 48 │ 50 │  0 │ Finalizado │       
-      │P15│ 10│  4│  9│  --  │  --  │ 49 │ 53 │  0 │ Finalizado │       
-      │P13│ 11│  7│  7│  --  │  --  │ 52 │ 59 │  0 │ Finalizado │       
-      │P07│ 12│ 10│ 12│  --  │  --  │ 58 │ 68 │  0 │ Finalizado │       
-      │P10│ 14│  3│  5│  --  │  --  │ 66 │ 69 │  0 │ Finalizado │       
-      │P01│ 15│  6│ 10│  --  │  --  │ 68 │ 74 │  0 │ Finalizado │       
-      │P03│ 15│ 18│  1│  --  │  --  │ 74 │ 92 │  0 │ Finalizado │       
-      │P12│ 16│ 15│ 12│  --  │  --  │ 91 │ 106│  0 │ Finalizado │       
-      │P02│ 17│ 13│ 13│   0  │  12  │ 105│ 105│ 13 │En Ejecución│       
-      │P06│ 17│  4│  6│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴────────────┘       
-   Tiempo Medio de Retorno: 55,46 - Tiempo Medio de Espera: 47,33    
-
-	   P02                                       
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊░░░ 14
-	   0                                      13 
-	   P05                  P08                                       
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7                                      20 
-	   P08            P09                        P04            P14   
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   20             25                         34             39 40 
-	   P14                                                P11   P15   
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   40                                                 57    59 60 
-	   P15      P13                  P07                           
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   60       63                   70                            80 
-	   P10      P01               P03                                 
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   80       83                89                               100
-	   P03                  P12                                       
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   100                  107                                    120
-	   P12   P02
-	   ██▊██▊▎
-	   120   122
-
-                     T=135 - Memoria usada: 6/14                     
-      ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬────────────┐       
-      │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│   Estado   │       
-      │P05│  0│  7│  6│  --  │  --  │  0 │  7 │  0 │ Finalizado │       
-      │P08│  0│ 18│ 14│  --  │  --  │  7 │ 25 │  0 │ Finalizado │       
-      │P09│  1│  9│ 13│  --  │  --  │ 24 │ 33 │  0 │ Finalizado │       
-      │P04│  2│  5│  3│  --  │  --  │ 32 │ 37 │  0 │ Finalizado │       
-      │P14│  3│ 18│ 11│  --  │  --  │ 36 │ 54 │  0 │ Finalizado │       
-      │P11│  9│  2│  8│  --  │  --  │ 48 │ 50 │  0 │ Finalizado │       
-      │P15│ 10│  4│  9│  --  │  --  │ 49 │ 53 │  0 │ Finalizado │       
-      │P13│ 11│  7│  7│  --  │  --  │ 52 │ 59 │  0 │ Finalizado │       
-      │P07│ 12│ 10│ 12│  --  │  --  │ 58 │ 68 │  0 │ Finalizado │       
-      │P10│ 14│  3│  5│  --  │  --  │ 66 │ 69 │  0 │ Finalizado │       
-      │P01│ 15│  6│ 10│  --  │  --  │ 68 │ 74 │  0 │ Finalizado │       
-      │P03│ 15│ 18│  1│  --  │  --  │ 74 │ 92 │  0 │ Finalizado │       
-      │P12│ 16│ 15│ 12│  --  │  --  │ 91 │ 106│  0 │ Finalizado │       
-      │P02│ 17│ 13│ 13│  --  │  --  │ 105│ 118│  0 │ Finalizado │       
-      │P06│ 17│  4│  6│   0  │   5  │ 118│ 118│  4 │En Ejecución│       
-      └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴────────────┘       
-   Tiempo Medio de Retorno: 64,20 - Tiempo Medio de Espera: 55,20    
-
-	   P06                                       
-	BM ██▊██▊██▊██▊██▊██▊░░░░░░░░░░░░░░░░░░░░░░░░ 14
-	   0                 6                       
-	   P05                  P08                                       
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7                                      20 
-	   P08            P09                        P04            P14   
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   20             25                         34             39 40 
-	   P14                                                P11   P15   
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   40                                                 57    59 60 
-	   P15      P13                  P07                           
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   60       63                   70                            80 
-	   P10      P01               P03                                 
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   80       83                89                               100
-	   P03                  P12                                       
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   100                  107                                    120
-	   P12   P02                                    P06
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊▎
-	   120   122                                    135
-
-                     T=139 - Memoria usada: 0/14                     
-       ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬──────────┐        
-       │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│  Estado  │        
-       │P05│  0│  7│  6│  --  │  --  │  0 │  7 │  0 │Finalizado│        
-       │P08│  0│ 18│ 14│  --  │  --  │  7 │ 25 │  0 │Finalizado│        
-       │P09│  1│  9│ 13│  --  │  --  │ 24 │ 33 │  0 │Finalizado│        
-       │P04│  2│  5│  3│  --  │  --  │ 32 │ 37 │  0 │Finalizado│        
-       │P14│  3│ 18│ 11│  --  │  --  │ 36 │ 54 │  0 │Finalizado│        
-       │P11│  9│  2│  8│  --  │  --  │ 48 │ 50 │  0 │Finalizado│        
-       │P15│ 10│  4│  9│  --  │  --  │ 49 │ 53 │  0 │Finalizado│        
-       │P13│ 11│  7│  7│  --  │  --  │ 52 │ 59 │  0 │Finalizado│        
-       │P07│ 12│ 10│ 12│  --  │  --  │ 58 │ 68 │  0 │Finalizado│        
-       │P10│ 14│  3│  5│  --  │  --  │ 66 │ 69 │  0 │Finalizado│        
-       │P01│ 15│  6│ 10│  --  │  --  │ 68 │ 74 │  0 │Finalizado│        
-       │P03│ 15│ 18│  1│  --  │  --  │ 74 │ 92 │  0 │Finalizado│        
-       │P12│ 16│ 15│ 12│  --  │  --  │ 91 │ 106│  0 │Finalizado│        
-       │P02│ 17│ 13│ 13│  --  │  --  │ 105│ 118│  0 │Finalizado│        
-       │P06│ 17│  4│  6│  --  │  --  │ 118│ 122│  0 │Finalizado│        
-       └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴──────────┘        
-   Tiempo Medio de Retorno: 64,46 - Tiempo Medio de Espera: 55,20    
-
-	                                             
-	BM ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 14
-	   0                                         
-	   P05                  P08                                       
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7                                      20 
-	   P08            P09                        P04            P14   
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   20             25                         34             39 40 
-	   P14                                                P11   P15   
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   40                                                 57    59 60 
-	   P15      P13                  P07                           
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   60       63                   70                            80 
-	   P10      P01               P03                                 
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   80       83                89                               100
-	   P03                  P12                                       
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   100                  107                                    120
-	   P12   P02                                    P06            
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   120   122                                    135         139
-[3J[H[2J
-        ┌──────────────────────────────────────────────────┐         
-        │         Ejecutando el algoritmo de nuevo         │         
-        └──────────────────────────────────────────────────┘         
-
-        ┌──────────────────────────────────────────────────┐         
-        │                  MENÚ PRINCIPAL                  │         
-        └──────────────────────────────────────────────────┘         
-
-        ┌──────────────────────────────────────────────────┐         
-        │          1.- Entrada manual por teclado          │         
-        │        2.- Entrada automática por archivo        │         
-        │   3.- Entrada automática con valores aleatorios  │         
-        │                     4.- Ayuda                    │         
-        │                     0.- Salir                    │         
-        └──────────────────────────────────────────────────┘         
-
-        ┌──────────────────────────────────────────────────┐         
-        │           Asignación de datos aleatoria          │         
-        └──────────────────────────────────────────────────┘         
-
-        ┌──────────────────────────────────────────────────┐         
-        │      ☑ Ejecutando algoritmo | FCFS-SN-NCNR ☑     │         
-        └──────────────────────────────────────────────────┘         
-
-                     T=0 - Memoria usada: 18/18                      
-    ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬─────────────────┐    
-    │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│     Estado      │    
-    │P04│  0│  7│ 18│   0  │  17  │  0 │  0 │  7 │  En Ejecución   │    
-    │P06│  3│ 16│ 14│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P09│  4│ 15│  6│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P13│  4│ 14│ 12│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P14│  5│  2│  8│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P15│  6│ 13│  2│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P11│  9│  1│ 10│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P03│ 10│ 18│ 11│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P07│ 10│  4│ 11│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P12│ 10│ 15│  3│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P10│ 11│  7│  8│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P02│ 14│ 20│  5│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P08│ 16│ 12│  1│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P05│ 18│ 11│  4│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P01│ 19│ 15│ 18│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴─────────────────┘    
-    Tiempo Medio de Retorno: 0,00 - Tiempo Medio de Espera: 0,00     
-
-	   P04                                                   
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊ 18
-	   0                                                     
-	   P04
-	BT ▎
-	   0  
-
-                     T=3 - Memoria usada: 18/18                      
-    ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬─────────────────┐    
-    │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│     Estado      │    
-    │P04│  0│  7│ 18│   0  │  17  │  0 │  3 │  4 │  En Ejecución   │    
-    │P06│  3│ 16│ 14│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P09│  4│ 15│  6│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P13│  4│ 14│ 12│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P14│  5│  2│  8│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P15│  6│ 13│  2│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P11│  9│  1│ 10│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P03│ 10│ 18│ 11│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P07│ 10│  4│ 11│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P12│ 10│ 15│  3│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P10│ 11│  7│  8│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P02│ 14│ 20│  5│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P08│ 16│ 12│  1│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P05│ 18│ 11│  4│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P01│ 19│ 15│ 18│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴─────────────────┘    
-    Tiempo Medio de Retorno: 0,20 - Tiempo Medio de Espera: 0,00     
-
-	   P04                                                   
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊ 18
-	   0                                                     
-	   P04         
-	BT ██▊██▊██▊
-	   0        3  
-
-                     T=4 - Memoria usada: 18/18                      
-    ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬─────────────────┐    
-    │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│     Estado      │    
-    │P04│  0│  7│ 18│   0  │  17  │  0 │  4 │  3 │  En Ejecución   │    
-    │P06│  3│ 16│ 14│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P09│  4│ 15│  6│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P13│  4│ 14│ 12│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P14│  5│  2│  8│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P15│  6│ 13│  2│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P11│  9│  1│ 10│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P03│ 10│ 18│ 11│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P07│ 10│  4│ 11│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P12│ 10│ 15│  3│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P10│ 11│  7│  8│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P02│ 14│ 20│  5│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P08│ 16│ 12│  1│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P05│ 18│ 11│  4│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P01│ 19│ 15│ 18│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴─────────────────┘    
-    Tiempo Medio de Retorno: 0,26 - Tiempo Medio de Espera: 0,00     
-
-	   P04                                                   
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊ 18
-	   0                                                     
-	   P04            
-	BT ██▊██▊██▊██▊
-	   0           4  
-
-                     T=5 - Memoria usada: 18/18                      
-    ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬─────────────────┐    
-    │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│     Estado      │    
-    │P04│  0│  7│ 18│   0  │  17  │  0 │  5 │  2 │  En Ejecución   │    
-    │P06│  3│ 16│ 14│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P09│  4│ 15│  6│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P13│  4│ 14│ 12│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P14│  5│  2│  8│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P15│  6│ 13│  2│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P11│  9│  1│ 10│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P03│ 10│ 18│ 11│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P07│ 10│  4│ 11│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P12│ 10│ 15│  3│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P10│ 11│  7│  8│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P02│ 14│ 20│  5│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P08│ 16│ 12│  1│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P05│ 18│ 11│  4│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P01│ 19│ 15│ 18│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴─────────────────┘    
-    Tiempo Medio de Retorno: 0,33 - Tiempo Medio de Espera: 0,00     
-
-	   P04                                                   
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊ 18
-	   0                                                     
-	   P04               
+	   P12                        
+	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊ 9
+	     0                        
+	   P10         P12   
 	BT ██▊██▊██▊██▊██▊
-	   0              5  
+	     0           4  5
 
-                     T=6 - Memoria usada: 18/18                      
-    ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬─────────────────┐    
-    │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│     Estado      │    
-    │P04│  0│  7│ 18│   0  │  17  │  0 │  6 │  1 │  En Ejecución   │    
-    │P06│  3│ 16│ 14│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P09│  4│ 15│  6│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P13│  4│ 14│ 12│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P14│  5│  2│  8│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P15│  6│ 13│  2│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P11│  9│  1│ 10│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P03│ 10│ 18│ 11│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P07│ 10│  4│ 11│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P12│ 10│ 15│  3│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P10│ 11│  7│  8│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P02│ 14│ 20│  5│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P08│ 16│ 12│  1│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P05│ 18│ 11│  4│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P01│ 19│ 15│ 18│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴─────────────────┘    
-    Tiempo Medio de Retorno: 0,40 - Tiempo Medio de Espera: 0,00     
+	 T=6 - Memoria usada: 9/9 
+	┌───┬───┬───┬───┬────┬────┬────┬────┬────┬─────────────────┐
+	│Ref│Tll│Tej│Mem│MIni│MFin│Tesp│Tret│Trej│     Estado      │
+	│P10│  0│  4│  9│ -- │ -- │  0 │  4 │  0 │   Finalizado    │
+	│P12│  1│ 17│  9│  0 │  8 │  3 │  5 │ 15 │  En Ejecución   │
+	│P18│  1│ 16│  7│ -- │ -- │  5 │  0 │ -- │    En Espera    │
+	│P20│  2│  5│  6│ -- │ -- │  4 │  0 │ -- │    En Espera    │
+	│P05│  3│ 10│  7│ -- │ -- │  3 │  0 │ -- │    En Espera    │
+	│P09│  3│ 11│  5│ -- │ -- │  3 │  0 │ -- │    En Espera    │
+	│P14│  3│  7│  4│ -- │ -- │  3 │  0 │ -- │    En Espera    │
+	│P02│  5│ 13│  9│ -- │ -- │  1 │  0 │ -- │    En Espera    │
+	│P17│  5│ 13│  2│ -- │ -- │  1 │  0 │ -- │    En Espera    │
+	│P19│  5│ 14│  8│ -- │ -- │  1 │  0 │ -- │    En Espera    │
+	│P13│  6│ 16│  6│ -- │ -- │  0 │  0 │ -- │    En Espera    │
+	│P16│  8│  4│  1│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P07│ 10│ 11│  4│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P06│ 11│ 10│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P01│ 12│ 12│  3│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P08│ 13│  7│  6│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P04│ 16│  9│  3│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P15│ 17│ 18│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P03│ 18│  4│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P11│ 18│ 11│  4│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	└───┴───┴───┴───┴────┴────┴────┴────┴────┴─────────────────┘
+	 Tiempo Medio de Retorno: 0,45 - Tiempo Medio de Espera: 1,20 
 
-	   P04                                                   
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊ 18
-	   0                                                     
-	   P04                  
+	   P12                        
+	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊ 9
+	     0                        
+	   P10         P12      
 	BT ██▊██▊██▊██▊██▊██▊
-	   0                 6  
+	     0           4     6
 
-                     T=7 - Memoria usada: 14/18                      
-    ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬─────────────────┐    
-    │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│     Estado      │    
-    │P04│  0│  7│ 18│  --  │  --  │  0 │  7 │  0 │   Finalizado    │    
-    │P06│  3│ 16│ 14│   0  │  13  │  4 │  4 │ 16 │  En Ejecución   │    
-    │P09│  4│ 15│  6│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P13│  4│ 14│ 12│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P14│  5│  2│  8│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P15│  6│ 13│  2│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P11│  9│  1│ 10│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P03│ 10│ 18│ 11│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P07│ 10│  4│ 11│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P12│ 10│ 15│  3│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P10│ 11│  7│  8│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P02│ 14│ 20│  5│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P08│ 16│ 12│  1│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P05│ 18│ 11│  4│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P01│ 19│ 15│ 18│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴─────────────────┘    
-    Tiempo Medio de Retorno: 0,73 - Tiempo Medio de Espera: 0,26     
+	 T=8 - Memoria usada: 9/9 
+	┌───┬───┬───┬───┬────┬────┬────┬────┬────┬─────────────────┐
+	│Ref│Tll│Tej│Mem│MIni│MFin│Tesp│Tret│Trej│     Estado      │
+	│P10│  0│  4│  9│ -- │ -- │  0 │  4 │  0 │   Finalizado    │
+	│P12│  1│ 17│  9│  0 │  8 │  3 │  7 │ 13 │  En Ejecución   │
+	│P18│  1│ 16│  7│ -- │ -- │  7 │  0 │ -- │    En Espera    │
+	│P20│  2│  5│  6│ -- │ -- │  6 │  0 │ -- │    En Espera    │
+	│P05│  3│ 10│  7│ -- │ -- │  5 │  0 │ -- │    En Espera    │
+	│P09│  3│ 11│  5│ -- │ -- │  5 │  0 │ -- │    En Espera    │
+	│P14│  3│  7│  4│ -- │ -- │  5 │  0 │ -- │    En Espera    │
+	│P02│  5│ 13│  9│ -- │ -- │  3 │  0 │ -- │    En Espera    │
+	│P17│  5│ 13│  2│ -- │ -- │  3 │  0 │ -- │    En Espera    │
+	│P19│  5│ 14│  8│ -- │ -- │  3 │  0 │ -- │    En Espera    │
+	│P13│  6│ 16│  6│ -- │ -- │  2 │  0 │ -- │    En Espera    │
+	│P16│  8│  4│  1│ -- │ -- │  0 │  0 │ -- │    En Espera    │
+	│P07│ 10│ 11│  4│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P06│ 11│ 10│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P01│ 12│ 12│  3│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P08│ 13│  7│  6│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P04│ 16│  9│  3│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P15│ 17│ 18│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P03│ 18│  4│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P11│ 18│ 11│  4│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	└───┴───┴───┴───┴────┴────┴────┴────┴────┴─────────────────┘
+	 Tiempo Medio de Retorno: 0,55 - Tiempo Medio de Espera: 2,10 
 
-	   P06                                                   
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊░░░░░░░░░░░░ 18
-	   0                                         14          
-	   P04                  P06
-	BT ██▊██▊██▊██▊██▊██▊██▊▎
-	   0                    7  
+	   P12                        
+	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊ 9
+	     0                        
+	   P10         P12            
+	BT ██▊██▊██▊██▊██▊██▊██▊██▊
+	     0           4           8
 
-                     T=9 - Memoria usada: 14/18                      
-    ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬─────────────────┐    
-    │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│     Estado      │    
-    │P04│  0│  7│ 18│  --  │  --  │  0 │  7 │  0 │   Finalizado    │    
-    │P06│  3│ 16│ 14│   0  │  13  │  4 │  6 │ 14 │  En Ejecución   │    
-    │P09│  4│ 15│  6│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P13│  4│ 14│ 12│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P14│  5│  2│  8│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P15│  6│ 13│  2│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P11│  9│  1│ 10│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P03│ 10│ 18│ 11│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P07│ 10│  4│ 11│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P12│ 10│ 15│  3│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P10│ 11│  7│  8│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P02│ 14│ 20│  5│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P08│ 16│ 12│  1│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P05│ 18│ 11│  4│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P01│ 19│ 15│ 18│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴─────────────────┘    
-    Tiempo Medio de Retorno: 0,86 - Tiempo Medio de Espera: 0,26     
+	 T=10 - Memoria usada: 9/9 
+	┌───┬───┬───┬───┬────┬────┬────┬────┬────┬─────────────────┐
+	│Ref│Tll│Tej│Mem│MIni│MFin│Tesp│Tret│Trej│     Estado      │
+	│P10│  0│  4│  9│ -- │ -- │  0 │  4 │  0 │   Finalizado    │
+	│P12│  1│ 17│  9│  0 │  8 │  3 │  9 │ 11 │  En Ejecución   │
+	│P18│  1│ 16│  7│ -- │ -- │  9 │  0 │ -- │    En Espera    │
+	│P20│  2│  5│  6│ -- │ -- │  8 │  0 │ -- │    En Espera    │
+	│P05│  3│ 10│  7│ -- │ -- │  7 │  0 │ -- │    En Espera    │
+	│P09│  3│ 11│  5│ -- │ -- │  7 │  0 │ -- │    En Espera    │
+	│P14│  3│  7│  4│ -- │ -- │  7 │  0 │ -- │    En Espera    │
+	│P02│  5│ 13│  9│ -- │ -- │  5 │  0 │ -- │    En Espera    │
+	│P17│  5│ 13│  2│ -- │ -- │  5 │  0 │ -- │    En Espera    │
+	│P19│  5│ 14│  8│ -- │ -- │  5 │  0 │ -- │    En Espera    │
+	│P13│  6│ 16│  6│ -- │ -- │  4 │  0 │ -- │    En Espera    │
+	│P16│  8│  4│  1│ -- │ -- │  2 │  0 │ -- │    En Espera    │
+	│P07│ 10│ 11│  4│ -- │ -- │  0 │  0 │ -- │    En Espera    │
+	│P06│ 11│ 10│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P01│ 12│ 12│  3│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P08│ 13│  7│  6│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P04│ 16│  9│  3│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P15│ 17│ 18│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P03│ 18│  4│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P11│ 18│ 11│  4│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	└───┴───┴───┴───┴────┴────┴────┴────┴────┴─────────────────┘
+	 Tiempo Medio de Retorno: 0,65 - Tiempo Medio de Espera: 3,10 
 
-	   P06                                                   
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊░░░░░░░░░░░░ 18
-	   0                                         14          
-	   P04                  P06      
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7     9  
-
-                     T=10 - Memoria usada: 14/18                     
-    ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬─────────────────┐    
-    │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│     Estado      │    
-    │P04│  0│  7│ 18│  --  │  --  │  0 │  7 │  0 │   Finalizado    │    
-    │P06│  3│ 16│ 14│   0  │  13  │  4 │  7 │ 13 │  En Ejecución   │    
-    │P09│  4│ 15│  6│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P13│  4│ 14│ 12│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P14│  5│  2│  8│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P15│  6│ 13│  2│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P11│  9│  1│ 10│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P03│ 10│ 18│ 11│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P07│ 10│  4│ 11│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P12│ 10│ 15│  3│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P10│ 11│  7│  8│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P02│ 14│ 20│  5│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P08│ 16│ 12│  1│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P05│ 18│ 11│  4│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P01│ 19│ 15│ 18│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴─────────────────┘    
-    Tiempo Medio de Retorno: 0,93 - Tiempo Medio de Espera: 0,26     
-
-	   P06                                                   
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊░░░░░░░░░░░░ 18
-	   0                                         14          
-	   P04                  P06         
+	   P12                        
+	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊ 9
+	     0                        
+	   P10         P12                  
 	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7        10 
+	     0           4                10
 
-                     T=11 - Memoria usada: 14/18                     
-    ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬─────────────────┐    
-    │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│     Estado      │    
-    │P04│  0│  7│ 18│  --  │  --  │  0 │  7 │  0 │   Finalizado    │    
-    │P06│  3│ 16│ 14│   0  │  13  │  4 │  8 │ 12 │  En Ejecución   │    
-    │P09│  4│ 15│  6│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P13│  4│ 14│ 12│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P14│  5│  2│  8│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P15│  6│ 13│  2│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P11│  9│  1│ 10│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P03│ 10│ 18│ 11│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P07│ 10│  4│ 11│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P12│ 10│ 15│  3│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P10│ 11│  7│  8│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P02│ 14│ 20│  5│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P08│ 16│ 12│  1│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P05│ 18│ 11│  4│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P01│ 19│ 15│ 18│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴─────────────────┘    
-    Tiempo Medio de Retorno: 1,00 - Tiempo Medio de Espera: 0,26     
+	 T=11 - Memoria usada: 9/9 
+	┌───┬───┬───┬───┬────┬────┬────┬────┬────┬─────────────────┐
+	│Ref│Tll│Tej│Mem│MIni│MFin│Tesp│Tret│Trej│     Estado      │
+	│P10│  0│  4│  9│ -- │ -- │  0 │  4 │  0 │   Finalizado    │
+	│P12│  1│ 17│  9│  0 │  8 │  3 │ 10 │ 10 │  En Ejecución   │
+	│P18│  1│ 16│  7│ -- │ -- │ 10 │  0 │ -- │    En Espera    │
+	│P20│  2│  5│  6│ -- │ -- │  9 │  0 │ -- │    En Espera    │
+	│P05│  3│ 10│  7│ -- │ -- │  8 │  0 │ -- │    En Espera    │
+	│P09│  3│ 11│  5│ -- │ -- │  8 │  0 │ -- │    En Espera    │
+	│P14│  3│  7│  4│ -- │ -- │  8 │  0 │ -- │    En Espera    │
+	│P02│  5│ 13│  9│ -- │ -- │  6 │  0 │ -- │    En Espera    │
+	│P17│  5│ 13│  2│ -- │ -- │  6 │  0 │ -- │    En Espera    │
+	│P19│  5│ 14│  8│ -- │ -- │  6 │  0 │ -- │    En Espera    │
+	│P13│  6│ 16│  6│ -- │ -- │  5 │  0 │ -- │    En Espera    │
+	│P16│  8│  4│  1│ -- │ -- │  3 │  0 │ -- │    En Espera    │
+	│P07│ 10│ 11│  4│ -- │ -- │  1 │  0 │ -- │    En Espera    │
+	│P06│ 11│ 10│  5│ -- │ -- │  0 │  0 │ -- │    En Espera    │
+	│P01│ 12│ 12│  3│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P08│ 13│  7│  6│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P04│ 16│  9│  3│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P15│ 17│ 18│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P03│ 18│  4│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P11│ 18│ 11│  4│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	└───┴───┴───┴───┴────┴────┴────┴────┴────┴─────────────────┘
+	 Tiempo Medio de Retorno: 0,70 - Tiempo Medio de Espera: 3,65 
 
-	   P06                                                   
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊░░░░░░░░░░░░ 18
-	   0                                         14          
-	   P04                  P06            
+	   P12                        
+	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊ 9
+	     0                        
+	   P10         P12                     
 	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7           11 
+	     0           4                   11
 
-                     T=14 - Memoria usada: 14/18                     
-    ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬─────────────────┐    
-    │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│     Estado      │    
-    │P04│  0│  7│ 18│  --  │  --  │  0 │  7 │  0 │   Finalizado    │    
-    │P06│  3│ 16│ 14│   0  │  13  │  4 │ 11 │  9 │  En Ejecución   │    
-    │P09│  4│ 15│  6│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P13│  4│ 14│ 12│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P14│  5│  2│  8│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P15│  6│ 13│  2│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P11│  9│  1│ 10│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P03│ 10│ 18│ 11│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P07│ 10│  4│ 11│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P12│ 10│ 15│  3│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P10│ 11│  7│  8│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P02│ 14│ 20│  5│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P08│ 16│ 12│  1│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P05│ 18│ 11│  4│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P01│ 19│ 15│ 18│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴─────────────────┘    
-    Tiempo Medio de Retorno: 1,20 - Tiempo Medio de Espera: 0,26     
+	 T=12 - Memoria usada: 9/9 
+	┌───┬───┬───┬───┬────┬────┬────┬────┬────┬─────────────────┐
+	│Ref│Tll│Tej│Mem│MIni│MFin│Tesp│Tret│Trej│     Estado      │
+	│P10│  0│  4│  9│ -- │ -- │  0 │  4 │  0 │   Finalizado    │
+	│P12│  1│ 17│  9│  0 │  8 │  3 │ 11 │  9 │  En Ejecución   │
+	│P18│  1│ 16│  7│ -- │ -- │ 11 │  0 │ -- │    En Espera    │
+	│P20│  2│  5│  6│ -- │ -- │ 10 │  0 │ -- │    En Espera    │
+	│P05│  3│ 10│  7│ -- │ -- │  9 │  0 │ -- │    En Espera    │
+	│P09│  3│ 11│  5│ -- │ -- │  9 │  0 │ -- │    En Espera    │
+	│P14│  3│  7│  4│ -- │ -- │  9 │  0 │ -- │    En Espera    │
+	│P02│  5│ 13│  9│ -- │ -- │  7 │  0 │ -- │    En Espera    │
+	│P17│  5│ 13│  2│ -- │ -- │  7 │  0 │ -- │    En Espera    │
+	│P19│  5│ 14│  8│ -- │ -- │  7 │  0 │ -- │    En Espera    │
+	│P13│  6│ 16│  6│ -- │ -- │  6 │  0 │ -- │    En Espera    │
+	│P16│  8│  4│  1│ -- │ -- │  4 │  0 │ -- │    En Espera    │
+	│P07│ 10│ 11│  4│ -- │ -- │  2 │  0 │ -- │    En Espera    │
+	│P06│ 11│ 10│  5│ -- │ -- │  1 │  0 │ -- │    En Espera    │
+	│P01│ 12│ 12│  3│ -- │ -- │  0 │  0 │ -- │    En Espera    │
+	│P08│ 13│  7│  6│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P04│ 16│  9│  3│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P15│ 17│ 18│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P03│ 18│  4│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P11│ 18│ 11│  4│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	└───┴───┴───┴───┴────┴────┴────┴────┴────┴─────────────────┘
+	 Tiempo Medio de Retorno: 0,75 - Tiempo Medio de Espera: 4,25 
 
-	   P06                                                   
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊░░░░░░░░░░░░ 18
-	   0                                         14          
-	   P04                  P06                     
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7                    14 
+	   P12                        
+	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊ 9
+	     0                        
+	   P10         P12                        
+	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	     0           4                      12
 
-                     T=16 - Memoria usada: 14/18                     
-    ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬─────────────────┐    
-    │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│     Estado      │    
-    │P04│  0│  7│ 18│  --  │  --  │  0 │  7 │  0 │   Finalizado    │    
-    │P06│  3│ 16│ 14│   0  │  13  │  4 │ 13 │  7 │  En Ejecución   │    
-    │P09│  4│ 15│  6│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P13│  4│ 14│ 12│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P14│  5│  2│  8│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P15│  6│ 13│  2│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P11│  9│  1│ 10│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P03│ 10│ 18│ 11│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P07│ 10│  4│ 11│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P12│ 10│ 15│  3│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P10│ 11│  7│  8│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P02│ 14│ 20│  5│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P08│ 16│ 12│  1│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P05│ 18│ 11│  4│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    │P01│ 19│ 15│ 18│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴─────────────────┘    
-    Tiempo Medio de Retorno: 1,33 - Tiempo Medio de Espera: 0,26     
+	 T=13 - Memoria usada: 9/9 
+	┌───┬───┬───┬───┬────┬────┬────┬────┬────┬─────────────────┐
+	│Ref│Tll│Tej│Mem│MIni│MFin│Tesp│Tret│Trej│     Estado      │
+	│P10│  0│  4│  9│ -- │ -- │  0 │  4 │  0 │   Finalizado    │
+	│P12│  1│ 17│  9│  0 │  8 │  3 │ 12 │  8 │  En Ejecución   │
+	│P18│  1│ 16│  7│ -- │ -- │ 12 │  0 │ -- │    En Espera    │
+	│P20│  2│  5│  6│ -- │ -- │ 11 │  0 │ -- │    En Espera    │
+	│P05│  3│ 10│  7│ -- │ -- │ 10 │  0 │ -- │    En Espera    │
+	│P09│  3│ 11│  5│ -- │ -- │ 10 │  0 │ -- │    En Espera    │
+	│P14│  3│  7│  4│ -- │ -- │ 10 │  0 │ -- │    En Espera    │
+	│P02│  5│ 13│  9│ -- │ -- │  8 │  0 │ -- │    En Espera    │
+	│P17│  5│ 13│  2│ -- │ -- │  8 │  0 │ -- │    En Espera    │
+	│P19│  5│ 14│  8│ -- │ -- │  8 │  0 │ -- │    En Espera    │
+	│P13│  6│ 16│  6│ -- │ -- │  7 │  0 │ -- │    En Espera    │
+	│P16│  8│  4│  1│ -- │ -- │  5 │  0 │ -- │    En Espera    │
+	│P07│ 10│ 11│  4│ -- │ -- │  3 │  0 │ -- │    En Espera    │
+	│P06│ 11│ 10│  5│ -- │ -- │  2 │  0 │ -- │    En Espera    │
+	│P01│ 12│ 12│  3│ -- │ -- │  1 │  0 │ -- │    En Espera    │
+	│P08│ 13│  7│  6│ -- │ -- │  0 │  0 │ -- │    En Espera    │
+	│P04│ 16│  9│  3│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P15│ 17│ 18│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P03│ 18│  4│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P11│ 18│ 11│  4│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	└───┴───┴───┴───┴────┴────┴────┴────┴────┴─────────────────┘
+	 Tiempo Medio de Retorno: 0,80 - Tiempo Medio de Espera: 4,90 
 
-	   P06                                                   
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊░░░░░░░░░░░░ 18
-	   0                                         14          
-	   P04                  P06                           
+	   P12                        
+	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊ 9
+	     0                        
+	   P10         P12                           
+	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	     0           4                         13
+
+	 T=16 - Memoria usada: 9/9 
+	┌───┬───┬───┬───┬────┬────┬────┬────┬────┬─────────────────┐
+	│Ref│Tll│Tej│Mem│MIni│MFin│Tesp│Tret│Trej│     Estado      │
+	│P10│  0│  4│  9│ -- │ -- │  0 │  4 │  0 │   Finalizado    │
+	│P12│  1│ 17│  9│  0 │  8 │  3 │ 15 │  5 │  En Ejecución   │
+	│P18│  1│ 16│  7│ -- │ -- │ 15 │  0 │ -- │    En Espera    │
+	│P20│  2│  5│  6│ -- │ -- │ 14 │  0 │ -- │    En Espera    │
+	│P05│  3│ 10│  7│ -- │ -- │ 13 │  0 │ -- │    En Espera    │
+	│P09│  3│ 11│  5│ -- │ -- │ 13 │  0 │ -- │    En Espera    │
+	│P14│  3│  7│  4│ -- │ -- │ 13 │  0 │ -- │    En Espera    │
+	│P02│  5│ 13│  9│ -- │ -- │ 11 │  0 │ -- │    En Espera    │
+	│P17│  5│ 13│  2│ -- │ -- │ 11 │  0 │ -- │    En Espera    │
+	│P19│  5│ 14│  8│ -- │ -- │ 11 │  0 │ -- │    En Espera    │
+	│P13│  6│ 16│  6│ -- │ -- │ 10 │  0 │ -- │    En Espera    │
+	│P16│  8│  4│  1│ -- │ -- │  8 │  0 │ -- │    En Espera    │
+	│P07│ 10│ 11│  4│ -- │ -- │  6 │  0 │ -- │    En Espera    │
+	│P06│ 11│ 10│  5│ -- │ -- │  5 │  0 │ -- │    En Espera    │
+	│P01│ 12│ 12│  3│ -- │ -- │  4 │  0 │ -- │    En Espera    │
+	│P08│ 13│  7│  6│ -- │ -- │  3 │  0 │ -- │    En Espera    │
+	│P04│ 16│  9│  3│ -- │ -- │  0 │  0 │ -- │    En Espera    │
+	│P15│ 17│ 18│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P03│ 18│  4│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P11│ 18│ 11│  4│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	└───┴───┴───┴───┴────┴────┴────┴────┴────┴─────────────────┘
+	 Tiempo Medio de Retorno: 0,95 - Tiempo Medio de Espera: 7,00 
+
+	   P12                        
+	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊ 9
+	     0                        
+	   P10         P12                                    
 	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7                          16 
+	     0           4                                  16
 
-                     T=18 - Memoria usada: 14/18                     
-    ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬─────────────────┐    
-    │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│     Estado      │    
-    │P04│  0│  7│ 18│  --  │  --  │  0 │  7 │  0 │   Finalizado    │    
-    │P06│  3│ 16│ 14│   0  │  13  │  4 │ 15 │  5 │  En Ejecución   │    
-    │P09│  4│ 15│  6│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P13│  4│ 14│ 12│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P14│  5│  2│  8│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P15│  6│ 13│  2│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P11│  9│  1│ 10│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P03│ 10│ 18│ 11│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P07│ 10│  4│ 11│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P12│ 10│ 15│  3│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P10│ 11│  7│  8│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P02│ 14│ 20│  5│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P08│ 16│ 12│  1│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P05│ 18│ 11│  4│  --  │  --  │  0 │  0 │ -- │    En Espera    │    
-    │P01│ 19│ 15│ 18│  --  │  --  │ -- │ -- │ -- │Fuera del Sistema│    
-    └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴─────────────────┘    
-    Tiempo Medio de Retorno: 1,46 - Tiempo Medio de Espera: 0,26     
+	 T=17 - Memoria usada: 9/9 
+	┌───┬───┬───┬───┬────┬────┬────┬────┬────┬─────────────────┐
+	│Ref│Tll│Tej│Mem│MIni│MFin│Tesp│Tret│Trej│     Estado      │
+	│P10│  0│  4│  9│ -- │ -- │  0 │  4 │  0 │   Finalizado    │
+	│P12│  1│ 17│  9│  0 │  8 │  3 │ 16 │  4 │  En Ejecución   │
+	│P18│  1│ 16│  7│ -- │ -- │ 16 │  0 │ -- │    En Espera    │
+	│P20│  2│  5│  6│ -- │ -- │ 15 │  0 │ -- │    En Espera    │
+	│P05│  3│ 10│  7│ -- │ -- │ 14 │  0 │ -- │    En Espera    │
+	│P09│  3│ 11│  5│ -- │ -- │ 14 │  0 │ -- │    En Espera    │
+	│P14│  3│  7│  4│ -- │ -- │ 14 │  0 │ -- │    En Espera    │
+	│P02│  5│ 13│  9│ -- │ -- │ 12 │  0 │ -- │    En Espera    │
+	│P17│  5│ 13│  2│ -- │ -- │ 12 │  0 │ -- │    En Espera    │
+	│P19│  5│ 14│  8│ -- │ -- │ 12 │  0 │ -- │    En Espera    │
+	│P13│  6│ 16│  6│ -- │ -- │ 11 │  0 │ -- │    En Espera    │
+	│P16│  8│  4│  1│ -- │ -- │  9 │  0 │ -- │    En Espera    │
+	│P07│ 10│ 11│  4│ -- │ -- │  7 │  0 │ -- │    En Espera    │
+	│P06│ 11│ 10│  5│ -- │ -- │  6 │  0 │ -- │    En Espera    │
+	│P01│ 12│ 12│  3│ -- │ -- │  5 │  0 │ -- │    En Espera    │
+	│P08│ 13│  7│  6│ -- │ -- │  4 │  0 │ -- │    En Espera    │
+	│P04│ 16│  9│  3│ -- │ -- │  1 │  0 │ -- │    En Espera    │
+	│P15│ 17│ 18│  5│ -- │ -- │  0 │  0 │ -- │    En Espera    │
+	│P03│ 18│  4│  5│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	│P11│ 18│ 11│  4│ -- │ -- │ -- │ -- │ -- │Fuera del Sistema│
+	└───┴───┴───┴───┴────┴────┴────┴────┴────┴─────────────────┘
+	 Tiempo Medio de Retorno: 1,00 - Tiempo Medio de Espera: 7,75 
 
-	   P06                                                   
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊░░░░░░░░░░░░ 18
-	   0                                         14          
-	   P04                  P06                                 
+	   P12                        
+	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊ 9
+	     0                        
+	   P10         P12                                       
+	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	     0           4                                     17
+
+	 T=18 - Memoria usada: 9/9 
+	┌───┬───┬───┬───┬────┬────┬────┬────┬────┬────────────┐
+	│Ref│Tll│Tej│Mem│MIni│MFin│Tesp│Tret│Trej│   Estado   │
+	│P10│  0│  4│  9│ -- │ -- │  0 │  4 │  0 │ Finalizado │
+	│P12│  1│ 17│  9│  0 │  8 │  3 │ 17 │  3 │En Ejecución│
+	│P18│  1│ 16│  7│ -- │ -- │ 17 │  0 │ -- │  En Espera │
+	│P20│  2│  5│  6│ -- │ -- │ 16 │  0 │ -- │  En Espera │
+	│P05│  3│ 10│  7│ -- │ -- │ 15 │  0 │ -- │  En Espera │
+	│P09│  3│ 11│  5│ -- │ -- │ 15 │  0 │ -- │  En Espera │
+	│P14│  3│  7│  4│ -- │ -- │ 15 │  0 │ -- │  En Espera │
+	│P02│  5│ 13│  9│ -- │ -- │ 13 │  0 │ -- │  En Espera │
+	│P17│  5│ 13│  2│ -- │ -- │ 13 │  0 │ -- │  En Espera │
+	│P19│  5│ 14│  8│ -- │ -- │ 13 │  0 │ -- │  En Espera │
+	│P13│  6│ 16│  6│ -- │ -- │ 12 │  0 │ -- │  En Espera │
+	│P16│  8│  4│  1│ -- │ -- │ 10 │  0 │ -- │  En Espera │
+	│P07│ 10│ 11│  4│ -- │ -- │  8 │  0 │ -- │  En Espera │
+	│P06│ 11│ 10│  5│ -- │ -- │  7 │  0 │ -- │  En Espera │
+	│P01│ 12│ 12│  3│ -- │ -- │  6 │  0 │ -- │  En Espera │
+	│P08│ 13│  7│  6│ -- │ -- │  5 │  0 │ -- │  En Espera │
+	│P04│ 16│  9│  3│ -- │ -- │  2 │  0 │ -- │  En Espera │
+	│P15│ 17│ 18│  5│ -- │ -- │  1 │  0 │ -- │  En Espera │
+	│P03│ 18│  4│  5│ -- │ -- │  0 │  0 │ -- │  En Espera │
+	│P11│ 18│ 11│  4│ -- │ -- │  0 │  0 │ -- │  En Espera │
+	└───┴───┴───┴───┴────┴────┴────┴────┴────┴────────────┘
+	 Tiempo Medio de Retorno: 1,05 - Tiempo Medio de Espera: 8,55 
+
+	   P12                        
+	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊ 9
+	     0                        
+	   P10         P12                                          
 	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7                                18 
+	     0           4                                        18
 
-                     T=19 - Memoria usada: 14/18                     
-      ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬────────────┐       
-      │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│   Estado   │       
-      │P04│  0│  7│ 18│  --  │  --  │  0 │  7 │  0 │ Finalizado │       
-      │P06│  3│ 16│ 14│   0  │  13  │  4 │ 16 │  4 │En Ejecución│       
-      │P09│  4│ 15│  6│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P13│  4│ 14│ 12│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P14│  5│  2│  8│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P15│  6│ 13│  2│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P11│  9│  1│ 10│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P03│ 10│ 18│ 11│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P07│ 10│  4│ 11│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P12│ 10│ 15│  3│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P10│ 11│  7│  8│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P02│ 14│ 20│  5│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P08│ 16│ 12│  1│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P05│ 18│ 11│  4│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P01│ 19│ 15│ 18│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴────────────┘       
-    Tiempo Medio de Retorno: 1,53 - Tiempo Medio de Espera: 0,26     
+	 T=21 - Memoria usada: 7/9 
+	┌───┬───┬───┬───┬────┬────┬────┬────┬────┬────────────┐
+	│Ref│Tll│Tej│Mem│MIni│MFin│Tesp│Tret│Trej│   Estado   │
+	│P10│  0│  4│  9│ -- │ -- │  0 │  4 │  0 │ Finalizado │
+	│P12│  1│ 17│  9│ -- │ -- │  3 │ 20 │  0 │ Finalizado │
+	│P18│  1│ 16│  7│  0 │  6 │ 20 │ 20 │ 16 │En Ejecución│
+	│P20│  2│  5│  6│ -- │ -- │ 19 │  0 │ -- │  En Espera │
+	│P05│  3│ 10│  7│ -- │ -- │ 18 │  0 │ -- │  En Espera │
+	│P09│  3│ 11│  5│ -- │ -- │ 18 │  0 │ -- │  En Espera │
+	│P14│  3│  7│  4│ -- │ -- │ 18 │  0 │ -- │  En Espera │
+	│P02│  5│ 13│  9│ -- │ -- │ 16 │  0 │ -- │  En Espera │
+	│P17│  5│ 13│  2│ -- │ -- │ 16 │  0 │ -- │  En Espera │
+	│P19│  5│ 14│  8│ -- │ -- │ 16 │  0 │ -- │  En Espera │
+	│P13│  6│ 16│  6│ -- │ -- │ 15 │  0 │ -- │  En Espera │
+	│P16│  8│  4│  1│ -- │ -- │ 13 │  0 │ -- │  En Espera │
+	│P07│ 10│ 11│  4│ -- │ -- │ 11 │  0 │ -- │  En Espera │
+	│P06│ 11│ 10│  5│ -- │ -- │ 10 │  0 │ -- │  En Espera │
+	│P01│ 12│ 12│  3│ -- │ -- │  9 │  0 │ -- │  En Espera │
+	│P08│ 13│  7│  6│ -- │ -- │  8 │  0 │ -- │  En Espera │
+	│P04│ 16│  9│  3│ -- │ -- │  5 │  0 │ -- │  En Espera │
+	│P15│ 17│ 18│  5│ -- │ -- │  4 │  0 │ -- │  En Espera │
+	│P03│ 18│  4│  5│ -- │ -- │  3 │  0 │ -- │  En Espera │
+	│P11│ 18│ 11│  4│ -- │ -- │  3 │  0 │ -- │  En Espera │
+	└───┴───┴───┴───┴────┴────┴────┴────┴────┴────────────┘
+	 Tiempo Medio de Retorno: 2,20 - Tiempo Medio de Espera: 11,25 
 
-	   P06                                                   
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊░░░░░░░░░░░░ 18
-	   0                                         14          
-	   P04                  P06                                    
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7                                   19 
+	   P18                        
+	BM ██▊██▊██▊██▊██▊██▊██▊░░░░░░ 9
+	     0                    7   
+	   P10         P12                                                P18
+	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊▎
+	     0           4                                                 21
 
-                     T=23 - Memoria usada: 18/18                     
-      ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬────────────┐       
-      │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│   Estado   │       
-      │P04│  0│  7│ 18│  --  │  --  │  0 │  7 │  0 │ Finalizado │       
-      │P06│  3│ 16│ 14│  --  │  --  │  4 │ 20 │  0 │ Finalizado │       
-      │P09│  4│ 15│  6│   0  │   5  │ 19 │ 19 │ 15 │En Ejecución│       
-      │P13│  4│ 14│ 12│   6  │  17  │  0 │  0 │ 14 │ En Memoria │       
-      │P14│  5│  2│  8│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P15│  6│ 13│  2│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P11│  9│  1│ 10│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P03│ 10│ 18│ 11│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P07│ 10│  4│ 11│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P12│ 10│ 15│  3│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P10│ 11│  7│  8│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P02│ 14│ 20│  5│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P08│ 16│ 12│  1│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P05│ 18│ 11│  4│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P01│ 19│ 15│ 18│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴────────────┘       
-    Tiempo Medio de Retorno: 3,06 - Tiempo Medio de Espera: 1,53     
+	 T=37 - Memoria usada: 6/9 
+	┌───┬───┬───┬───┬────┬────┬────┬────┬────┬────────────┐
+	│Ref│Tll│Tej│Mem│MIni│MFin│Tesp│Tret│Trej│   Estado   │
+	│P10│  0│  4│  9│ -- │ -- │  0 │  4 │  0 │ Finalizado │
+	│P12│  1│ 17│  9│ -- │ -- │  3 │ 20 │  0 │ Finalizado │
+	│P18│  1│ 16│  7│ -- │ -- │ 20 │ 36 │  0 │ Finalizado │
+	│P20│  2│  5│  6│  0 │  5 │ 35 │ 35 │  5 │En Ejecución│
+	│P05│  3│ 10│  7│ -- │ -- │ 34 │  0 │ -- │  En Espera │
+	│P09│  3│ 11│  5│ -- │ -- │ 34 │  0 │ -- │  En Espera │
+	│P14│  3│  7│  4│ -- │ -- │ 34 │  0 │ -- │  En Espera │
+	│P02│  5│ 13│  9│ -- │ -- │ 32 │  0 │ -- │  En Espera │
+	│P17│  5│ 13│  2│ -- │ -- │ 32 │  0 │ -- │  En Espera │
+	│P19│  5│ 14│  8│ -- │ -- │ 32 │  0 │ -- │  En Espera │
+	│P13│  6│ 16│  6│ -- │ -- │ 31 │  0 │ -- │  En Espera │
+	│P16│  8│  4│  1│ -- │ -- │ 29 │  0 │ -- │  En Espera │
+	│P07│ 10│ 11│  4│ -- │ -- │ 27 │  0 │ -- │  En Espera │
+	│P06│ 11│ 10│  5│ -- │ -- │ 26 │  0 │ -- │  En Espera │
+	│P01│ 12│ 12│  3│ -- │ -- │ 25 │  0 │ -- │  En Espera │
+	│P08│ 13│  7│  6│ -- │ -- │ 24 │  0 │ -- │  En Espera │
+	│P04│ 16│  9│  3│ -- │ -- │ 21 │  0 │ -- │  En Espera │
+	│P15│ 17│ 18│  5│ -- │ -- │ 20 │  0 │ -- │  En Espera │
+	│P03│ 18│  4│  5│ -- │ -- │ 19 │  0 │ -- │  En Espera │
+	│P11│ 18│ 11│  4│ -- │ -- │ 19 │  0 │ -- │  En Espera │
+	└───┴───┴───┴───┴────┴────┴────┴────┴────┴────────────┘
+	 Tiempo Medio de Retorno: 4,75 - Tiempo Medio de Espera: 24,85 
 
-	   P09               P13                                 
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊ 18
-	   0                 6                                   
-	   P04                  P06                                       
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7                                      20 
-	   P06      P09
-	   ██▊██▊██▊▎
-	   20       23 
+	   P20                        
+	BM ██▊██▊██▊██▊██▊██▊░░░░░░░░░ 9
+	     0                 6      
+	   P10         P12                                                P18                                             P20
+	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊▎
+	     0           4                                                 21                                              37
 
-                     T=38 - Memoria usada: 12/18                     
-      ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬────────────┐       
-      │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│   Estado   │       
-      │P04│  0│  7│ 18│  --  │  --  │  0 │  7 │  0 │ Finalizado │       
-      │P06│  3│ 16│ 14│  --  │  --  │  4 │ 20 │  0 │ Finalizado │       
-      │P09│  4│ 15│  6│  --  │  --  │ 19 │ 34 │  0 │ Finalizado │       
-      │P13│  4│ 14│ 12│   6  │  17  │ 34 │ 34 │ 14 │En Ejecución│       
-      │P14│  5│  2│  8│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P15│  6│ 13│  2│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P11│  9│  1│ 10│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P03│ 10│ 18│ 11│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P07│ 10│  4│ 11│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P12│ 10│ 15│  3│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P10│ 11│  7│  8│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P02│ 14│ 20│  5│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P08│ 16│ 12│  1│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P05│ 18│ 11│  4│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P01│ 19│ 15│ 18│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴────────────┘       
-    Tiempo Medio de Retorno: 6,33 - Tiempo Medio de Espera: 3,80     
+	 T=42 - Memoria usada: 7/9 
+	┌───┬───┬───┬───┬────┬────┬────┬────┬────┬────────────┐
+	│Ref│Tll│Tej│Mem│MIni│MFin│Tesp│Tret│Trej│   Estado   │
+	│P10│  0│  4│  9│ -- │ -- │  0 │  4 │  0 │ Finalizado │
+	│P12│  1│ 17│  9│ -- │ -- │  3 │ 20 │  0 │ Finalizado │
+	│P18│  1│ 16│  7│ -- │ -- │ 20 │ 36 │  0 │ Finalizado │
+	│P20│  2│  5│  6│ -- │ -- │ 35 │ 40 │  0 │ Finalizado │
+	│P05│  3│ 10│  7│  0 │  6 │ 39 │ 39 │ 10 │En Ejecución│
+	│P09│  3│ 11│  5│ -- │ -- │ 39 │  0 │ -- │  En Espera │
+	│P14│  3│  7│  4│ -- │ -- │ 39 │  0 │ -- │  En Espera │
+	│P02│  5│ 13│  9│ -- │ -- │ 37 │  0 │ -- │  En Espera │
+	│P17│  5│ 13│  2│ -- │ -- │ 37 │  0 │ -- │  En Espera │
+	│P19│  5│ 14│  8│ -- │ -- │ 37 │  0 │ -- │  En Espera │
+	│P13│  6│ 16│  6│ -- │ -- │ 36 │  0 │ -- │  En Espera │
+	│P16│  8│  4│  1│ -- │ -- │ 34 │  0 │ -- │  En Espera │
+	│P07│ 10│ 11│  4│ -- │ -- │ 32 │  0 │ -- │  En Espera │
+	│P06│ 11│ 10│  5│ -- │ -- │ 31 │  0 │ -- │  En Espera │
+	│P01│ 12│ 12│  3│ -- │ -- │ 30 │  0 │ -- │  En Espera │
+	│P08│ 13│  7│  6│ -- │ -- │ 29 │  0 │ -- │  En Espera │
+	│P04│ 16│  9│  3│ -- │ -- │ 26 │  0 │ -- │  En Espera │
+	│P15│ 17│ 18│  5│ -- │ -- │ 25 │  0 │ -- │  En Espera │
+	│P03│ 18│  4│  5│ -- │ -- │ 24 │  0 │ -- │  En Espera │
+	│P11│ 18│ 11│  4│ -- │ -- │ 24 │  0 │ -- │  En Espera │
+	└───┴───┴───┴───┴────┴────┴────┴────┴────┴────────────┘
+	 Tiempo Medio de Retorno: 6,95 - Tiempo Medio de Espera: 28,85 
 
-	                     P13                                 
-	BM ░░░░░░░░░░░░░░░░░░██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊ 18
-	   0                 6                                   
-	   P04                  P06                                       
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7                                      20 
-	   P06      P09                                          P13
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊▎
-	   20       23                                           38 
+	   P05                        
+	BM ██▊██▊██▊██▊██▊██▊██▊░░░░░░ 9
+	     0                    7   
+	   P10         P12                                                P18                                             P20            
+	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	     0           4                                                 21                                              37             42
 
-                     T=52 - Memoria usada: 10/18                     
-      ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬────────────┐       
-      │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│   Estado   │       
-      │P04│  0│  7│ 18│  --  │  --  │  0 │  7 │  0 │ Finalizado │       
-      │P06│  3│ 16│ 14│  --  │  --  │  4 │ 20 │  0 │ Finalizado │       
-      │P09│  4│ 15│  6│  --  │  --  │ 19 │ 34 │  0 │ Finalizado │       
-      │P13│  4│ 14│ 12│  --  │  --  │ 34 │ 48 │  0 │ Finalizado │       
-      │P14│  5│  2│  8│   0  │   7  │ 47 │ 47 │  2 │En Ejecución│       
-      │P15│  6│ 13│  2│   8  │   9  │  0 │  0 │ 13 │ En Memoria │       
-      │P11│  9│  1│ 10│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P03│ 10│ 18│ 11│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P07│ 10│  4│ 11│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P12│ 10│ 15│  3│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P10│ 11│  7│  8│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P02│ 14│ 20│  5│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P08│ 16│ 12│  1│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P05│ 18│ 11│  4│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P01│ 19│ 15│ 18│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴────────────┘       
-    Tiempo Medio de Retorno: 10,40 - Tiempo Medio de Espera: 6,93    
+	 T=52 - Memoria usada: 9/9 
+	┌───┬───┬───┬───┬────┬────┬────┬────┬────┬────────────┐
+	│Ref│Tll│Tej│Mem│MIni│MFin│Tesp│Tret│Trej│   Estado   │
+	│P10│  0│  4│  9│ -- │ -- │  0 │  4 │  0 │ Finalizado │
+	│P12│  1│ 17│  9│ -- │ -- │  3 │ 20 │  0 │ Finalizado │
+	│P18│  1│ 16│  7│ -- │ -- │ 20 │ 36 │  0 │ Finalizado │
+	│P20│  2│  5│  6│ -- │ -- │ 35 │ 40 │  0 │ Finalizado │
+	│P05│  3│ 10│  7│ -- │ -- │ 39 │ 49 │  0 │ Finalizado │
+	│P09│  3│ 11│  5│  0 │  4 │ 49 │ 49 │ 11 │En Ejecución│
+	│P14│  3│  7│  4│  5 │  8 │ 49 │  0 │  7 │ En Memoria │
+	│P02│  5│ 13│  9│ -- │ -- │ 47 │  0 │ -- │  En Espera │
+	│P17│  5│ 13│  2│ -- │ -- │ 47 │  0 │ -- │  En Espera │
+	│P19│  5│ 14│  8│ -- │ -- │ 47 │  0 │ -- │  En Espera │
+	│P13│  6│ 16│  6│ -- │ -- │ 46 │  0 │ -- │  En Espera │
+	│P16│  8│  4│  1│ -- │ -- │ 44 │  0 │ -- │  En Espera │
+	│P07│ 10│ 11│  4│ -- │ -- │ 42 │  0 │ -- │  En Espera │
+	│P06│ 11│ 10│  5│ -- │ -- │ 41 │  0 │ -- │  En Espera │
+	│P01│ 12│ 12│  3│ -- │ -- │ 40 │  0 │ -- │  En Espera │
+	│P08│ 13│  7│  6│ -- │ -- │ 39 │  0 │ -- │  En Espera │
+	│P04│ 16│  9│  3│ -- │ -- │ 36 │  0 │ -- │  En Espera │
+	│P15│ 17│ 18│  5│ -- │ -- │ 35 │  0 │ -- │  En Espera │
+	│P03│ 18│  4│  5│ -- │ -- │ 34 │  0 │ -- │  En Espera │
+	│P11│ 18│ 11│  4│ -- │ -- │ 34 │  0 │ -- │  En Espera │
+	└───┴───┴───┴───┴────┴────┴────┴────┴────┴────────────┘
+	 Tiempo Medio de Retorno: 9,90 - Tiempo Medio de Espera: 36,35 
 
-	   P14                     P15                           
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊░░░░░░░░░░░░░░░░░░░░░░░░ 18
-	   0                       8     10                      
-	   P04                  P06                                       
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7                                      20 
-	   P06      P09                                          P13      
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   20       23                                           38    40 
-	   P13                                 P14
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊▎
-	   40                                  52 
-
-                     T=54 - Memoria usada: 12/18                     
-      ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬────────────┐       
-      │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│   Estado   │       
-      │P04│  0│  7│ 18│  --  │  --  │  0 │  7 │  0 │ Finalizado │       
-      │P06│  3│ 16│ 14│  --  │  --  │  4 │ 20 │  0 │ Finalizado │       
-      │P09│  4│ 15│  6│  --  │  --  │ 19 │ 34 │  0 │ Finalizado │       
-      │P13│  4│ 14│ 12│  --  │  --  │ 34 │ 48 │  0 │ Finalizado │       
-      │P14│  5│  2│  8│  --  │  --  │ 47 │ 49 │  0 │ Finalizado │       
-      │P15│  6│ 13│  2│   8  │   9  │ 48 │ 48 │ 13 │En Ejecución│       
-      │P11│  9│  1│ 10│   0  │   7  │  0 │  0 │  1 │ En Memoria │       
-      │   │   │   │   │  10  │  11  │    │    │    │            │       
-      │P03│ 10│ 18│ 11│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P07│ 10│  4│ 11│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P12│ 10│ 15│  3│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P10│ 11│  7│  8│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P02│ 14│ 20│  5│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P08│ 16│ 12│  1│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P05│ 18│ 11│  4│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P01│ 19│ 15│ 18│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴────────────┘       
-   Tiempo Medio de Retorno: 13,73 - Tiempo Medio de Espera: 10,13    
-
-	   P11                     P15   P11                     
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊░░░░░░░░░░░░░░░░░░ 18
-	   0                       8     10    12                
-	   P04                  P06                                       
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7                                      20 
-	   P06      P09                                          P13      
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   20       23                                           38    40 
-	   P13                                 P14   P15
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊▎
-	   40                                  52    54 
-
-                     T=67 - Memoria usada: 10/18                     
-      ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬────────────┐       
-      │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│   Estado   │       
-      │P04│  0│  7│ 18│  --  │  --  │  0 │  7 │  0 │ Finalizado │       
-      │P06│  3│ 16│ 14│  --  │  --  │  4 │ 20 │  0 │ Finalizado │       
-      │P09│  4│ 15│  6│  --  │  --  │ 19 │ 34 │  0 │ Finalizado │       
-      │P13│  4│ 14│ 12│  --  │  --  │ 34 │ 48 │  0 │ Finalizado │       
-      │P14│  5│  2│  8│  --  │  --  │ 47 │ 49 │  0 │ Finalizado │       
-      │P15│  6│ 13│  2│  --  │  --  │ 48 │ 61 │  0 │ Finalizado │       
-      │P11│  9│  1│ 10│   0  │   7  │ 58 │ 58 │  1 │En Ejecución│       
-      │   │   │   │   │  10  │  11  │    │    │    │            │       
-      │P03│ 10│ 18│ 11│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P07│ 10│  4│ 11│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P12│ 10│ 15│  3│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P10│ 11│  7│  8│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P02│ 14│ 20│  5│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P08│ 16│ 12│  1│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P05│ 18│ 11│  4│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P01│ 19│ 15│ 18│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴────────────┘       
-   Tiempo Medio de Retorno: 18,46 - Tiempo Medio de Espera: 14,00    
-
-	   P11                           P11                     
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊░░░░░░██▊██▊░░░░░░░░░░░░░░░░░░ 18
-	   0                       8     10    12                
-	   P04                  P06                                       
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7                                      20 
-	   P06      P09                                          P13      
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   20       23                                           38    40 
-	   P13                                 P14   P15                  
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   40                                  52    54                60 
-	   P15                  P11
-	   ██▊██▊██▊██▊██▊██▊██▊▎
-	   60                   67 
-
-                     T=68 - Memoria usada: 11/18                     
-      ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬────────────┐       
-      │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│   Estado   │       
-      │P04│  0│  7│ 18│  --  │  --  │  0 │  7 │  0 │ Finalizado │       
-      │P06│  3│ 16│ 14│  --  │  --  │  4 │ 20 │  0 │ Finalizado │       
-      │P09│  4│ 15│  6│  --  │  --  │ 19 │ 34 │  0 │ Finalizado │       
-      │P13│  4│ 14│ 12│  --  │  --  │ 34 │ 48 │  0 │ Finalizado │       
-      │P14│  5│  2│  8│  --  │  --  │ 47 │ 49 │  0 │ Finalizado │       
-      │P15│  6│ 13│  2│  --  │  --  │ 48 │ 61 │  0 │ Finalizado │       
-      │P11│  9│  1│ 10│  --  │  --  │ 58 │ 59 │  0 │ Finalizado │       
-      │P03│ 10│ 18│ 11│   0  │  10  │ 58 │ 58 │ 18 │En Ejecución│       
-      │P07│ 10│  4│ 11│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P12│ 10│ 15│  3│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P10│ 11│  7│  8│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P02│ 14│ 20│  5│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P08│ 16│ 12│  1│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P05│ 18│ 11│  4│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P01│ 19│ 15│ 18│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴────────────┘       
-   Tiempo Medio de Retorno: 22,40 - Tiempo Medio de Espera: 17,86    
-
-	   P03                                                   
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊░░░░░░░░░░░░░░░░░░░░░ 18
-	   0                                11                   
-	   P04                  P06                                       
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7                                      20 
-	   P06      P09                                          P13      
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   20       23                                           38    40 
-	   P13                                 P14   P15                  
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   40                                  52    54                60 
-	   P15                  P11P03
-	   ██▊██▊██▊██▊██▊██▊██▊██▊▎
-	   60                   67 68 
-
-                     T=86 - Memoria usada: 14/18                     
-      ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬────────────┐       
-      │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│   Estado   │       
-      │P04│  0│  7│ 18│  --  │  --  │  0 │  7 │  0 │ Finalizado │       
-      │P06│  3│ 16│ 14│  --  │  --  │  4 │ 20 │  0 │ Finalizado │       
-      │P09│  4│ 15│  6│  --  │  --  │ 19 │ 34 │  0 │ Finalizado │       
-      │P13│  4│ 14│ 12│  --  │  --  │ 34 │ 48 │  0 │ Finalizado │       
-      │P14│  5│  2│  8│  --  │  --  │ 47 │ 49 │  0 │ Finalizado │       
-      │P15│  6│ 13│  2│  --  │  --  │ 48 │ 61 │  0 │ Finalizado │       
-      │P11│  9│  1│ 10│  --  │  --  │ 58 │ 59 │  0 │ Finalizado │       
-      │P03│ 10│ 18│ 11│  --  │  --  │ 58 │ 76 │  0 │ Finalizado │       
-      │P07│ 10│  4│ 11│   0  │  10  │ 76 │ 76 │  4 │En Ejecución│       
-      │P12│ 10│ 15│  3│  11  │  13  │  0 │  0 │ 15 │ En Memoria │       
-      │P10│ 11│  7│  8│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P02│ 14│ 20│  5│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P08│ 16│ 12│  1│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P05│ 18│ 11│  4│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P01│ 19│ 15│ 18│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴────────────┘       
-   Tiempo Medio de Retorno: 28,66 - Tiempo Medio de Espera: 22,93    
-
-	   P07                              P12                  
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊░░░░░░░░░░░░ 18
-	   0                                11       14          
-	   P04                  P06                                       
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7                                      20 
-	   P06      P09                                          P13      
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   20       23                                           38    40 
-	   P13                                 P14   P15                  
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   40                                  52    54                60 
-	   P15                  P11P03                                    
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   60                   67 68                                  80 
-	   P03               P07
-	   ██▊██▊██▊██▊██▊██▊▎
-	   80                86 
-
-                     T=90 - Memoria usada: 17/18                     
-      ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬────────────┐       
-      │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│   Estado   │       
-      │P04│  0│  7│ 18│  --  │  --  │  0 │  7 │  0 │ Finalizado │       
-      │P06│  3│ 16│ 14│  --  │  --  │  4 │ 20 │  0 │ Finalizado │       
-      │P09│  4│ 15│  6│  --  │  --  │ 19 │ 34 │  0 │ Finalizado │       
-      │P13│  4│ 14│ 12│  --  │  --  │ 34 │ 48 │  0 │ Finalizado │       
-      │P14│  5│  2│  8│  --  │  --  │ 47 │ 49 │  0 │ Finalizado │       
-      │P15│  6│ 13│  2│  --  │  --  │ 48 │ 61 │  0 │ Finalizado │       
-      │P11│  9│  1│ 10│  --  │  --  │ 58 │ 59 │  0 │ Finalizado │       
-      │P03│ 10│ 18│ 11│  --  │  --  │ 58 │ 76 │  0 │ Finalizado │       
-      │P07│ 10│  4│ 11│  --  │  --  │ 76 │ 80 │  0 │ Finalizado │       
-      │P12│ 10│ 15│  3│  11  │  13  │ 80 │ 80 │ 15 │En Ejecución│       
-      │P10│ 11│  7│  8│   0  │   7  │  0 │  0 │  7 │ En Memoria │       
-      │P02│ 14│ 20│  5│   8  │  10  │  0 │  0 │ 20 │ En Memoria │       
-      │   │   │   │   │  14  │  15  │    │    │    │            │       
-      │P08│ 16│ 12│  1│  16  │  16  │  0 │  0 │ 12 │ En Memoria │       
-      │P05│ 18│ 11│  4│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      │P01│ 19│ 15│ 18│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴────────────┘       
-   Tiempo Medio de Retorno: 34,26 - Tiempo Medio de Espera: 28,26    
-
-	   P10                     P02      P12      P02   P08   
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊░░░ 18
-	   0                       8        11       14    16 17 
-	   P04                  P06                                       
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7                                      20 
-	   P06      P09                                          P13      
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   20       23                                           38    40 
-	   P13                                 P14   P15                  
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   40                                  52    54                60 
-	   P15                  P11P03                                    
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   60                   67 68                                  80 
-	   P03               P07         P12
+	   P09            P14         
+	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊ 9
+	     0              5         
+	   P10         P12                                                P18                                             P20            
+	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	     0           4                                                 21                                              37             42
+	   P05                           P09
 	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊▎
-	   80                86          90 
+	    42                            52
 
-                    T=105 - Memoria usada: 18/18                     
-      ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬────────────┐       
-      │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│   Estado   │       
-      │P04│  0│  7│ 18│  --  │  --  │  0 │  7 │  0 │ Finalizado │       
-      │P06│  3│ 16│ 14│  --  │  --  │  4 │ 20 │  0 │ Finalizado │       
-      │P09│  4│ 15│  6│  --  │  --  │ 19 │ 34 │  0 │ Finalizado │       
-      │P13│  4│ 14│ 12│  --  │  --  │ 34 │ 48 │  0 │ Finalizado │       
-      │P14│  5│  2│  8│  --  │  --  │ 47 │ 49 │  0 │ Finalizado │       
-      │P15│  6│ 13│  2│  --  │  --  │ 48 │ 61 │  0 │ Finalizado │       
-      │P11│  9│  1│ 10│  --  │  --  │ 58 │ 59 │  0 │ Finalizado │       
-      │P03│ 10│ 18│ 11│  --  │  --  │ 58 │ 76 │  0 │ Finalizado │       
-      │P07│ 10│  4│ 11│  --  │  --  │ 76 │ 80 │  0 │ Finalizado │       
-      │P12│ 10│ 15│  3│  --  │  --  │ 80 │ 95 │  0 │ Finalizado │       
-      │P10│ 11│  7│  8│   0  │   7  │ 94 │ 94 │  7 │En Ejecución│       
-      │P02│ 14│ 20│  5│   8  │  10  │  0 │  0 │ 20 │ En Memoria │       
-      │   │   │   │   │  14  │  15  │    │    │    │            │       
-      │P08│ 16│ 12│  1│  16  │  16  │  0 │  0 │ 12 │ En Memoria │       
-      │P05│ 18│ 11│  4│  11  │  13  │  0 │  0 │ 11 │ En Memoria │       
-      │   │   │   │   │  17  │  17  │    │    │    │            │       
-      │P01│ 19│ 15│ 18│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴────────────┘       
-   Tiempo Medio de Retorno: 41,53 - Tiempo Medio de Espera: 34,53    
+	 T=63 - Memoria usada: 4/9 
+	┌───┬───┬───┬───┬────┬────┬────┬────┬────┬────────────┐
+	│Ref│Tll│Tej│Mem│MIni│MFin│Tesp│Tret│Trej│   Estado   │
+	│P10│  0│  4│  9│ -- │ -- │  0 │  4 │  0 │ Finalizado │
+	│P12│  1│ 17│  9│ -- │ -- │  3 │ 20 │  0 │ Finalizado │
+	│P18│  1│ 16│  7│ -- │ -- │ 20 │ 36 │  0 │ Finalizado │
+	│P20│  2│  5│  6│ -- │ -- │ 35 │ 40 │  0 │ Finalizado │
+	│P05│  3│ 10│  7│ -- │ -- │ 39 │ 49 │  0 │ Finalizado │
+	│P09│  3│ 11│  5│ -- │ -- │ 49 │ 60 │  0 │ Finalizado │
+	│P14│  3│  7│  4│  5 │  8 │ 60 │ 60 │  7 │En Ejecución│
+	│P02│  5│ 13│  9│ -- │ -- │ 58 │  0 │ -- │  En Espera │
+	│P17│  5│ 13│  2│ -- │ -- │ 58 │  0 │ -- │  En Espera │
+	│P19│  5│ 14│  8│ -- │ -- │ 58 │  0 │ -- │  En Espera │
+	│P13│  6│ 16│  6│ -- │ -- │ 57 │  0 │ -- │  En Espera │
+	│P16│  8│  4│  1│ -- │ -- │ 55 │  0 │ -- │  En Espera │
+	│P07│ 10│ 11│  4│ -- │ -- │ 53 │  0 │ -- │  En Espera │
+	│P06│ 11│ 10│  5│ -- │ -- │ 52 │  0 │ -- │  En Espera │
+	│P01│ 12│ 12│  3│ -- │ -- │ 51 │  0 │ -- │  En Espera │
+	│P08│ 13│  7│  6│ -- │ -- │ 50 │  0 │ -- │  En Espera │
+	│P04│ 16│  9│  3│ -- │ -- │ 47 │  0 │ -- │  En Espera │
+	│P15│ 17│ 18│  5│ -- │ -- │ 46 │  0 │ -- │  En Espera │
+	│P03│ 18│  4│  5│ -- │ -- │ 45 │  0 │ -- │  En Espera │
+	│P11│ 18│ 11│  4│ -- │ -- │ 45 │  0 │ -- │  En Espera │
+	└───┴───┴───┴───┴────┴────┴────┴────┴────┴────────────┘
+	 Tiempo Medio de Retorno: 13,45 - Tiempo Medio de Espera: 44,05 
 
-	   P10                     P02      P05      P02   P08P05
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊ 18
-	   0                       8        11       14    16 17 
-	   P04                  P06                                       
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7                                      20 
-	   P06      P09                                          P13      
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   20       23                                           38    40 
-	   P13                                 P14   P15                  
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   40                                  52    54                60 
-	   P15                  P11P03                                    
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   60                   67 68                                  80 
-	   P03               P07         P12                              
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   80                86          90                            100
-	   P12            P10
-	   ██▊██▊██▊██▊██▊▎
-	   100            105
+	                  P14         
+	BM ░░░░░░░░░░░░░░░██▊██▊██▊██▊ 9
+	     0              5         
+	   P10         P12                                                P18                                             P20            
+	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	     0           4                                                 21                                              37             42
+	   P05                           P09                              P14
+	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊▎
+	    42                            52                               63
 
-                    T=112 - Memoria usada: 10/18                     
-      ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬────────────┐       
-      │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│   Estado   │       
-      │P04│  0│  7│ 18│  --  │  --  │  0 │  7 │  0 │ Finalizado │       
-      │P06│  3│ 16│ 14│  --  │  --  │  4 │ 20 │  0 │ Finalizado │       
-      │P09│  4│ 15│  6│  --  │  --  │ 19 │ 34 │  0 │ Finalizado │       
-      │P13│  4│ 14│ 12│  --  │  --  │ 34 │ 48 │  0 │ Finalizado │       
-      │P14│  5│  2│  8│  --  │  --  │ 47 │ 49 │  0 │ Finalizado │       
-      │P15│  6│ 13│  2│  --  │  --  │ 48 │ 61 │  0 │ Finalizado │       
-      │P11│  9│  1│ 10│  --  │  --  │ 58 │ 59 │  0 │ Finalizado │       
-      │P03│ 10│ 18│ 11│  --  │  --  │ 58 │ 76 │  0 │ Finalizado │       
-      │P07│ 10│  4│ 11│  --  │  --  │ 76 │ 80 │  0 │ Finalizado │       
-      │P12│ 10│ 15│  3│  --  │  --  │ 80 │ 95 │  0 │ Finalizado │       
-      │P10│ 11│  7│  8│  --  │  --  │ 94 │ 101│  0 │ Finalizado │       
-      │P02│ 14│ 20│  5│   8  │  10  │ 98 │ 98 │ 20 │En Ejecución│       
-      │   │   │   │   │  14  │  15  │    │    │    │            │       
-      │P08│ 16│ 12│  1│  16  │  16  │  0 │  0 │ 12 │ En Memoria │       
-      │P05│ 18│ 11│  4│  11  │  13  │  0 │  0 │ 11 │ En Memoria │       
-      │   │   │   │   │  17  │  17  │    │    │    │            │       
-      │P01│ 19│ 15│ 18│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴────────────┘       
-   Tiempo Medio de Retorno: 48,53 - Tiempo Medio de Espera: 41,06    
+	 T=70 - Memoria usada: 9/9 
+	┌───┬───┬───┬───┬────┬────┬────┬────┬────┬────────────┐
+	│Ref│Tll│Tej│Mem│MIni│MFin│Tesp│Tret│Trej│   Estado   │
+	│P10│  0│  4│  9│ -- │ -- │  0 │  4 │  0 │ Finalizado │
+	│P12│  1│ 17│  9│ -- │ -- │  3 │ 20 │  0 │ Finalizado │
+	│P18│  1│ 16│  7│ -- │ -- │ 20 │ 36 │  0 │ Finalizado │
+	│P20│  2│  5│  6│ -- │ -- │ 35 │ 40 │  0 │ Finalizado │
+	│P05│  3│ 10│  7│ -- │ -- │ 39 │ 49 │  0 │ Finalizado │
+	│P09│  3│ 11│  5│ -- │ -- │ 49 │ 60 │  0 │ Finalizado │
+	│P14│  3│  7│  4│ -- │ -- │ 60 │ 67 │  0 │ Finalizado │
+	│P02│  5│ 13│  9│  0 │  8 │ 65 │ 65 │ 13 │En Ejecución│
+	│P17│  5│ 13│  2│ -- │ -- │ 65 │  0 │ -- │  En Espera │
+	│P19│  5│ 14│  8│ -- │ -- │ 65 │  0 │ -- │  En Espera │
+	│P13│  6│ 16│  6│ -- │ -- │ 64 │  0 │ -- │  En Espera │
+	│P16│  8│  4│  1│ -- │ -- │ 62 │  0 │ -- │  En Espera │
+	│P07│ 10│ 11│  4│ -- │ -- │ 60 │  0 │ -- │  En Espera │
+	│P06│ 11│ 10│  5│ -- │ -- │ 59 │  0 │ -- │  En Espera │
+	│P01│ 12│ 12│  3│ -- │ -- │ 58 │  0 │ -- │  En Espera │
+	│P08│ 13│  7│  6│ -- │ -- │ 57 │  0 │ -- │  En Espera │
+	│P04│ 16│  9│  3│ -- │ -- │ 54 │  0 │ -- │  En Espera │
+	│P15│ 17│ 18│  5│ -- │ -- │ 53 │  0 │ -- │  En Espera │
+	│P03│ 18│  4│  5│ -- │ -- │ 52 │  0 │ -- │  En Espera │
+	│P11│ 18│ 11│  4│ -- │ -- │ 52 │  0 │ -- │  En Espera │
+	└───┴───┴───┴───┴────┴────┴────┴────┴────┴────────────┘
+	 Tiempo Medio de Retorno: 17,05 - Tiempo Medio de Espera: 48,60 
 
-	                           P02      P05      P02   P08P05
-	BM ░░░░░░░░░░░░░░░░░░░░░░░░██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊ 18
-	   0                       8        11       14    16 17 
-	   P04                  P06                                       
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7                                      20 
-	   P06      P09                                          P13      
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   20       23                                           38    40 
-	   P13                                 P14   P15                  
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   40                                  52    54                60 
-	   P15                  P11P03                                    
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   60                   67 68                                  80 
-	   P03               P07         P12                              
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   80                86          90                            100
-	   P12            P10                  P02
+	   P02                        
+	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊ 9
+	     0                        
+	   P10         P12                                                P18                                             P20            
+	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	     0           4                                                 21                                              37             42
+	   P05                           P09                              P14                  P02
+	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊▎
+	    42                            52                               63                   70
+
+	 T=83 - Memoria usada: 2/9 
+	┌───┬───┬───┬───┬────┬────┬────┬────┬────┬────────────┐
+	│Ref│Tll│Tej│Mem│MIni│MFin│Tesp│Tret│Trej│   Estado   │
+	│P10│  0│  4│  9│ -- │ -- │  0 │  4 │  0 │ Finalizado │
+	│P12│  1│ 17│  9│ -- │ -- │  3 │ 20 │  0 │ Finalizado │
+	│P18│  1│ 16│  7│ -- │ -- │ 20 │ 36 │  0 │ Finalizado │
+	│P20│  2│  5│  6│ -- │ -- │ 35 │ 40 │  0 │ Finalizado │
+	│P05│  3│ 10│  7│ -- │ -- │ 39 │ 49 │  0 │ Finalizado │
+	│P09│  3│ 11│  5│ -- │ -- │ 49 │ 60 │  0 │ Finalizado │
+	│P14│  3│  7│  4│ -- │ -- │ 60 │ 67 │  0 │ Finalizado │
+	│P02│  5│ 13│  9│ -- │ -- │ 65 │ 78 │  0 │ Finalizado │
+	│P17│  5│ 13│  2│  0 │  1 │ 78 │ 78 │ 13 │En Ejecución│
+	│P19│  5│ 14│  8│ -- │ -- │ 78 │  0 │ -- │  En Espera │
+	│P13│  6│ 16│  6│ -- │ -- │ 77 │  0 │ -- │  En Espera │
+	│P16│  8│  4│  1│ -- │ -- │ 75 │  0 │ -- │  En Espera │
+	│P07│ 10│ 11│  4│ -- │ -- │ 73 │  0 │ -- │  En Espera │
+	│P06│ 11│ 10│  5│ -- │ -- │ 72 │  0 │ -- │  En Espera │
+	│P01│ 12│ 12│  3│ -- │ -- │ 71 │  0 │ -- │  En Espera │
+	│P08│ 13│  7│  6│ -- │ -- │ 70 │  0 │ -- │  En Espera │
+	│P04│ 16│  9│  3│ -- │ -- │ 67 │  0 │ -- │  En Espera │
+	│P15│ 17│ 18│  5│ -- │ -- │ 66 │  0 │ -- │  En Espera │
+	│P03│ 18│  4│  5│ -- │ -- │ 65 │  0 │ -- │  En Espera │
+	│P11│ 18│ 11│  4│ -- │ -- │ 65 │  0 │ -- │  En Espera │
+	└───┴───┴───┴───┴────┴────┴────┴────┴────┴────────────┘
+	 Tiempo Medio de Retorno: 21,60 - Tiempo Medio de Espera: 56,40 
+
+	   P17                        
+	BM ██▊██▊░░░░░░░░░░░░░░░░░░░░░ 9
+	     0     2                  
+	   P10         P12                                                P18                                             P20            
+	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	     0           4                                                 21                                              37             42
+	   P05                           P09                              P14                  P02                                    P17
+	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊▎
+	    42                            52                               63                   70                                     83
+
+	 T=96 - Memoria usada: 8/9 
+	┌───┬───┬───┬───┬────┬────┬────┬────┬────┬────────────┐
+	│Ref│Tll│Tej│Mem│MIni│MFin│Tesp│Tret│Trej│   Estado   │
+	│P10│  0│  4│  9│ -- │ -- │  0 │  4 │  0 │ Finalizado │
+	│P12│  1│ 17│  9│ -- │ -- │  3 │ 20 │  0 │ Finalizado │
+	│P18│  1│ 16│  7│ -- │ -- │ 20 │ 36 │  0 │ Finalizado │
+	│P20│  2│  5│  6│ -- │ -- │ 35 │ 40 │  0 │ Finalizado │
+	│P05│  3│ 10│  7│ -- │ -- │ 39 │ 49 │  0 │ Finalizado │
+	│P09│  3│ 11│  5│ -- │ -- │ 49 │ 60 │  0 │ Finalizado │
+	│P14│  3│  7│  4│ -- │ -- │ 60 │ 67 │  0 │ Finalizado │
+	│P02│  5│ 13│  9│ -- │ -- │ 65 │ 78 │  0 │ Finalizado │
+	│P17│  5│ 13│  2│ -- │ -- │ 78 │ 91 │  0 │ Finalizado │
+	│P19│  5│ 14│  8│  0 │  7 │ 91 │ 91 │ 14 │En Ejecución│
+	│P13│  6│ 16│  6│ -- │ -- │ 90 │  0 │ -- │  En Espera │
+	│P16│  8│  4│  1│ -- │ -- │ 88 │  0 │ -- │  En Espera │
+	│P07│ 10│ 11│  4│ -- │ -- │ 86 │  0 │ -- │  En Espera │
+	│P06│ 11│ 10│  5│ -- │ -- │ 85 │  0 │ -- │  En Espera │
+	│P01│ 12│ 12│  3│ -- │ -- │ 84 │  0 │ -- │  En Espera │
+	│P08│ 13│  7│  6│ -- │ -- │ 83 │  0 │ -- │  En Espera │
+	│P04│ 16│  9│  3│ -- │ -- │ 80 │  0 │ -- │  En Espera │
+	│P15│ 17│ 18│  5│ -- │ -- │ 79 │  0 │ -- │  En Espera │
+	│P03│ 18│  4│  5│ -- │ -- │ 78 │  0 │ -- │  En Espera │
+	│P11│ 18│ 11│  4│ -- │ -- │ 78 │  0 │ -- │  En Espera │
+	└───┴───┴───┴───┴────┴────┴────┴────┴────┴────────────┘
+	 Tiempo Medio de Retorno: 26,80 - Tiempo Medio de Espera: 63,55 
+
+	   P19                        
+	BM ██▊██▊██▊██▊██▊██▊██▊██▊░░░ 9
+	     0                       8
+	   P10         P12                                                P18                                             P20            
+	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	     0           4                                                 21                                              37             42
+	   P05                           P09                              P14                  P02                                    P17   
+	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	    42                            52                               63                   70                                     83 84
+	   P17                                 P19
 	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊▎
-	   100            105                  112
+	    84                                  96
 
-                     T=132 - Memoria usada: 5/18                     
-      ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬────────────┐       
-      │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│   Estado   │       
-      │P04│  0│  7│ 18│  --  │  --  │  0 │  7 │  0 │ Finalizado │       
-      │P06│  3│ 16│ 14│  --  │  --  │  4 │ 20 │  0 │ Finalizado │       
-      │P09│  4│ 15│  6│  --  │  --  │ 19 │ 34 │  0 │ Finalizado │       
-      │P13│  4│ 14│ 12│  --  │  --  │ 34 │ 48 │  0 │ Finalizado │       
-      │P14│  5│  2│  8│  --  │  --  │ 47 │ 49 │  0 │ Finalizado │       
-      │P15│  6│ 13│  2│  --  │  --  │ 48 │ 61 │  0 │ Finalizado │       
-      │P11│  9│  1│ 10│  --  │  --  │ 58 │ 59 │  0 │ Finalizado │       
-      │P03│ 10│ 18│ 11│  --  │  --  │ 58 │ 76 │  0 │ Finalizado │       
-      │P07│ 10│  4│ 11│  --  │  --  │ 76 │ 80 │  0 │ Finalizado │       
-      │P12│ 10│ 15│  3│  --  │  --  │ 80 │ 95 │  0 │ Finalizado │       
-      │P10│ 11│  7│  8│  --  │  --  │ 94 │ 101│  0 │ Finalizado │       
-      │P02│ 14│ 20│  5│  --  │  --  │ 98 │ 118│  0 │ Finalizado │       
-      │P08│ 16│ 12│  1│  16  │  16  │ 116│ 116│ 12 │En Ejecución│       
-      │P05│ 18│ 11│  4│  11  │  13  │  0 │  0 │ 11 │ En Memoria │       
-      │   │   │   │   │  17  │  17  │    │    │    │            │       
-      │P01│ 19│ 15│ 18│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴────────────┘       
-   Tiempo Medio de Retorno: 57,60 - Tiempo Medio de Espera: 48,80    
+	 T=110 - Memoria usada: 7/9 
+	┌───┬───┬───┬───┬────┬────┬────┬────┬────┬────────────┐
+	│Ref│Tll│Tej│Mem│MIni│MFin│Tesp│Tret│Trej│   Estado   │
+	│P10│  0│  4│  9│ -- │ -- │  0 │  4 │  0 │ Finalizado │
+	│P12│  1│ 17│  9│ -- │ -- │  3 │ 20 │  0 │ Finalizado │
+	│P18│  1│ 16│  7│ -- │ -- │ 20 │ 36 │  0 │ Finalizado │
+	│P20│  2│  5│  6│ -- │ -- │ 35 │ 40 │  0 │ Finalizado │
+	│P05│  3│ 10│  7│ -- │ -- │ 39 │ 49 │  0 │ Finalizado │
+	│P09│  3│ 11│  5│ -- │ -- │ 49 │ 60 │  0 │ Finalizado │
+	│P14│  3│  7│  4│ -- │ -- │ 60 │ 67 │  0 │ Finalizado │
+	│P02│  5│ 13│  9│ -- │ -- │ 65 │ 78 │  0 │ Finalizado │
+	│P17│  5│ 13│  2│ -- │ -- │ 78 │ 91 │  0 │ Finalizado │
+	│P19│  5│ 14│  8│ -- │ -- │ 91 │ 105│  0 │ Finalizado │
+	│P13│  6│ 16│  6│  0 │  5 │ 104│ 104│ 16 │En Ejecución│
+	│P16│  8│  4│  1│  6 │  6 │ 102│  0 │  4 │ En Memoria │
+	│P07│ 10│ 11│  4│ -- │ -- │ 100│  0 │ -- │  En Espera │
+	│P06│ 11│ 10│  5│ -- │ -- │ 99 │  0 │ -- │  En Espera │
+	│P01│ 12│ 12│  3│ -- │ -- │ 98 │  0 │ -- │  En Espera │
+	│P08│ 13│  7│  6│ -- │ -- │ 97 │  0 │ -- │  En Espera │
+	│P04│ 16│  9│  3│ -- │ -- │ 94 │  0 │ -- │  En Espera │
+	│P15│ 17│ 18│  5│ -- │ -- │ 93 │  0 │ -- │  En Espera │
+	│P03│ 18│  4│  5│ -- │ -- │ 92 │  0 │ -- │  En Espera │
+	│P11│ 18│ 11│  4│ -- │ -- │ 92 │  0 │ -- │  En Espera │
+	└───┴───┴───┴───┴────┴────┴────┴────┴────┴────────────┘
+	 Tiempo Medio de Retorno: 32,70 - Tiempo Medio de Espera: 70,55 
 
-	                                    P05            P08P05
-	BM ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░██▊██▊██▊░░░░░░██▊██▊ 18
-	   0                                11       14    16 17 
-	   P04                  P06                                       
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7                                      20 
-	   P06      P09                                          P13      
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   20       23                                           38    40 
-	   P13                                 P14   P15                  
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   40                                  52    54                60 
-	   P15                  P11P03                                    
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   60                   67 68                                  80 
-	   P03               P07         P12                              
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   80                86          90                            100
-	   P12            P10                  P02                        
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   100            105                  112                     120
-	   P02                                 P08
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊▎
-	   120                                 132
+	   P13               P16      
+	BM ██▊██▊██▊██▊██▊██▊██▊░░░░░░ 9
+	     0                 6  7   
+	   P10         P12                                                P18                                             P20            
+	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	     0           4                                                 21                                              37             42
+	   P05                           P09                              P14                  P02                                    P17   
+	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	    42                            52                               63                   70                                     83 84
+	   P17                                 P19                                       P13
+	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊▎
+	    84                                  96                                       110
 
-                     T=144 - Memoria usada: 4/18                     
-      ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬────────────┐       
-      │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│   Estado   │       
-      │P04│  0│  7│ 18│  --  │  --  │  0 │  7 │  0 │ Finalizado │       
-      │P06│  3│ 16│ 14│  --  │  --  │  4 │ 20 │  0 │ Finalizado │       
-      │P09│  4│ 15│  6│  --  │  --  │ 19 │ 34 │  0 │ Finalizado │       
-      │P13│  4│ 14│ 12│  --  │  --  │ 34 │ 48 │  0 │ Finalizado │       
-      │P14│  5│  2│  8│  --  │  --  │ 47 │ 49 │  0 │ Finalizado │       
-      │P15│  6│ 13│  2│  --  │  --  │ 48 │ 61 │  0 │ Finalizado │       
-      │P11│  9│  1│ 10│  --  │  --  │ 58 │ 59 │  0 │ Finalizado │       
-      │P03│ 10│ 18│ 11│  --  │  --  │ 58 │ 76 │  0 │ Finalizado │       
-      │P07│ 10│  4│ 11│  --  │  --  │ 76 │ 80 │  0 │ Finalizado │       
-      │P12│ 10│ 15│  3│  --  │  --  │ 80 │ 95 │  0 │ Finalizado │       
-      │P10│ 11│  7│  8│  --  │  --  │ 94 │ 101│  0 │ Finalizado │       
-      │P02│ 14│ 20│  5│  --  │  --  │ 98 │ 118│  0 │ Finalizado │       
-      │P08│ 16│ 12│  1│  --  │  --  │ 116│ 128│  0 │ Finalizado │       
-      │P05│ 18│ 11│  4│  11  │  13  │ 126│ 126│ 11 │En Ejecución│       
-      │   │   │   │   │  17  │  17  │    │    │    │            │       
-      │P01│ 19│ 15│ 18│  --  │  --  │  0 │  0 │ -- │  En Espera │       
-      └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴────────────┘       
-   Tiempo Medio de Retorno: 66,80 - Tiempo Medio de Espera: 57,20    
+	 T=126 - Memoria usada: 5/9 
+	┌───┬───┬───┬───┬────┬────┬────┬────┬────┬────────────┐
+	│Ref│Tll│Tej│Mem│MIni│MFin│Tesp│Tret│Trej│   Estado   │
+	│P10│  0│  4│  9│ -- │ -- │  0 │  4 │  0 │ Finalizado │
+	│P12│  1│ 17│  9│ -- │ -- │  3 │ 20 │  0 │ Finalizado │
+	│P18│  1│ 16│  7│ -- │ -- │ 20 │ 36 │  0 │ Finalizado │
+	│P20│  2│  5│  6│ -- │ -- │ 35 │ 40 │  0 │ Finalizado │
+	│P05│  3│ 10│  7│ -- │ -- │ 39 │ 49 │  0 │ Finalizado │
+	│P09│  3│ 11│  5│ -- │ -- │ 49 │ 60 │  0 │ Finalizado │
+	│P14│  3│  7│  4│ -- │ -- │ 60 │ 67 │  0 │ Finalizado │
+	│P02│  5│ 13│  9│ -- │ -- │ 65 │ 78 │  0 │ Finalizado │
+	│P17│  5│ 13│  2│ -- │ -- │ 78 │ 91 │  0 │ Finalizado │
+	│P19│  5│ 14│  8│ -- │ -- │ 91 │ 105│  0 │ Finalizado │
+	│P13│  6│ 16│  6│ -- │ -- │ 104│ 120│  0 │ Finalizado │
+	│P16│  8│  4│  1│  6 │  6 │ 118│ 118│  4 │En Ejecución│
+	│P07│ 10│ 11│  4│  0 │  3 │ 116│  0 │ 11 │ En Memoria │
+	│P06│ 11│ 10│  5│ -- │ -- │ 115│  0 │ -- │  En Espera │
+	│P01│ 12│ 12│  3│ -- │ -- │ 114│  0 │ -- │  En Espera │
+	│P08│ 13│  7│  6│ -- │ -- │ 113│  0 │ -- │  En Espera │
+	│P04│ 16│  9│  3│ -- │ -- │ 110│  0 │ -- │  En Espera │
+	│P15│ 17│ 18│  5│ -- │ -- │ 109│  0 │ -- │  En Espera │
+	│P03│ 18│  4│  5│ -- │ -- │ 108│  0 │ -- │  En Espera │
+	│P11│ 18│ 11│  4│ -- │ -- │ 108│  0 │ -- │  En Espera │
+	└───┴───┴───┴───┴────┴────┴────┴────┴────┴────────────┘
+	 Tiempo Medio de Retorno: 39,40 - Tiempo Medio de Espera: 77,75 
 
-	                                    P05               P05
-	BM ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░██▊██▊██▊░░░░░░░░░██▊ 18
-	   0                                11       14       17 
-	   P04                  P06                                       
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7                                      20 
-	   P06      P09                                          P13      
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   20       23                                           38    40 
-	   P13                                 P14   P15                  
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   40                                  52    54                60 
-	   P15                  P11P03                                    
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   60                   67 68                                  80 
-	   P03               P07         P12                              
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   80                86          90                            100
-	   P12            P10                  P02                        
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   100            105                  112                     120
-	   P02                                 P08                        
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   120                                 132                     140
-	   P08         P05
+	   P07               P16      
+	BM ██▊██▊██▊██▊░░░░░░██▊░░░░░░ 9
+	     0           4     6  7   
+	   P10         P12                                                P18                                             P20            
+	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	     0           4                                                 21                                              37             42
+	   P05                           P09                              P14                  P02                                    P17   
+	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	    42                            52                               63                   70                                     83 84
+	   P17                                 P19                                       P13                                             
+	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	    84                                  96                                       110                                             126
+
+	 T=130 - Memoria usada: 9/9 
+	┌───┬───┬───┬───┬────┬────┬────┬────┬────┬────────────┐
+	│Ref│Tll│Tej│Mem│MIni│MFin│Tesp│Tret│Trej│   Estado   │
+	│P10│  0│  4│  9│ -- │ -- │  0 │  4 │  0 │ Finalizado │
+	│P12│  1│ 17│  9│ -- │ -- │  3 │ 20 │  0 │ Finalizado │
+	│P18│  1│ 16│  7│ -- │ -- │ 20 │ 36 │  0 │ Finalizado │
+	│P20│  2│  5│  6│ -- │ -- │ 35 │ 40 │  0 │ Finalizado │
+	│P05│  3│ 10│  7│ -- │ -- │ 39 │ 49 │  0 │ Finalizado │
+	│P09│  3│ 11│  5│ -- │ -- │ 49 │ 60 │  0 │ Finalizado │
+	│P14│  3│  7│  4│ -- │ -- │ 60 │ 67 │  0 │ Finalizado │
+	│P02│  5│ 13│  9│ -- │ -- │ 65 │ 78 │  0 │ Finalizado │
+	│P17│  5│ 13│  2│ -- │ -- │ 78 │ 91 │  0 │ Finalizado │
+	│P19│  5│ 14│  8│ -- │ -- │ 91 │ 105│  0 │ Finalizado │
+	│P13│  6│ 16│  6│ -- │ -- │ 104│ 120│  0 │ Finalizado │
+	│P16│  8│  4│  1│ -- │ -- │ 118│ 122│  0 │ Finalizado │
+	│P07│ 10│ 11│  4│  0 │  3 │ 120│ 120│ 11 │En Ejecución│
+	│P06│ 11│ 10│  5│  4 │  8 │ 119│  0 │ 10 │ En Memoria │
+	│P01│ 12│ 12│  3│ -- │ -- │ 118│  0 │ -- │  En Espera │
+	│P08│ 13│  7│  6│ -- │ -- │ 117│  0 │ -- │  En Espera │
+	│P04│ 16│  9│  3│ -- │ -- │ 114│  0 │ -- │  En Espera │
+	│P15│ 17│ 18│  5│ -- │ -- │ 113│  0 │ -- │  En Espera │
+	│P03│ 18│  4│  5│ -- │ -- │ 112│  0 │ -- │  En Espera │
+	│P11│ 18│ 11│  4│ -- │ -- │ 112│  0 │ -- │  En Espera │
+	└───┴───┴───┴───┴────┴────┴────┴────┴────┴────────────┘
+	 Tiempo Medio de Retorno: 45,60 - Tiempo Medio de Espera: 79,35 
+
+	   P07         P06            
+	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊ 9
+	     0           4            
+	   P10         P12                                                P18                                             P20            
+	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	     0           4                                                 21                                              37             42
+	   P05                           P09                              P14                  P02                                    P17   
+	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	    42                            52                               63                   70                                     83 84
+	   P17                                 P19                                       P13                                             
+	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	    84                                  96                                       110                                             126
+	   P16         P07
 	   ██▊██▊██▊██▊▎
-	   140         144
+	   126         130
 
-                    T=155 - Memoria usada: 18/18                     
-      ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬────────────┐       
-      │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│   Estado   │       
-      │P04│  0│  7│ 18│  --  │  --  │  0 │  7 │  0 │ Finalizado │       
-      │P06│  3│ 16│ 14│  --  │  --  │  4 │ 20 │  0 │ Finalizado │       
-      │P09│  4│ 15│  6│  --  │  --  │ 19 │ 34 │  0 │ Finalizado │       
-      │P13│  4│ 14│ 12│  --  │  --  │ 34 │ 48 │  0 │ Finalizado │       
-      │P14│  5│  2│  8│  --  │  --  │ 47 │ 49 │  0 │ Finalizado │       
-      │P15│  6│ 13│  2│  --  │  --  │ 48 │ 61 │  0 │ Finalizado │       
-      │P11│  9│  1│ 10│  --  │  --  │ 58 │ 59 │  0 │ Finalizado │       
-      │P03│ 10│ 18│ 11│  --  │  --  │ 58 │ 76 │  0 │ Finalizado │       
-      │P07│ 10│  4│ 11│  --  │  --  │ 76 │ 80 │  0 │ Finalizado │       
-      │P12│ 10│ 15│  3│  --  │  --  │ 80 │ 95 │  0 │ Finalizado │       
-      │P10│ 11│  7│  8│  --  │  --  │ 94 │ 101│  0 │ Finalizado │       
-      │P02│ 14│ 20│  5│  --  │  --  │ 98 │ 118│  0 │ Finalizado │       
-      │P08│ 16│ 12│  1│  --  │  --  │ 116│ 128│  0 │ Finalizado │       
-      │P05│ 18│ 11│  4│  --  │  --  │ 126│ 137│  0 │ Finalizado │       
-      │P01│ 19│ 15│ 18│   0  │  17  │ 136│ 136│ 15 │En Ejecución│       
-      └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴────────────┘       
-   Tiempo Medio de Retorno: 76,60 - Tiempo Medio de Espera: 66,26    
+	 T=141 - Memoria usada: 8/9 
+	┌───┬───┬───┬───┬────┬────┬────┬────┬────┬────────────┐
+	│Ref│Tll│Tej│Mem│MIni│MFin│Tesp│Tret│Trej│   Estado   │
+	│P10│  0│  4│  9│ -- │ -- │  0 │  4 │  0 │ Finalizado │
+	│P12│  1│ 17│  9│ -- │ -- │  3 │ 20 │  0 │ Finalizado │
+	│P18│  1│ 16│  7│ -- │ -- │ 20 │ 36 │  0 │ Finalizado │
+	│P20│  2│  5│  6│ -- │ -- │ 35 │ 40 │  0 │ Finalizado │
+	│P05│  3│ 10│  7│ -- │ -- │ 39 │ 49 │  0 │ Finalizado │
+	│P09│  3│ 11│  5│ -- │ -- │ 49 │ 60 │  0 │ Finalizado │
+	│P14│  3│  7│  4│ -- │ -- │ 60 │ 67 │  0 │ Finalizado │
+	│P02│  5│ 13│  9│ -- │ -- │ 65 │ 78 │  0 │ Finalizado │
+	│P17│  5│ 13│  2│ -- │ -- │ 78 │ 91 │  0 │ Finalizado │
+	│P19│  5│ 14│  8│ -- │ -- │ 91 │ 105│  0 │ Finalizado │
+	│P13│  6│ 16│  6│ -- │ -- │ 104│ 120│  0 │ Finalizado │
+	│P16│  8│  4│  1│ -- │ -- │ 118│ 122│  0 │ Finalizado │
+	│P07│ 10│ 11│  4│ -- │ -- │ 120│ 131│  0 │ Finalizado │
+	│P06│ 11│ 10│  5│  4 │  8 │ 130│ 130│ 10 │En Ejecución│
+	│P01│ 12│ 12│  3│  0 │  2 │ 129│  0 │ 12 │ En Memoria │
+	│P08│ 13│  7│  6│ -- │ -- │ 128│  0 │ -- │  En Espera │
+	│P04│ 16│  9│  3│ -- │ -- │ 125│  0 │ -- │  En Espera │
+	│P15│ 17│ 18│  5│ -- │ -- │ 124│  0 │ -- │  En Espera │
+	│P03│ 18│  4│  5│ -- │ -- │ 123│  0 │ -- │  En Espera │
+	│P11│ 18│ 11│  4│ -- │ -- │ 123│  0 │ -- │  En Espera │
+	└───┴───┴───┴───┴────┴────┴────┴────┴────┴────────────┘
+	 Tiempo Medio de Retorno: 52,65 - Tiempo Medio de Espera: 83,20 
 
-	   P01                                                   
-	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊ 18
-	   0                                                     
-	   P04                  P06                                       
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7                                      20 
-	   P06      P09                                          P13      
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   20       23                                           38    40 
-	   P13                                 P14   P15                  
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   40                                  52    54                60 
-	   P15                  P11P03                                    
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   60                   67 68                                  80 
-	   P03               P07         P12                              
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   80                86          90                            100
-	   P12            P10                  P02                        
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   100            105                  112                     120
-	   P02                                 P08                        
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   120                                 132                     140
-	   P08         P05                              P01
+	   P01         P06            
+	BM ██▊██▊██▊░░░██▊██▊██▊██▊██▊ 9
+	     0        3  4            
+	   P10         P12                                                P18                                             P20            
+	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	     0           4                                                 21                                              37             42
+	   P05                           P09                              P14                  P02                                    P17   
+	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	    42                            52                               63                   70                                     83 84
+	   P17                                 P19                                       P13                                             
+	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	    84                                  96                                       110                                             126
+	   P16         P07                              P06
 	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊▎
-	   140         144                              155
+	   126         130                              141
 
-                     T=170 - Memoria usada: 0/18                     
-       ┌───┬───┬───┬───┬──────┬──────┬────┬────┬────┬──────────┐        
-       │Ref│Tll│Tej│Mem│IniMem│FinMem│Tesp│Tret│Trej│  Estado  │        
-       │P04│  0│  7│ 18│  --  │  --  │  0 │  7 │  0 │Finalizado│        
-       │P06│  3│ 16│ 14│  --  │  --  │  4 │ 20 │  0 │Finalizado│        
-       │P09│  4│ 15│  6│  --  │  --  │ 19 │ 34 │  0 │Finalizado│        
-       │P13│  4│ 14│ 12│  --  │  --  │ 34 │ 48 │  0 │Finalizado│        
-       │P14│  5│  2│  8│  --  │  --  │ 47 │ 49 │  0 │Finalizado│        
-       │P15│  6│ 13│  2│  --  │  --  │ 48 │ 61 │  0 │Finalizado│        
-       │P11│  9│  1│ 10│  --  │  --  │ 58 │ 59 │  0 │Finalizado│        
-       │P03│ 10│ 18│ 11│  --  │  --  │ 58 │ 76 │  0 │Finalizado│        
-       │P07│ 10│  4│ 11│  --  │  --  │ 76 │ 80 │  0 │Finalizado│        
-       │P12│ 10│ 15│  3│  --  │  --  │ 80 │ 95 │  0 │Finalizado│        
-       │P10│ 11│  7│  8│  --  │  --  │ 94 │ 101│  0 │Finalizado│        
-       │P02│ 14│ 20│  5│  --  │  --  │ 98 │ 118│  0 │Finalizado│        
-       │P08│ 16│ 12│  1│  --  │  --  │ 116│ 128│  0 │Finalizado│        
-       │P05│ 18│ 11│  4│  --  │  --  │ 126│ 137│  0 │Finalizado│        
-       │P01│ 19│ 15│ 18│  --  │  --  │ 136│ 151│  0 │Finalizado│        
-       └───┴───┴───┴───┴──────┴──────┴────┴────┴────┴──────────┘        
-   Tiempo Medio de Retorno: 77,60 - Tiempo Medio de Espera: 66,26    
+	 T=151 - Memoria usada: 9/9 
+	┌───┬───┬───┬───┬────┬────┬────┬────┬────┬────────────┐
+	│Ref│Tll│Tej│Mem│MIni│MFin│Tesp│Tret│Trej│   Estado   │
+	│P10│  0│  4│  9│ -- │ -- │  0 │  4 │  0 │ Finalizado │
+	│P12│  1│ 17│  9│ -- │ -- │  3 │ 20 │  0 │ Finalizado │
+	│P18│  1│ 16│  7│ -- │ -- │ 20 │ 36 │  0 │ Finalizado │
+	│P20│  2│  5│  6│ -- │ -- │ 35 │ 40 │  0 │ Finalizado │
+	│P05│  3│ 10│  7│ -- │ -- │ 39 │ 49 │  0 │ Finalizado │
+	│P09│  3│ 11│  5│ -- │ -- │ 49 │ 60 │  0 │ Finalizado │
+	│P14│  3│  7│  4│ -- │ -- │ 60 │ 67 │  0 │ Finalizado │
+	│P02│  5│ 13│  9│ -- │ -- │ 65 │ 78 │  0 │ Finalizado │
+	│P17│  5│ 13│  2│ -- │ -- │ 78 │ 91 │  0 │ Finalizado │
+	│P19│  5│ 14│  8│ -- │ -- │ 91 │ 105│  0 │ Finalizado │
+	│P13│  6│ 16│  6│ -- │ -- │ 104│ 120│  0 │ Finalizado │
+	│P16│  8│  4│  1│ -- │ -- │ 118│ 122│  0 │ Finalizado │
+	│P07│ 10│ 11│  4│ -- │ -- │ 120│ 131│  0 │ Finalizado │
+	│P06│ 11│ 10│  5│ -- │ -- │ 130│ 140│  0 │ Finalizado │
+	│P01│ 12│ 12│  3│  0 │  2 │ 139│ 139│ 12 │En Ejecución│
+	│P08│ 13│  7│  6│  3 │  8 │ 138│  0 │  7 │ En Memoria │
+	│P04│ 16│  9│  3│ -- │ -- │ 135│  0 │ -- │  En Espera │
+	│P15│ 17│ 18│  5│ -- │ -- │ 134│  0 │ -- │  En Espera │
+	│P03│ 18│  4│  5│ -- │ -- │ 133│  0 │ -- │  En Espera │
+	│P11│ 18│ 11│  4│ -- │ -- │ 133│  0 │ -- │  En Espera │
+	└───┴───┴───┴───┴────┴────┴────┴────┴────┴────────────┘
+	 Tiempo Medio de Retorno: 60,10 - Tiempo Medio de Espera: 86,20 
 
-	                                                         
-	BM ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 18
-	   0                                                     
-	   P04                  P06                                       
-	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   0                    7                                      20 
-	   P06      P09                                          P13      
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   20       23                                           38    40 
-	   P13                                 P14   P15                  
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   40                                  52    54                60 
-	   P15                  P11P03                                    
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   60                   67 68                                  80 
-	   P03               P07         P12                              
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   80                86          90                            100
-	   P12            P10                  P02                        
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   100            105                  112                     120
-	   P02                                 P08                        
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   120                                 132                     140
-	   P08         P05                              P01               
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   140         144                              155            160
-	   P01                              
-	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
-	   160                           170
+	   P01      P08               
+	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊ 9
+	     0        3               
+	   P10         P12                                                P18                                             P20            
+	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	     0           4                                                 21                                              37             42
+	   P05                           P09                              P14                  P02                                    P17   
+	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	    42                            52                               63                   70                                     83 84
+	   P17                                 P19                                       P13                                             
+	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	    84                                  96                                       110                                             126
+	   P16         P07                              P06                           P01
+	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊▎
+	   126         130                              141                           151
+
+	 T=163 - Memoria usada: 9/9 
+	┌───┬───┬───┬───┬────┬────┬────┬────┬────┬────────────┐
+	│Ref│Tll│Tej│Mem│MIni│MFin│Tesp│Tret│Trej│   Estado   │
+	│P10│  0│  4│  9│ -- │ -- │  0 │  4 │  0 │ Finalizado │
+	│P12│  1│ 17│  9│ -- │ -- │  3 │ 20 │  0 │ Finalizado │
+	│P18│  1│ 16│  7│ -- │ -- │ 20 │ 36 │  0 │ Finalizado │
+	│P20│  2│  5│  6│ -- │ -- │ 35 │ 40 │  0 │ Finalizado │
+	│P05│  3│ 10│  7│ -- │ -- │ 39 │ 49 │  0 │ Finalizado │
+	│P09│  3│ 11│  5│ -- │ -- │ 49 │ 60 │  0 │ Finalizado │
+	│P14│  3│  7│  4│ -- │ -- │ 60 │ 67 │  0 │ Finalizado │
+	│P02│  5│ 13│  9│ -- │ -- │ 65 │ 78 │  0 │ Finalizado │
+	│P17│  5│ 13│  2│ -- │ -- │ 78 │ 91 │  0 │ Finalizado │
+	│P19│  5│ 14│  8│ -- │ -- │ 91 │ 105│  0 │ Finalizado │
+	│P13│  6│ 16│  6│ -- │ -- │ 104│ 120│  0 │ Finalizado │
+	│P16│  8│  4│  1│ -- │ -- │ 118│ 122│  0 │ Finalizado │
+	│P07│ 10│ 11│  4│ -- │ -- │ 120│ 131│  0 │ Finalizado │
+	│P06│ 11│ 10│  5│ -- │ -- │ 130│ 140│  0 │ Finalizado │
+	│P01│ 12│ 12│  3│ -- │ -- │ 139│ 151│  0 │ Finalizado │
+	│P08│ 13│  7│  6│  3 │  8 │ 150│ 150│  7 │En Ejecución│
+	│P04│ 16│  9│  3│  0 │  2 │ 147│  0 │  9 │ En Memoria │
+	│P15│ 17│ 18│  5│ -- │ -- │ 146│  0 │ -- │  En Espera │
+	│P03│ 18│  4│  5│ -- │ -- │ 145│  0 │ -- │  En Espera │
+	│P11│ 18│ 11│  4│ -- │ -- │ 145│  0 │ -- │  En Espera │
+	└───┴───┴───┴───┴────┴────┴────┴────┴────┴────────────┘
+	 Tiempo Medio de Retorno: 68,20 - Tiempo Medio de Espera: 89,20 
+
+	   P04      P08               
+	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊ 9
+	     0        3               
+	   P10         P12                                                P18                                             P20            
+	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	     0           4                                                 21                                              37             42
+	   P05                           P09                              P14                  P02                                    P17   
+	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	    42                            52                               63                   70                                     83 84
+	   P17                                 P19                                       P13                                             
+	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	    84                                  96                                       110                                             126
+	   P16         P07                              P06                           P01                                 P08
+	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊▎
+	   126         130                              141                           151                                 163
+
+	 T=170 - Memoria usada: 8/9 
+	┌───┬───┬───┬───┬────┬────┬────┬────┬────┬────────────┐
+	│Ref│Tll│Tej│Mem│MIni│MFin│Tesp│Tret│Trej│   Estado   │
+	│P10│  0│  4│  9│ -- │ -- │  0 │  4 │  0 │ Finalizado │
+	│P12│  1│ 17│  9│ -- │ -- │  3 │ 20 │  0 │ Finalizado │
+	│P18│  1│ 16│  7│ -- │ -- │ 20 │ 36 │  0 │ Finalizado │
+	│P20│  2│  5│  6│ -- │ -- │ 35 │ 40 │  0 │ Finalizado │
+	│P05│  3│ 10│  7│ -- │ -- │ 39 │ 49 │  0 │ Finalizado │
+	│P09│  3│ 11│  5│ -- │ -- │ 49 │ 60 │  0 │ Finalizado │
+	│P14│  3│  7│  4│ -- │ -- │ 60 │ 67 │  0 │ Finalizado │
+	│P02│  5│ 13│  9│ -- │ -- │ 65 │ 78 │  0 │ Finalizado │
+	│P17│  5│ 13│  2│ -- │ -- │ 78 │ 91 │  0 │ Finalizado │
+	│P19│  5│ 14│  8│ -- │ -- │ 91 │ 105│  0 │ Finalizado │
+	│P13│  6│ 16│  6│ -- │ -- │ 104│ 120│  0 │ Finalizado │
+	│P16│  8│  4│  1│ -- │ -- │ 118│ 122│  0 │ Finalizado │
+	│P07│ 10│ 11│  4│ -- │ -- │ 120│ 131│  0 │ Finalizado │
+	│P06│ 11│ 10│  5│ -- │ -- │ 130│ 140│  0 │ Finalizado │
+	│P01│ 12│ 12│  3│ -- │ -- │ 139│ 151│  0 │ Finalizado │
+	│P08│ 13│  7│  6│ -- │ -- │ 150│ 157│  0 │ Finalizado │
+	│P04│ 16│  9│  3│  0 │  2 │ 154│ 154│  9 │En Ejecución│
+	│P15│ 17│ 18│  5│  3 │  7 │ 153│  0 │ 18 │ En Memoria │
+	│P03│ 18│  4│  5│ -- │ -- │ 152│  0 │ -- │  En Espera │
+	│P11│ 18│ 11│  4│ -- │ -- │ 152│  0 │ -- │  En Espera │
+	└───┴───┴───┴───┴────┴────┴────┴────┴────┴────────────┘
+	 Tiempo Medio de Retorno: 76,25 - Tiempo Medio de Espera: 90,60 
+
+	   P04      P15               
+	BM ██▊██▊██▊██▊██▊██▊██▊██▊░░░ 9
+	     0        3              8
+	   P10         P12                                                P18                                             P20            
+	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	     0           4                                                 21                                              37             42
+	   P05                           P09                              P14                  P02                                    P17   
+	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	    42                            52                               63                   70                                     83 84
+	   P17                                 P19                                       P13                                             
+	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	    84                                  96                                       110                                             126
+	   P16         P07                              P06                           P01                                 P08               
+	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	   126         130                              141                           151                                 163            168
+	   P08   P04
+	   ██▊██▊▎
+	   168   170
+
+	 T=179 - Memoria usada: 5/9 
+	┌───┬───┬───┬───┬────┬────┬────┬────┬────┬────────────┐
+	│Ref│Tll│Tej│Mem│MIni│MFin│Tesp│Tret│Trej│   Estado   │
+	│P10│  0│  4│  9│ -- │ -- │  0 │  4 │  0 │ Finalizado │
+	│P12│  1│ 17│  9│ -- │ -- │  3 │ 20 │  0 │ Finalizado │
+	│P18│  1│ 16│  7│ -- │ -- │ 20 │ 36 │  0 │ Finalizado │
+	│P20│  2│  5│  6│ -- │ -- │ 35 │ 40 │  0 │ Finalizado │
+	│P05│  3│ 10│  7│ -- │ -- │ 39 │ 49 │  0 │ Finalizado │
+	│P09│  3│ 11│  5│ -- │ -- │ 49 │ 60 │  0 │ Finalizado │
+	│P14│  3│  7│  4│ -- │ -- │ 60 │ 67 │  0 │ Finalizado │
+	│P02│  5│ 13│  9│ -- │ -- │ 65 │ 78 │  0 │ Finalizado │
+	│P17│  5│ 13│  2│ -- │ -- │ 78 │ 91 │  0 │ Finalizado │
+	│P19│  5│ 14│  8│ -- │ -- │ 91 │ 105│  0 │ Finalizado │
+	│P13│  6│ 16│  6│ -- │ -- │ 104│ 120│  0 │ Finalizado │
+	│P16│  8│  4│  1│ -- │ -- │ 118│ 122│  0 │ Finalizado │
+	│P07│ 10│ 11│  4│ -- │ -- │ 120│ 131│  0 │ Finalizado │
+	│P06│ 11│ 10│  5│ -- │ -- │ 130│ 140│  0 │ Finalizado │
+	│P01│ 12│ 12│  3│ -- │ -- │ 139│ 151│  0 │ Finalizado │
+	│P08│ 13│  7│  6│ -- │ -- │ 150│ 157│  0 │ Finalizado │
+	│P04│ 16│  9│  3│ -- │ -- │ 154│ 163│  0 │ Finalizado │
+	│P15│ 17│ 18│  5│  3 │  7 │ 162│ 162│ 18 │En Ejecución│
+	│P03│ 18│  4│  5│ -- │ -- │ 161│  0 │ -- │  En Espera │
+	│P11│ 18│ 11│  4│ -- │ -- │ 161│  0 │ -- │  En Espera │
+	└───┴───┴───┴───┴────┴────┴────┴────┴────┴────────────┘
+	 Tiempo Medio de Retorno: 84,80 - Tiempo Medio de Espera: 91,95 
+
+	            P15               
+	BM ░░░░░░░░░██▊██▊██▊██▊██▊░░░ 9
+	     0        3              8
+	   P10         P12                                                P18                                             P20            
+	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	     0           4                                                 21                                              37             42
+	   P05                           P09                              P14                  P02                                    P17   
+	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	    42                            52                               63                   70                                     83 84
+	   P17                                 P19                                       P13                                             
+	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	    84                                  96                                       110                                             126
+	   P16         P07                              P06                           P01                                 P08               
+	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	   126         130                              141                           151                                 163            168
+	   P08   P04                        P15
+	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊▎
+	   168   170                        179
+
+	 T=197 - Memoria usada: 9/9 
+	┌───┬───┬───┬───┬────┬────┬────┬────┬────┬────────────┐
+	│Ref│Tll│Tej│Mem│MIni│MFin│Tesp│Tret│Trej│   Estado   │
+	│P10│  0│  4│  9│ -- │ -- │  0 │  4 │  0 │ Finalizado │
+	│P12│  1│ 17│  9│ -- │ -- │  3 │ 20 │  0 │ Finalizado │
+	│P18│  1│ 16│  7│ -- │ -- │ 20 │ 36 │  0 │ Finalizado │
+	│P20│  2│  5│  6│ -- │ -- │ 35 │ 40 │  0 │ Finalizado │
+	│P05│  3│ 10│  7│ -- │ -- │ 39 │ 49 │  0 │ Finalizado │
+	│P09│  3│ 11│  5│ -- │ -- │ 49 │ 60 │  0 │ Finalizado │
+	│P14│  3│  7│  4│ -- │ -- │ 60 │ 67 │  0 │ Finalizado │
+	│P02│  5│ 13│  9│ -- │ -- │ 65 │ 78 │  0 │ Finalizado │
+	│P17│  5│ 13│  2│ -- │ -- │ 78 │ 91 │  0 │ Finalizado │
+	│P19│  5│ 14│  8│ -- │ -- │ 91 │ 105│  0 │ Finalizado │
+	│P13│  6│ 16│  6│ -- │ -- │ 104│ 120│  0 │ Finalizado │
+	│P16│  8│  4│  1│ -- │ -- │ 118│ 122│  0 │ Finalizado │
+	│P07│ 10│ 11│  4│ -- │ -- │ 120│ 131│  0 │ Finalizado │
+	│P06│ 11│ 10│  5│ -- │ -- │ 130│ 140│  0 │ Finalizado │
+	│P01│ 12│ 12│  3│ -- │ -- │ 139│ 151│  0 │ Finalizado │
+	│P08│ 13│  7│  6│ -- │ -- │ 150│ 157│  0 │ Finalizado │
+	│P04│ 16│  9│  3│ -- │ -- │ 154│ 163│  0 │ Finalizado │
+	│P15│ 17│ 18│  5│ -- │ -- │ 162│ 180│  0 │ Finalizado │
+	│P03│ 18│  4│  5│  0 │  4 │ 179│ 179│  4 │En Ejecución│
+	│P11│ 18│ 11│  4│  5 │  8 │ 179│  0 │ 11 │ En Memoria │
+	└───┴───┴───┴───┴────┴────┴────┴────┴────┴────────────┘
+	 Tiempo Medio de Retorno: 94,65 - Tiempo Medio de Espera: 93,75 
+
+	   P03            P11         
+	BM ██▊██▊██▊██▊██▊██▊██▊██▊██▊ 9
+	     0              5         
+	   P10         P12                                                P18                                             P20            
+	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	     0           4                                                 21                                              37             42
+	   P05                           P09                              P14                  P02                                    P17   
+	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	    42                            52                               63                   70                                     83 84
+	   P17                                 P19                                       P13                                             
+	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	    84                                  96                                       110                                             126
+	   P16         P07                              P06                           P01                                 P08               
+	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	   126         130                              141                           151                                 163            168
+	   P08   P04                        P15                                                   P03
+	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊▎
+	   168   170                        179                                                   197
+
+	 T=201 - Memoria usada: 4/9 
+	┌───┬───┬───┬───┬────┬────┬────┬────┬────┬────────────┐
+	│Ref│Tll│Tej│Mem│MIni│MFin│Tesp│Tret│Trej│   Estado   │
+	│P10│  0│  4│  9│ -- │ -- │  0 │  4 │  0 │ Finalizado │
+	│P12│  1│ 17│  9│ -- │ -- │  3 │ 20 │  0 │ Finalizado │
+	│P18│  1│ 16│  7│ -- │ -- │ 20 │ 36 │  0 │ Finalizado │
+	│P20│  2│  5│  6│ -- │ -- │ 35 │ 40 │  0 │ Finalizado │
+	│P05│  3│ 10│  7│ -- │ -- │ 39 │ 49 │  0 │ Finalizado │
+	│P09│  3│ 11│  5│ -- │ -- │ 49 │ 60 │  0 │ Finalizado │
+	│P14│  3│  7│  4│ -- │ -- │ 60 │ 67 │  0 │ Finalizado │
+	│P02│  5│ 13│  9│ -- │ -- │ 65 │ 78 │  0 │ Finalizado │
+	│P17│  5│ 13│  2│ -- │ -- │ 78 │ 91 │  0 │ Finalizado │
+	│P19│  5│ 14│  8│ -- │ -- │ 91 │ 105│  0 │ Finalizado │
+	│P13│  6│ 16│  6│ -- │ -- │ 104│ 120│  0 │ Finalizado │
+	│P16│  8│  4│  1│ -- │ -- │ 118│ 122│  0 │ Finalizado │
+	│P07│ 10│ 11│  4│ -- │ -- │ 120│ 131│  0 │ Finalizado │
+	│P06│ 11│ 10│  5│ -- │ -- │ 130│ 140│  0 │ Finalizado │
+	│P01│ 12│ 12│  3│ -- │ -- │ 139│ 151│  0 │ Finalizado │
+	│P08│ 13│  7│  6│ -- │ -- │ 150│ 157│  0 │ Finalizado │
+	│P04│ 16│  9│  3│ -- │ -- │ 154│ 163│  0 │ Finalizado │
+	│P15│ 17│ 18│  5│ -- │ -- │ 162│ 180│  0 │ Finalizado │
+	│P03│ 18│  4│  5│ -- │ -- │ 179│ 183│  0 │ Finalizado │
+	│P11│ 18│ 11│  4│  5 │  8 │ 183│ 183│ 11 │En Ejecución│
+	└───┴───┴───┴───┴────┴────┴────┴────┴────┴────────────┘
+	 Tiempo Medio de Retorno: 104,00 - Tiempo Medio de Espera: 93,95 
+
+	                  P11         
+	BM ░░░░░░░░░░░░░░░██▊██▊██▊██▊ 9
+	     0              5         
+	   P10         P12                                                P18                                             P20            
+	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	     0           4                                                 21                                              37             42
+	   P05                           P09                              P14                  P02                                    P17   
+	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	    42                            52                               63                   70                                     83 84
+	   P17                                 P19                                       P13                                             
+	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	    84                                  96                                       110                                             126
+	   P16         P07                              P06                           P01                                 P08               
+	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	   126         130                              141                           151                                 163            168
+	   P08   P04                        P15                                                   P03         P11
+	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊▎
+	   168   170                        179                                                   197         201
+
+	 T=212 - Memoria usada: 0/9 
+	┌───┬───┬───┬───┬────┬────┬────┬────┬────┬──────────┐
+	│Ref│Tll│Tej│Mem│MIni│MFin│Tesp│Tret│Trej│  Estado  │
+	│P10│  0│  4│  9│ -- │ -- │  0 │  4 │  0 │Finalizado│
+	│P12│  1│ 17│  9│ -- │ -- │  3 │ 20 │  0 │Finalizado│
+	│P18│  1│ 16│  7│ -- │ -- │ 20 │ 36 │  0 │Finalizado│
+	│P20│  2│  5│  6│ -- │ -- │ 35 │ 40 │  0 │Finalizado│
+	│P05│  3│ 10│  7│ -- │ -- │ 39 │ 49 │  0 │Finalizado│
+	│P09│  3│ 11│  5│ -- │ -- │ 49 │ 60 │  0 │Finalizado│
+	│P14│  3│  7│  4│ -- │ -- │ 60 │ 67 │  0 │Finalizado│
+	│P02│  5│ 13│  9│ -- │ -- │ 65 │ 78 │  0 │Finalizado│
+	│P17│  5│ 13│  2│ -- │ -- │ 78 │ 91 │  0 │Finalizado│
+	│P19│  5│ 14│  8│ -- │ -- │ 91 │ 105│  0 │Finalizado│
+	│P13│  6│ 16│  6│ -- │ -- │ 104│ 120│  0 │Finalizado│
+	│P16│  8│  4│  1│ -- │ -- │ 118│ 122│  0 │Finalizado│
+	│P07│ 10│ 11│  4│ -- │ -- │ 120│ 131│  0 │Finalizado│
+	│P06│ 11│ 10│  5│ -- │ -- │ 130│ 140│  0 │Finalizado│
+	│P01│ 12│ 12│  3│ -- │ -- │ 139│ 151│  0 │Finalizado│
+	│P08│ 13│  7│  6│ -- │ -- │ 150│ 157│  0 │Finalizado│
+	│P04│ 16│  9│  3│ -- │ -- │ 154│ 163│  0 │Finalizado│
+	│P15│ 17│ 18│  5│ -- │ -- │ 162│ 180│  0 │Finalizado│
+	│P03│ 18│  4│  5│ -- │ -- │ 179│ 183│  0 │Finalizado│
+	│P11│ 18│ 11│  4│ -- │ -- │ 183│ 194│  0 │Finalizado│
+	└───┴───┴───┴───┴────┴────┴────┴────┴────┴──────────┘
+	 Tiempo Medio de Retorno: 104,55 - Tiempo Medio de Espera: 93,95 
+
+	                              
+	BM ░░░░░░░░░░░░░░░░░░░░░░░░░░░ 9
+	     0                        
+	   P10         P12                                                P18                                             P20            
+	BT ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	     0           4                                                 21                                              37             42
+	   P05                           P09                              P14                  P02                                    P17   
+	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	    42                            52                               63                   70                                     83 84
+	   P17                                 P19                                       P13                                             
+	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	    84                                  96                                       110                                             126
+	   P16         P07                              P06                           P01                                 P08               
+	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	   126         130                              141                           151                                 163            168
+	   P08   P04                        P15                                                   P03         P11                           
+	   ██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊██▊
+	   168   170                        179                                                   197         201                        210
+	   P11      
+	   ██▊██▊
+	   210   212
