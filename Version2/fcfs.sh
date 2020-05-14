@@ -110,7 +110,7 @@ function extraerDeConfig() {
 # ----------------------------------
 function recibirEntrada() {
   local mensaje
-  mensaje="$(printf "$(cc Neg blanco)%20s$(fc)" "⌨ Respuesta: ")"
+  mensaje="$(printf "$(cc Neg blanco)%15s$(fc)" "Respuesta: ")"
 
   read -r -p "$mensaje "
   echo "$REPLY"
@@ -291,7 +291,7 @@ function asignarManual() {
     centrarEnPantalla "$(imprimirCuadro "50" "blanco" "Tamaño de la memoria")" "n"
     memTemp=$(recibirEntrada)
 
-    while [[ $(entradaEsEntero "$MEM_TAM" "1") != "true" ]]; do
+    while [[ $(entradaEsEntero "$memTemp" "1") != "true" ]]; do
       printf "\n"
       centrarEnPantalla "$(imprimirCuadro "50" "error" "$(printf "Valor de tamaño de memoria no\nválido, mayor o igual que 1")")" "n"
       memTemp=$(recibirEntrada)
@@ -1915,19 +1915,19 @@ function main() {
  █ ▄▄▄ █ ▀ ▀ ▄█▀█▀ █ ▀▄█▄▀ █ ▄▄▄ █
  █ ███ █ ▀█▀ ▀ ▀█▄▀ █▄▄█▄  █ ███ █
  █▄▄▄▄▄█ █▀▄▀█ ▄ ▄ ▄ ▄ ▄ ▄ █▄▄▄▄▄█
- ▄▄▄▄▄ ▄▄▄█▀█  ▀ █▄█▀▄▀█ ▄▄ ▄ ▄ ▄ 
+ ▄▄▄▄▄ ▄▄▄█▀█  ▀ █▄█▀▄▀█ ▄▄ ▄ ▄ ▄
  ▀▄▄ ▀▄▄▄▄ █ ▀███▄█▀▀█▄ ▀▄ ▀▄▄▄▀█▀
- █▀██ ▄▄ ▄▄▄ █▀▄█ ▄ ▀ ▀█ ▄█▀▄█▄▀  
+ █▀██ ▄▄ ▄▄▄ █▀▄█ ▄ ▀ ▀█ ▄█▀▄█▄▀
  █▄█ █ ▄ ██▄▄▄  ▀▀  ▀█▀▀  ▄██▄  █▀
- ▄▄▀▄██▄▄█▄▀█  ▀ ▀▄▀▀▄▀█  █▀█▄ ▀▄ 
+ ▄▄▀▄██▄▄█▄▀█  ▀ ▀▄▀▀▄▀█  █▀█▄ ▀▄
   ▀▄▀▄█▄█ █▀ ▀███ ▄▄▀█ ▄▀▄▄█  █ █▀
- ▄▄▄  ▀▄█ █▀ █▀▄ ▀▄▀▄▀▀██▄▀  ▄ ▀▄ 
+ ▄▄▄  ▀▄█ █▀ █▀▄ ▀▄▀▄▀▀██▄▀  ▄ ▀▄
  █ █  █▄▄▀██▄▄  ▄█ ▀▀ █▀▀ ▄█▄ █ █▀
  █ ▄███▄▀█ ▄█  ▀█ ▄ ▄ ▀  █████▀▀ ▄
  ▄▄▄▄▄▄▄ █▀█ ▀██▄▀ ▀▀█▄▄▄█ ▄ ██▀▄▀
  █ ▄▄▄ █ ▄█▄ █▀▄▄█▄▄▀▄▀█▀█▄▄▄█▀▀█▀
  █ ███ █ █ █▄▄  ▄██▀▀█▀ ▄▄▀▄▀▀▄▄▀▀
- █▄▄▄▄▄█ █▄▄█  ▀▀     ▀▄█▄▄▀▀ █▀▄ 
+ █▄▄▄▄▄█ █▄▄█  ▀▀     ▀▄█▄▄▀▀ █▀▄
  "
     clear
     printf "\n"
