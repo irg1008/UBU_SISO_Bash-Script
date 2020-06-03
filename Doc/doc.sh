@@ -1,6 +1,11 @@
 #!/bin/bash
 
 # Pequeño documento para generar la documentacion en html, adoc y pdf en la carpeta doc/zsdoc
+# Si quieres ejecutarlo necesitarás los siguientes paquetes:
+# 	-> zsd
+# 	-> asciidoctor
+# 	-> pandoc
+# Puedes descargarlos desde tu gestor de paquetes favoritos, apt, pacman, etc...
 
 # Adoc
 #------
@@ -14,7 +19,7 @@ function generarHTML() {
     asciidoctor zsdoc/fcfs.sh.adoc
 }
 
-# PDf
+# PDF
 #------
 function generarPDF() {
     asciidoctor -b pdf -r asciidoctor-pdf zsdoc/fcfs.sh.adoc
