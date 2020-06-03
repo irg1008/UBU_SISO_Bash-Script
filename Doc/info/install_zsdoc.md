@@ -1,6 +1,6 @@
 ## Información de instalación de "zsdoc"
 
-# Requisitos:
+#### Requisitos:
 
 - Git para la instalación
     $ sudo apt install git
@@ -29,7 +29,7 @@
     $ sudo apt install pandoc
     $ pacman -S pandoc (ArchLinux)
 
-# Pasos:
+### Pasos:
 
 1. Clonamos el repositorio de "ZSHELLDOC"
     $ git clone https://github.com/zdharma/zshelldoc
@@ -42,7 +42,7 @@
 
 Ya podemos documentar cualquier script con las anteriores herramientas.
 
-# Documentar un Script
+### Documentar un Script
 
 1. Generar ADOC: 
     $ zsd --scomm --bash "$path_script"
