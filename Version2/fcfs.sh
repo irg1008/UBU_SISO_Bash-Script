@@ -170,6 +170,24 @@ function eliminarProcesosNoValidos() {
   eliminarNoValido
 }
 
+# Asigna los colores usados en todo el algoritmo
+# @param Desde una posicion(n) o desde el principio("")
+# ----------------------------------
+function asignarColores() {
+  local -i pos="1"
+  local -i posFinal="$NUM_FIL"
+
+  if [[ "$1" != "" ]]; then
+    pos="$1"
+    posFinal="$1"
+  fi
+
+  for ((i = pos; i <= posFinal; i++)); do
+    serieColores[$i]=$(cc Nor "$((i + 4))")
+    serieColores_FG[$i]=$(cc Nor "$((i + 4))" "fg")
+  done
+}
+
 # Funcion para elegir el tipo de entrada de datos
 # @param archivo externo para la opcion de archivo
 # ----------------------------------
@@ -224,12 +242,14 @@ function elegirTipoDeEntrada() {
     asignarDesdeArchivo "$1"
     eliminarProcesosNoValidos
     colocarNombreAProcesos
+    asignarColores
     ;;
   3)
     guardaTipoEnArchivo "aleatoria"
     asignarValoresAleatorios
     volcarDatosHaciaArchivo "$1"
     colocarNombreAProcesos
+    asignarColores
     ;;
   4)
     imprimirAyuda
@@ -400,11 +420,12 @@ function asignarManual() {
   NUM_FIL="1"
   tamMemoria
   while [[ "$masProcesos" != "false" && "$NUM_FIL" -lt "100" ]]; do
+    asignarColores "$NUM_FIL"
     colocarNombreAlProceso "$NUM_FIL"
     guardarLlegadaProceso "$NUM_FIL"
     guardarTiempoEjecucion "$NUM_FIL"
     guardarTamMemoria "$NUM_FIL"
-    ordenarArray
+    ordenarArray -c
     comprobarSiMasProcesos
   done
 }
@@ -718,7 +739,7 @@ function imprimirMemoria() {
       # SEGUNDA FILA
       # Solo ponemos el nombre de la banda en la primera fila de truncado
       if [[ "$i" -lt "$anchoTruncado" ]]; then
-        printf "\t$(cc Neg blanco fg)%-*s$(fc)%s" "$(calcularLongitud "$espacios")" "BM" "$(imprimirSegundaFila)"
+        printf "\t$(cc Neg blanco fg)%-*s$(fc)%s" "$(calcularLongitud "$espacios")" "BM|" "$(imprimirSegundaFila)"
       else
         printf "\t$(cc Neg blanco fg)%-*s$(fc)%s" "$(calcularLongitud "$espacios")" "$espacios" "$(imprimirSegundaFila)"
       fi
@@ -839,7 +860,7 @@ function imprimirLineaProcesos() {
       # SEGUNDA FILA
       # Solo ponemos el nombre de la banda en la primera fila de truncado
       if [[ "$posicion" -lt "anchoTruncado" ]]; then
-        printf "\t$(cc Neg blanco fg)%-*s$(fc)%s\n" "$(calcularLongitud "$espacios")" "BT" "$(imprimirSegundaFila "$1")"
+        printf "\t$(cc Neg blanco fg)%-*s$(fc)%s\n" "$(calcularLongitud "$espacios")" "BT|" "$(imprimirSegundaFila "$1")"
       else
         printf "\t$(cc Neg blanco fg)%-*s$(fc)%s\n" "$(calcularLongitud "$espacios")" "$espacios" "$(imprimirSegundaFila "$1")"
       fi
@@ -859,11 +880,11 @@ function imprimirLineaProcesos() {
 function asignarDatosInicial() {
   for ((i = 1; i <= NUM_FIL; i++)); do
     array[$PROC_EST, $i]="${estados[0]}"
-    array[$PROC_EJE_RES, $i]="--"
-    array[$PROC_RES, $i]="--"
-    array[$PROC_ESP, $i]="--"
-    array[$PROC_TAM_INI, $i]="--"
-    array[$PROC_TAM_FIN, $i]="--"
+    array[$PROC_EJE_RES, $i]="$stringNoAsignado"
+    array[$PROC_RES, $i]="$stringNoAsignado"
+    array[$PROC_ESP, $i]="$stringNoAsignado"
+    array[$PROC_TAM_INI, $i]="$stringNoAsignado"
+    array[$PROC_TAM_FIN, $i]="$stringNoAsignado"
   done
 
   MEM_USE="0"
@@ -1205,10 +1226,9 @@ function imprimirCuadro() {
 # @param numeroDeColumnaDelQueEmpezamos
 # ----------------------------------
 function imprimirTabla() {
-  local titulos
+  local -a titulos
   local colorEncabezado
   local colorBordes
-  local -a serieColoresTabla_FG
   local estiloTabla
   local -A anchoCelda
   local filasImprimir
@@ -1235,14 +1255,14 @@ function imprimirTabla() {
       # Otorgamos un nuevo hueco y movemos todo hacia arriba
       # La linea pasada se limpia para poder ser escrita con los nuevos datos.
       for ((numFila = filasImprimir; numFila > nodo; numFila--)); do
-        serieColoresTabla_FG[$numFila]="${serieColoresTabla_FG[$((numFila - salto))]}"
+        serieColores_FG[$numFila]="${serieColores_FG[$((numFila - salto))]}"
         for ((numColum = 1; numColum <= NUM_COL; numColum++)); do
           arrayCopia[$numColum, $numFila]="${arrayCopia[$numColum, $((numFila - salto))]}"
         done
       done
 
       for ((numFila = nodo; numFila > proc; numFila--)); do
-        serieColoresTabla_FG[$numFila]="${serieColoresTabla_FG[$proc]}"
+        serieColores_FG[$numFila]="${serieColores_FG[$proc]}"
         for ((numColum = 1; numColum <= NUM_COL; numColum++)); do
           arrayCopia[$numColum, $((proc + 1))]=""
         done
@@ -1301,7 +1321,16 @@ function imprimirTabla() {
   # Asigna el titulo de la tabla
   # ----------------------------------
   function asignarTitulos() {
-    titulos=("Ref" "Tll" "Tej" "Mem" "MIni" "MFin" "Tesp" "Tret" "Trej" "Estado")
+    titulos[$((PROC_NUM - 1))]="Ref"
+    titulos[$((PROC_LLE - 1))]="Tll"
+    titulos[$((PROC_EJE - 1))]="Tej"
+    titulos[$((PROC_TAM - 1))]="Mem"
+    titulos[$((PROC_TAM_INI - 1))]="MIni"
+    titulos[$((PROC_TAM_FIN - 1))]="MFin"
+    titulos[$((PROC_ESP - 1))]="Tesp"
+    titulos[$((PROC_RES - 1))]="Tret"
+    titulos[$((PROC_EJE_RES - 1))]="Trej"
+    titulos[$((PROC_EST - 1))]="Estado"
   }
 
   # Guarda los colores de la tabla
@@ -1309,9 +1338,6 @@ function imprimirTabla() {
   function guardarColoresDeTabla() {
     colorEncabezado=$(cc Sub blanco fg)
     colorBordes=$(cc Neg blanco fg)
-    for ((i = 1; i <= NUM_FIL; i++)); do
-      serieColoresTabla_FG[$i]=$(cc Nor "$((i + 4))" "fg")
-    done
   }
 
   # Imprime los titulos de las columnas de datos
@@ -1406,6 +1432,7 @@ function imprimirTabla() {
   # ----------------------------------
   function imprimir() {
     local longitudArray
+    longitudArray="0"
 
     # Encabezado Y Titulos
     # ----------------------------------
@@ -1421,12 +1448,19 @@ function imprimirTabla() {
     function datos() {
       for ((k = 1; k <= filasImprimir; k++)); do
         for ((j = numColComienzo; j <= columnasImprimir; j++)); do
-          # Celda
-          longitudArray=$(calcularLongitud "${arrayCopia[$j, $k]}")
-          if [[ "$j" -gt "1" && "$j" -lt "5" ]]; then
-            printf "${estiloTabla[10]}${serieColoresTabla_FG[$k]}%*s$(fc)" "${anchoCelda[$j]}" "${arrayCopia[$j, $k]}"
+          # Filas numéricas a la derecha
+          if [[ "$j" -gt "1" && "$j" -lt "8" ]] || [[ "$j" == "9" ]] || [[ "$j" == "10" ]]; then
+            # Derecha
+            printf "${estiloTabla[10]}${serieColores_FG[$k]}%*s$(fc)" "${anchoCelda[$j]}" "${arrayCopia[$j, $k]}"
+          # Filas de strings a la izquierda
           else
-            printf "${estiloTabla[10]}%-*s${serieColoresTabla_FG[$k]}%s$(fc)%*s" "$((anchoCelda[$j] / 2 - longitudArray / 2))" "" "${arrayCopia[$j, $k]}" "$(((anchoCelda[$j] + 1) / 2 - (longitudArray + 1) / 2))" ""
+            # Añadimos un hueco a "En ejecución" porque la tilde borra un espacio. Por cieto, WTF!
+            if [[ "$j" == "$PROC_EST" && "${arrayCopia[$j, $k]}" == "${estados[3]}" ]]; then
+              longitudArray="1"
+            fi
+            # Izquierda
+            printf "${estiloTabla[10]}${serieColores_FG[$k]}%-*s$(fc)" "$((anchoCelda[$j] + longitudArray))" "${arrayCopia[$j, $k]}"
+            longitudArray="0"
           fi
         done
         printf "${estiloTabla[10]}%s\n" ""
@@ -1458,20 +1492,42 @@ function imprimirTabla() {
   imprimir
 }
 
-# Ordena el array según tiempo de llegada para mostrar la tabla
+# Ordena el array según tiempo de llegada para mostrar la tabla.
+# @param col Movemos también los colores.
 # ----------------------------------
 function ordenarArray() {
+  local movemosColor="$1"
 
   # Funcion que mueve la fila completa por la siguiente
   # ----------------------------------
   function moverFilaCompleta() {
     local temp
+    local fila="$1"
 
     for ((col = 1; col <= NUM_COL; col++)); do
-      temp="${array[$col, $1]}"
-      array[$col, $1]="${array[$col, $(($1 + 1))]}"
-      array[$col, $(($1 + 1))]="$temp"
+      temp="${array[$col, $fila]}"
+      array[$col, $fila]="${array[$col, $(($fila + 1))]}"
+      array[$col, $(($fila + 1))]="$temp"
     done
+  }
+
+  # Movemos también el color
+  # ----------------------------------
+  function moverColor() {
+    local temp
+    local fila="$1"
+
+    temp="${serieColores_FG[$fila]}"
+    if [[ "$temp" != "" ]]; then
+      serieColores_FG[$fila]="${serieColores_FG[$((fila + 1))]}"
+      serieColores_FG[$(($fila + 1))]="$temp"
+    fi
+
+    temp="${serieColores[$fila]}"
+    if [[ "$temp" != "" ]]; then
+      serieColores[$fila]="${serieColores[$((fila + 1))]}"
+      serieColores[$(($fila + 1))]="$temp"
+    fi
   }
 
   # Ejecuta el algoritmo burbuja
@@ -1487,6 +1543,9 @@ function ordenarArray() {
 
         if [ "$tempOrigen" -gt "$tempDestino" ]; then
           moverFilaCompleta "$j"
+          if [[ "$movemosColor" == "-c" ]]; then
+            moverColor "$j"
+          fi
         fi
       done
     done
@@ -1566,6 +1625,8 @@ function main() {
   declare -a estiloGeneral
   declare -A array
   declare -A arrayCopia
+  declare -a serieColores
+  declare -a serieColores_FG
   declare -i NUM_COL
   declare -i NUM_FIL
   declare -i MEM_TAM
@@ -1598,7 +1659,6 @@ function main() {
   # Extraccion de variables del archivo de config
   # ------------------------------------------------
   function asignaciones() {
-
     # Asigna las variables extraidas del archivo de ocnfiguración
     # ----------------------------------
     function asignarConfigs() {
@@ -1622,14 +1682,14 @@ function main() {
       PROC_LLE="2"
       PROC_EJE="3"
       PROC_TAM="4"
-      PROC_TAM_INI="5"
-      PROC_TAM_FIN="6"
-      PROC_ESP="7"
-      PROC_RES="8"
-      PROC_EJE_RES="9"
-      PROC_EST="10"
+      PROC_ESP="5"
+      PROC_RES="6"
+      PROC_EJE_RES="7"
+      PROC_EST="8"
+      PROC_TAM_INI="9"
+      PROC_TAM_FIN="10"
 
-      NUM_COL="$PROC_EST" # Ya que siempre esta columna va a ser la última
+      NUM_COL="$PROC_TAM_FIN" # Ya que siempre esta columna va a ser la última
     }
 
     asignarConfigs
@@ -1668,24 +1728,31 @@ function main() {
     local stringVacio
     local instante
     local acabarAlgoritmo
-    local -a serieColores
-    local -a serieColores_FG
     local colorVacio
     procesosEnCPU=()
     acabarAlgoritmo="false"
     stringVacio="null"
+    stringNoAsignado="--"
 
     # Imprime una cabecera muy simple
     # ----------------------------------
     function algCabecera() {
-      centrarEnPantalla "$(imprimirCuadro "50" "acierto" "$acierto")"
+      if [[ "$1" == "-c" ]]; then
+        centrarEnPantalla "$(imprimirCuadro "50" "acierto" "$acierto")"
+      else
+        centrarEnPantalla "$(printf "$(cc Neg acierto) %s $(fc)" "$acierto")"
+      fi
     }
 
     # Calcula los siguientes datos a mostrar
     # ----------------------------------
     function algCalcularSigIns() {
       printf "\n"
-      centrarEnPantalla "$(printf "$(cc Neg 3) %s $(fc)" "T=$instante - Memoria usada: $MEM_USE/$MEM_TAM")"
+
+      # Con Color
+      # centrarEnPantalla "$(printf "$(cc Neg 3) %s $(fc)" "T=$instante - Memoria usada: $MEM_USE/$MEM_TAM")"
+      # Sin Color
+      centrarEnPantalla "$(printf "$(cc Neg blanco fg) %s $(fc)" "T=$instante - Memoria usada: $MEM_USE/$MEM_TAM")"
     }
 
     # Calcula los tiempos medios de respuesta y espera
@@ -1697,10 +1764,10 @@ function main() {
       mediaRespuesta="0"
 
       for ((i = 1; i <= NUM_FIL; i++)); do
-        if [[ "${array[$PROC_RES, $i]}" != "--" ]]; then
+        if [[ "${array[$PROC_RES, $i]}" != "$stringNoAsignado" ]]; then
           mediaRespuesta+="${array[$PROC_RES, $i]}"
         fi
-        if [[ "${array[$PROC_ESP, $i]}" != "--" ]]; then
+        if [[ "${array[$PROC_ESP, $i]}" != "$stringNoAsignado" ]]; then
           mediaEspera+="${array[$PROC_ESP, $i]}"
         fi
       done
@@ -1720,7 +1787,10 @@ function main() {
         printf "%.2f" "$((mediaEspera / NUM_FIL))e-2"
       }
 
-      centrarEnPantalla "$(printf "$(cc Neg 3) %s $(fc)" "Tiempo Medio de Retorno: $(sacarMediaRespuesta) - Tiempo Medio de Espera: $(sacarMediaEspera)")" "n"
+      # Con Color
+      # centrarEnPantalla "$(printf "$(cc Neg 3) %s $(fc)" "Tiempo Medio de Retorno: $(sacarMediaRespuesta) - Tiempo Medio de Espera: $(sacarMediaEspera)")" "n"
+      # Sin Color
+      centrarEnPantalla "$(printf "$(cc Neg blanco fg) %s $(fc)" "Tiempo Medio de Retorno: $(sacarMediaRespuesta) - Tiempo Medio de Espera: $(sacarMediaEspera)")" "n"
     }
 
     # Funcion que calcula el tiempo y estado de todos los proceos en cada instante,
@@ -1793,12 +1863,8 @@ function main() {
 
     # Asigna los colores que llevaran los procesos y todas las lineas en las que esten presentados
     # ----------------------------------
-    function algAsignarSerieDeColores() {
+    function algAsignarColorVacio() {
       colorVacio="$(cc Nor blanco)" # Cuando la memoria esta vacia debe ser blanco
-      for ((i = 1; i <= NUM_FIL; i++)); do
-        serieColores[$i]=$(cc Nor "$((i + 4))")
-        serieColores_FG[$i]=$(cc Nor "$((i + 4))" "fg")
-      done
     }
 
     # Main de las llamadas de la parte de calculo de algoritmo
@@ -1808,8 +1874,8 @@ function main() {
     algoritmoComienza="true"
     ordenarArray
     asignarDatosInicial
-    algAsignarSerieDeColores
-    algCabecera >>"$archivoSalida" -a
+    algAsignarColorVacio
+    algCabecera "-c" -a >>"$archivoSalida"
 
     while [[ $(procesosHanTerminado) != "true" ]]; do
       copiarArray
@@ -1822,6 +1888,7 @@ function main() {
         if [[ "$acabarAlgoritmo" == "true" ]]; then
           algCuerpoAlgoritmo >>"$archivoSalida"
         else
+          algCabecera
           algCuerpoAlgoritmo | sacarHaciaArchivo "$archivoSalida" -a
           algAvanzarAlgoritmo
         fi
@@ -1911,28 +1978,25 @@ function main() {
     local spam
     local gitSpam=("¡Gracias por usar nuestro algoritmo!" "Visita nuestro repositorio aquí abajo")
     spam="
- ▄▄▄▄▄▄▄   ▄ ▄▄▄▄   ▄▄  ▄▄ ▄▄▄▄▄▄▄
- █ ▄▄▄ █ ▀ ▀ ▄█▀█▀ █ ▀▄█▄▀ █ ▄▄▄ █
- █ ███ █ ▀█▀ ▀ ▀█▄▀ █▄▄█▄  █ ███ █
- █▄▄▄▄▄█ █▀▄▀█ ▄ ▄ ▄ ▄ ▄ ▄ █▄▄▄▄▄█
- ▄▄▄▄▄ ▄▄▄█▀█  ▀ █▄█▀▄▀█ ▄▄ ▄ ▄ ▄
- ▀▄▄ ▀▄▄▄▄ █ ▀███▄█▀▀█▄ ▀▄ ▀▄▄▄▀█▀
- █▀██ ▄▄ ▄▄▄ █▀▄█ ▄ ▀ ▀█ ▄█▀▄█▄▀
- █▄█ █ ▄ ██▄▄▄  ▀▀  ▀█▀▀  ▄██▄  █▀
- ▄▄▀▄██▄▄█▄▀█  ▀ ▀▄▀▀▄▀█  █▀█▄ ▀▄
-  ▀▄▀▄█▄█ █▀ ▀███ ▄▄▀█ ▄▀▄▄█  █ █▀
- ▄▄▄  ▀▄█ █▀ █▀▄ ▀▄▀▄▀▀██▄▀  ▄ ▀▄
- █ █  █▄▄▀██▄▄  ▄█ ▀▀ █▀▀ ▄█▄ █ █▀
- █ ▄███▄▀█ ▄█  ▀█ ▄ ▄ ▀  █████▀▀ ▄
- ▄▄▄▄▄▄▄ █▀█ ▀██▄▀ ▀▀█▄▄▄█ ▄ ██▀▄▀
- █ ▄▄▄ █ ▄█▄ █▀▄▄█▄▄▀▄▀█▀█▄▄▄█▀▀█▀
- █ ███ █ █ █▄▄  ▄██▀▀█▀ ▄▄▀▄▀▀▄▄▀▀
- █▄▄▄▄▄█ █▄▄█  ▀▀     ▀▄█▄▄▀▀ █▀▄
+▄▄▄▄▄▄▄  ▄▄▄ ▄    ▄   ▄▄▄▄▄▄▄
+█ ▄▄▄ █  ▄▄█▀▀▄▄▀▀▄ ▀ █ ▄▄▄ █
+█ ███ █ █ █▀██  █▀ ▄█ █ ███ █
+█▄▄▄▄▄█ ▄▀█ █ ▄ ▄ ▄ ▄ █▄▄▄▄▄█
+▄▄   ▄▄▄ █▄  ▄ █   ▀█   ▄▄   
+▀▀▄██▀▄█▀▄▀▀ ▀██▄ ▀▀▄▀ ▀█ ▀▀ 
+█▀▀ █▄▄█▀▄█ █ ▀ █ ▀ ▄▀▄▄ ▀  ▄
+█▀   █▄█▀ █▀ ▄▀█  ▀▀█▄▀▀█▄▄▀▀
+  ▀▄█▀▄▀▀▀▄▀▄▄▄▄█▄ █ ▄ █▀▄█ ▀
+█▄ ██▄▄▀▀▀ █▄ ▄█▀  █  ▀▀█▄▀▀█
+█ █▀ ▀▄█   █▄▄█▀▀▄█▄█▄█▄▄ ▄▄▄
+▄▄▄▄▄▄▄ █▄▀▀█▄ █▄█▀▄█ ▄ ██▄  
+█ ▄▄▄ █ ▀▄▄▄   █   ██▄▄▄█▄ █▄
+█ ███ █   █▀▄▀ ██▄▄███▄▄▄███▀
+█▄▄▄▄▄█ █   ▀▄▄ ▀▄ ▄  ██▄▀█ ▀
  "
     clear
-    printf "\n"
-    centrarEnPantalla "$(imprimirCuadro "50" "acierto" "${gitSpam[@]}")" "n"
-    centrarEnPantalla "$(imprimirCuadro "38" "default" "$spam")" "n"
+    centrarEnPantalla "$(imprimirCuadro "50" "acierto" "${gitSpam[0]}")" "n"
+    # centrarEnPantalla "$(imprimirCuadro "33" "default" "$spam")" "n"
   }
   # ------------------------------------------------
 

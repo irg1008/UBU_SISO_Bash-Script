@@ -5,7 +5,7 @@ Asignatura = ["Sistemas Operativos", "2019-2020"]
 
 [mensajes]
 errorGeneral = "☒ Esto es un error ☒"
-mensajeAlgoritmo = "☑ Ejecutando algoritmo | FCFS-SN-NCNR ☑"
+mensajeAlgoritmo = "☑ Ejecutando algoritmo FCFS SN NC NR ☑"
 advertenciaGeneral = "⚠ Esto es solo un aviso ⚠"
 
 [archivos]
