@@ -1,6 +1,0 @@
-fcfs.sh/asignarDesdeArchivo: fcfs.sh/centrarEnPantalla  fcfs.sh/sacarHaciaArchivo  fcfs.sh/avanzarAlgoritmo  fcfs.sh/elegirTipoDeEntrada
-fcfs.sh/asignarEstadosSegunInstante: fcfs.sh/calcularMemoriaRestante
-fcfs.sh/asignarValoresAleatorios: fcfs.sh/centrarEnPantalla
-fcfs.sh/elegirTipoDeEntrada: fcfs.sh/centrarEnPantalla  fcfs.sh/sacarHaciaArchivo  fcfs.sh/asignarManual  fcfs.sh/asignarDesdeArchivo  fcfs.sh/eliminarProcesosNoValidos  fcfs.sh/asignarValoresAleatorios  fcfs.sh/imprimirAyuda  fcfs.sh/colocarNombreAProcesos
-fcfs.sh/imprimirAyuda: fcfs.sh/centrarEnPantalla  fcfs.sh/sacarHaciaArchivo  fcfs.sh/elegirTipoDeEntrada
-fcfs.sh/zsd_script_body: fcfs.sh/main

@@ -1,6 +1,0 @@
-# Devuelve la expresión completa de color, pasándole los parámetros
-# que queremos en orden
-# @param tipoEspecial (Negrita=Neg, Subrayado=Sub, Normal=Nor, Parpadeo=Par)
-# @param (valor random, default,  error, acierto, fg aleatorio sobre bg negro
-# o lista de colores en orden)
-# ----------------------------------

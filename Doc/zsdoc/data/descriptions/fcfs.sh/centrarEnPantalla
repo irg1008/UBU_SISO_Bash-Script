@@ -1,4 +1,0 @@
-# Centra en pantalla el valor pasado, si es un string, divide por saltos de
-# linea y coloca cada linea en el centro
-# @param string a centrar
-# ----------------------------------

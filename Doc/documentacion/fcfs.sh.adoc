@@ -1,18 +1,23 @@
-fcfs.sh(1)
-==========
+FCFS - Según Necesidades - No Continua - No Reubicable
+======================================================
 :compat-mode!:
+:toc: left
 
-NAME
-----
-fcfs.sh - a shell script
+ALUMNO
+------
+* Iván Ruiz Gázquez
+* Sistemas Operativos
+* Curso 2019-2020
 
-SYNOPSIS
---------
-FCFS según necesidades memoria no continua y no reubicable
+INFORMACIÓN
+-----------
+Script que simula la ejecución de un algoritmo FCFS en sistemas operativos
+
 
 FUNCTIONS
 ---------
 
+ asignarColores
  asignarDatosInicial
  asignarDesdeArchivo
  asignarEstadosSegunInstante
@@ -28,6 +33,7 @@ FUNCTIONS
  centrarEnPantalla
  colocarNombreAProcesos
  comprobarProcesosEjecutando
+ copiarArray
  elegirTipoDeEntrada
  eliminarProcesosNoValidos
  extraerDeConfig
@@ -54,6 +60,23 @@ Has 3 line(s). Calls functions:
  Script-Body
  `-- main
 
+asignarColores
+~~~~~~~~~~~~~~
+
+____
+ 
+ Asigna los colores usados en todo el algoritmo
+ @param Desde una posicion(n) o desde el principio("")
+ ----------------------------------
+____
+
+Has 12 line(s). Doesn't call other functions.
+
+Called by:
+
+ asignarManual
+ elegirTipoDeEntrada
+
 asignarDatosInicial
 ~~~~~~~~~~~~~~~~~~~
 
@@ -63,7 +86,7 @@ ____
  ----------------------------------
 ____
 
-Has 11 line(s). Doesn't call other functions.
+Has 13 line(s). Doesn't call other functions.
 
 Not called by script or any function (may be e.g. command_not_found_handle or called indirectly in other way).
 
@@ -76,13 +99,16 @@ ____
  ----------------------------------
 ____
 
-Has 28 line(s). Calls functions:
+Has 29 line(s). Calls functions:
 
  asignarDesdeArchivo
  |-- avanzarAlgoritmo
  |-- centrarEnPantalla
  |-- elegirTipoDeEntrada
+ |   |-- asignarColores
  |   |-- asignarManual
+ |   |   |-- asignarColores
+ |   |   `-- ordenarArray
  |   |-- asignarValoresAleatorios
  |   |   `-- centrarEnPantalla
  |   |-- centrarEnPantalla
@@ -139,7 +165,11 @@ ____
  ----------------------------------
 ____
 
-Has 94 line(s). Doesn't call other functions.
+Has 117 line(s). Calls functions:
+
+ asignarManual
+ |-- asignarColores
+ `-- ordenarArray
 
 Called by:
 
@@ -156,7 +186,7 @@ ____
  ----------------------------------
 ____
 
-Has 25 line(s). Calls functions:
+Has 29 line(s). Calls functions:
 
  asignarValoresAleatorios
  `-- centrarEnPantalla
@@ -262,11 +292,12 @@ ____
  
  Centra en pantalla el valor pasado, si es un string, divide por saltos de
  linea y coloca cada linea en el centro
- @param string a centrar
+ @param String a centrar
+ @param Si se quiere un espacio al final
  ----------------------------------
 ____
 
-Has 15 line(s). Doesn't call other functions.
+Has 41 line(s). Doesn't call other functions.
 
 Called by:
 
@@ -303,6 +334,21 @@ Has 5 line(s). Doesn't call other functions.
 
 Not called by script or any function (may be e.g. command_not_found_handle or called indirectly in other way).
 
+copiarArray
+~~~~~~~~~~~
+
+____
+ 
+ Hace una copia del array antes de cambiarlo en la ejecucion
+ ----------------------------------
+____
+
+Has 5 line(s). Doesn't call other functions.
+
+Called by:
+
+ imprimirTabla
+
 elegirTipoDeEntrada
 ~~~~~~~~~~~~~~~~~~~
 
@@ -313,14 +359,17 @@ ____
  ----------------------------------
 ____
 
-Has 60 line(s). Calls functions:
+Has 65 line(s). Calls functions:
 
  elegirTipoDeEntrada
+ |-- asignarColores
  |-- asignarDesdeArchivo
  |   |-- avanzarAlgoritmo
  |   |-- centrarEnPantalla
  |   `-- sacarHaciaArchivo
  |-- asignarManual
+ |   |-- asignarColores
+ |   `-- ordenarArray
  |-- asignarValoresAleatorios
  |   `-- centrarEnPantalla
  |-- centrarEnPantalla
@@ -346,7 +395,7 @@ ____
  ----------------------------------
 ____
 
-Has 22 line(s). Doesn't call other functions.
+Has 34 line(s). Doesn't call other functions.
 
 Called by:
 
@@ -362,7 +411,7 @@ ____
  ----------------------------------
 ____
 
-Has 44 line(s). Doesn't call other functions.
+Has 47 line(s). Doesn't call other functions.
 
 Not called by script or any function (may be e.g. command_not_found_handle or called indirectly in other way).
 
@@ -393,11 +442,14 @@ Has 23 line(s). Calls functions:
  imprimirAyuda
  |-- centrarEnPantalla
  |-- elegirTipoDeEntrada
+ |   |-- asignarColores
  |   |-- asignarDesdeArchivo
  |   |   |-- avanzarAlgoritmo
  |   |   |-- centrarEnPantalla
  |   |   `-- sacarHaciaArchivo
  |   |-- asignarManual
+ |   |   |-- asignarColores
+ |   |   `-- ordenarArray
  |   |-- asignarValoresAleatorios
  |   |   `-- centrarEnPantalla
  |   |-- centrarEnPantalla
@@ -439,7 +491,7 @@ ____
  ----------------------------------
 ____
 
-Has 74 line(s). Doesn't call other functions.
+Has 82 line(s). Doesn't call other functions.
 
 Not called by script or any function (may be e.g. command_not_found_handle or called indirectly in other way).
 
@@ -452,7 +504,7 @@ ____
  ----------------------------------
 ____
 
-Has 71 line(s). Doesn't call other functions.
+Has 76 line(s). Doesn't call other functions.
 
 Not called by script or any function (may be e.g. command_not_found_handle or called indirectly in other way).
 
@@ -468,7 +520,10 @@ ____
  ----------------------------------
 ____
 
-Has 126 line(s). Doesn't call other functions.
+Has 199 line(s). Calls functions:
+
+ imprimirTabla
+ `-- copiarArray
 
 Not called by script or any function (may be e.g. command_not_found_handle or called indirectly in other way).
 
@@ -482,7 +537,7 @@ ____
  ----------------------------------
 ____
 
-Has 279 line(s). Doesn't call other functions.
+Has 271 line(s). Doesn't call other functions.
 
 Called by:
 
@@ -493,13 +548,16 @@ ordenarArray
 
 ____
  
- Ordena el array según tiempo de llegada para mostrar la tabla
+ Ordena el array según tiempo de llegada para mostrar la tabla.
+ @param col Movemos también los colores.
  ----------------------------------
 ____
 
-Has 26 line(s). Doesn't call other functions.
+Has 47 line(s). Doesn't call other functions.
 
-Not called by script or any function (may be e.g. command_not_found_handle or called indirectly in other way).
+Called by:
+
+ asignarManual
 
 procesosHanTerminado
 ~~~~~~~~~~~~~~~~~~~~
@@ -539,7 +597,7 @@ ____
  ----------------------------------
 ____
 
-Has 9 line(s). Doesn't call other functions.
+Has 8 line(s). Doesn't call other functions.
 
 Called by:
 

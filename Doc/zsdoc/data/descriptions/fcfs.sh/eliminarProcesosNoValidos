@@ -1,3 +1,0 @@
-# Funcion que elimina las lineas de datos no validas.
-# Estas son las que tienen procesos cuyo tamaño es mayor a la memoria.
-# ----------------------------------

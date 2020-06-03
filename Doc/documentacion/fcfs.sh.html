@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.10">
-<title>fcfs.sh(1)</title>
+<title>FCFS - Según Necesidades - No Continua - No Reubicable</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -436,24 +436,78 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 @media amzn-kf8{#header,#content,#footnotes,#footer{padding:0}}
 </style>
 </head>
-<body class="article">
+<body class="article toc2 toc-left">
 <div id="header">
-<h1>fcfs.sh(1)</h1>
+<h1>FCFS - Según Necesidades - No Continua - No Reubicable</h1>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_alumno">ALUMNO</a></li>
+<li><a href="#_información">INFORMACIÓN</a></li>
+<li><a href="#_functions">FUNCTIONS</a></li>
+<li><a href="#_details">DETAILS</a>
+<ul class="sectlevel2">
+<li><a href="#_script_body">Script Body</a></li>
+<li><a href="#_asignarcolores">asignarColores</a></li>
+<li><a href="#_asignardatosinicial">asignarDatosInicial</a></li>
+<li><a href="#_asignardesdearchivo">asignarDesdeArchivo</a></li>
+<li><a href="#_asignarestadosseguninstante">asignarEstadosSegunInstante</a></li>
+<li><a href="#_asignarestilogeneral">asignarEstiloGeneral</a></li>
+<li><a href="#_asignarmanual">asignarManual</a></li>
+<li><a href="#_asignarvaloresaleatorios">asignarValoresAleatorios</a></li>
+<li><a href="#_avanzaralgoritmo">avanzarAlgoritmo</a></li>
+<li><a href="#_calcularcambioscpu">calcularCambiosCPU</a></li>
+<li><a href="#_calcularcambiosmemoria">calcularCambiosMemoria</a></li>
+<li><a href="#_calcularlongitud">calcularLongitud</a></li>
+<li><a href="#_calcularmemoriarestante">calcularMemoriaRestante</a></li>
+<li><a href="#_cc">cc</a></li>
+<li><a href="#_centrarenpantalla">centrarEnPantalla</a></li>
+<li><a href="#_colocarnombreaprocesos">colocarNombreAProcesos</a></li>
+<li><a href="#_comprobarprocesosejecutando">comprobarProcesosEjecutando</a></li>
+<li><a href="#_copiararray">copiarArray</a></li>
+<li><a href="#_elegirtipodeentrada">elegirTipoDeEntrada</a></li>
+<li><a href="#_eliminarprocesosnovalidos">eliminarProcesosNoValidos</a></li>
+<li><a href="#_extraerdeconfig">extraerDeConfig</a></li>
+<li><a href="#_fc">fc</a></li>
+<li><a href="#_imprimirayuda">imprimirAyuda</a></li>
+<li><a href="#_imprimircuadro">imprimirCuadro</a></li>
+<li><a href="#_imprimirlineaprocesos">imprimirLineaProcesos</a></li>
+<li><a href="#_imprimirmemoria">imprimirMemoria</a></li>
+<li><a href="#_imprimirtabla">imprimirTabla</a></li>
+<li><a href="#_main">main</a></li>
+<li><a href="#_ordenararray">ordenarArray</a></li>
+<li><a href="#_procesoshanterminado">procesosHanTerminado</a></li>
+<li><a href="#_recibirentrada">recibirEntrada</a></li>
+<li><a href="#_sacarhaciaarchivo">sacarHaciaArchivo</a></li>
+</ul>
+</li>
+</ul>
+</div>
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_name">NAME</h2>
+<h2 id="_alumno">ALUMNO</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>fcfs.sh - a shell script</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Iván Ruiz Gázquez</p>
+</li>
+<li>
+<p>Sistemas Operativos</p>
+</li>
+<li>
+<p>Curso 2019-2020</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_synopsis">SYNOPSIS</h2>
+<h2 id="_información">INFORMACIÓN</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>FCFS según necesidades memoria no continua y no reubicable</p>
+<p>Script que simula la ejecución de un algoritmo FCFS en sistemas operativos</p>
 </div>
 </div>
 </div>
@@ -462,7 +516,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="literalblock">
 <div class="content">
-<pre>asignarDatosInicial
+<pre>asignarColores
+asignarDatosInicial
 asignarDesdeArchivo
 asignarEstadosSegunInstante
 asignarEstiloGeneral
@@ -477,6 +532,7 @@ cc
 centrarEnPantalla
 colocarNombreAProcesos
 comprobarProcesosEjecutando
+copiarArray
 elegirTipoDeEntrada
 eliminarProcesosNoValidos
 extraerDeConfig
@@ -511,6 +567,32 @@ sacarHaciaArchivo</pre>
 </div>
 </div>
 <div class="sect2">
+<h3 id="_asignarcolores">asignarColores</h3>
+<div class="quoteblock">
+<blockquote>
+<div class="literalblock">
+<div class="content">
+<pre>Asigna los colores usados en todo el algoritmo
+@param Desde una posicion(n) o desde el principio("")
+----------------------------------</pre>
+</div>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>Has 12 line(s). Doesn&#8217;t call other functions.</p>
+</div>
+<div class="paragraph">
+<p>Called by:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>asignarManual
+elegirTipoDeEntrada</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_asignardatosinicial">asignarDatosInicial</h3>
 <div class="quoteblock">
 <blockquote>
@@ -523,7 +605,7 @@ sacarHaciaArchivo</pre>
 </blockquote>
 </div>
 <div class="paragraph">
-<p>Has 11 line(s). Doesn&#8217;t call other functions.</p>
+<p>Has 13 line(s). Doesn&#8217;t call other functions.</p>
 </div>
 <div class="paragraph">
 <p>Not called by script or any function (may be e.g. command_not_found_handle or called indirectly in other way).</p>
@@ -542,7 +624,7 @@ sacarHaciaArchivo</pre>
 </blockquote>
 </div>
 <div class="paragraph">
-<p>Has 28 line(s). Calls functions:</p>
+<p>Has 29 line(s). Calls functions:</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -550,7 +632,10 @@ sacarHaciaArchivo</pre>
 |-- avanzarAlgoritmo
 |-- centrarEnPantalla
 |-- elegirTipoDeEntrada
+|   |-- asignarColores
 |   |-- asignarManual
+|   |   |-- asignarColores
+|   |   `-- ordenarArray
 |   |-- asignarValoresAleatorios
 |   |   `-- centrarEnPantalla
 |   |-- centrarEnPantalla
@@ -633,7 +718,14 @@ sacarHaciaArchivo</pre>
 </blockquote>
 </div>
 <div class="paragraph">
-<p>Has 94 line(s). Doesn&#8217;t call other functions.</p>
+<p>Has 117 line(s). Calls functions:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>asignarManual
+|-- asignarColores
+`-- ordenarArray</pre>
+</div>
 </div>
 <div class="paragraph">
 <p>Called by:</p>
@@ -659,7 +751,7 @@ de datos automatica, (ni manual ni por archivo)
 </blockquote>
 </div>
 <div class="paragraph">
-<p>Has 25 line(s). Calls functions:</p>
+<p>Has 29 line(s). Calls functions:</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -817,14 +909,15 @@ o lista de colores en orden)
 <div class="content">
 <pre>Centra en pantalla el valor pasado, si es un string, divide por saltos de
 linea y coloca cada linea en el centro
-@param string a centrar
+@param String a centrar
+@param Si se quiere un espacio al final
 ----------------------------------</pre>
 </div>
 </div>
 </blockquote>
 </div>
 <div class="paragraph">
-<p>Has 15 line(s). Doesn&#8217;t call other functions.</p>
+<p>Has 41 line(s). Doesn&#8217;t call other functions.</p>
 </div>
 <div class="paragraph">
 <p>Called by:</p>
@@ -882,6 +975,30 @@ imprimirAyuda</pre>
 </div>
 </div>
 <div class="sect2">
+<h3 id="_copiararray">copiarArray</h3>
+<div class="quoteblock">
+<blockquote>
+<div class="literalblock">
+<div class="content">
+<pre>Hace una copia del array antes de cambiarlo en la ejecucion
+----------------------------------</pre>
+</div>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>Has 5 line(s). Doesn&#8217;t call other functions.</p>
+</div>
+<div class="paragraph">
+<p>Called by:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>imprimirTabla</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_elegirtipodeentrada">elegirTipoDeEntrada</h3>
 <div class="quoteblock">
 <blockquote>
@@ -895,16 +1012,19 @@ imprimirAyuda</pre>
 </blockquote>
 </div>
 <div class="paragraph">
-<p>Has 60 line(s). Calls functions:</p>
+<p>Has 65 line(s). Calls functions:</p>
 </div>
 <div class="literalblock">
 <div class="content">
 <pre>elegirTipoDeEntrada
+|-- asignarColores
 |-- asignarDesdeArchivo
 |   |-- avanzarAlgoritmo
 |   |-- centrarEnPantalla
 |   `-- sacarHaciaArchivo
 |-- asignarManual
+|   |-- asignarColores
+|   `-- ordenarArray
 |-- asignarValoresAleatorios
 |   `-- centrarEnPantalla
 |-- centrarEnPantalla
@@ -940,7 +1060,7 @@ Estas son las que tienen procesos cuyo tamaño es mayor a la memoria.
 </blockquote>
 </div>
 <div class="paragraph">
-<p>Has 22 line(s). Doesn&#8217;t call other functions.</p>
+<p>Has 34 line(s). Doesn&#8217;t call other functions.</p>
 </div>
 <div class="paragraph">
 <p>Called by:</p>
@@ -965,7 +1085,7 @@ Estas son las que tienen procesos cuyo tamaño es mayor a la memoria.
 </blockquote>
 </div>
 <div class="paragraph">
-<p>Has 44 line(s). Doesn&#8217;t call other functions.</p>
+<p>Has 47 line(s). Doesn&#8217;t call other functions.</p>
 </div>
 <div class="paragraph">
 <p>Not called by script or any function (may be e.g. command_not_found_handle or called indirectly in other way).</p>
@@ -1010,11 +1130,14 @@ Estas son las que tienen procesos cuyo tamaño es mayor a la memoria.
 <pre>imprimirAyuda
 |-- centrarEnPantalla
 |-- elegirTipoDeEntrada
+|   |-- asignarColores
 |   |-- asignarDesdeArchivo
 |   |   |-- avanzarAlgoritmo
 |   |   |-- centrarEnPantalla
 |   |   `-- sacarHaciaArchivo
 |   |-- asignarManual
+|   |   |-- asignarColores
+|   |   `-- ordenarArray
 |   |-- asignarValoresAleatorios
 |   |   `-- centrarEnPantalla
 |   |-- centrarEnPantalla
@@ -1073,7 +1196,7 @@ Estas son las que tienen procesos cuyo tamaño es mayor a la memoria.
 </blockquote>
 </div>
 <div class="paragraph">
-<p>Has 74 line(s). Doesn&#8217;t call other functions.</p>
+<p>Has 82 line(s). Doesn&#8217;t call other functions.</p>
 </div>
 <div class="paragraph">
 <p>Not called by script or any function (may be e.g. command_not_found_handle or called indirectly in other way).</p>
@@ -1092,7 +1215,7 @@ Estas son las que tienen procesos cuyo tamaño es mayor a la memoria.
 </blockquote>
 </div>
 <div class="paragraph">
-<p>Has 71 line(s). Doesn&#8217;t call other functions.</p>
+<p>Has 76 line(s). Doesn&#8217;t call other functions.</p>
 </div>
 <div class="paragraph">
 <p>Not called by script or any function (may be e.g. command_not_found_handle or called indirectly in other way).</p>
@@ -1114,7 +1237,13 @@ Estas son las que tienen procesos cuyo tamaño es mayor a la memoria.
 </blockquote>
 </div>
 <div class="paragraph">
-<p>Has 126 line(s). Doesn&#8217;t call other functions.</p>
+<p>Has 199 line(s). Calls functions:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>imprimirTabla
+`-- copiarArray</pre>
+</div>
 </div>
 <div class="paragraph">
 <p>Not called by script or any function (may be e.g. command_not_found_handle or called indirectly in other way).</p>
@@ -1134,7 +1263,7 @@ Main, eje central del algoritmo, única llamada en cuerpo
 </blockquote>
 </div>
 <div class="paragraph">
-<p>Has 279 line(s). Doesn&#8217;t call other functions.</p>
+<p>Has 271 line(s). Doesn&#8217;t call other functions.</p>
 </div>
 <div class="paragraph">
 <p>Called by:</p>
@@ -1151,17 +1280,23 @@ Main, eje central del algoritmo, única llamada en cuerpo
 <blockquote>
 <div class="literalblock">
 <div class="content">
-<pre>Ordena el array según tiempo de llegada para mostrar la tabla
+<pre>Ordena el array según tiempo de llegada para mostrar la tabla.
+@param col Movemos también los colores.
 ----------------------------------</pre>
 </div>
 </div>
 </blockquote>
 </div>
 <div class="paragraph">
-<p>Has 26 line(s). Doesn&#8217;t call other functions.</p>
+<p>Has 47 line(s). Doesn&#8217;t call other functions.</p>
 </div>
 <div class="paragraph">
-<p>Not called by script or any function (may be e.g. command_not_found_handle or called indirectly in other way).</p>
+<p>Called by:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>asignarManual</pre>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -1219,7 +1354,7 @@ Main, eje central del algoritmo, única llamada en cuerpo
 </blockquote>
 </div>
 <div class="paragraph">
-<p>Has 9 line(s). Doesn&#8217;t call other functions.</p>
+<p>Has 8 line(s). Doesn&#8217;t call other functions.</p>
 </div>
 <div class="paragraph">
 <p>Called by:</p>
@@ -1237,7 +1372,7 @@ imprimirAyuda</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-03-22 17:31:38 +0100
+Last updated 2020-06-03 16:37:34 +0200
 </div>
 </div>
 </body>

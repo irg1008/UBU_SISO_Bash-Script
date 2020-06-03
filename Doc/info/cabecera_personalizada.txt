@@ -1,0 +1,16 @@
+FCFS - Según Necesidades - No Continua - No Reubicable
+======================================================
+:compat-mode!:
+:toc: left
+
+ALUMNO
+------
+* Iván Ruiz Gázquez
+* Sistemas Operativos
+* Curso 2019-2020
+
+INFORMACIÓN
+-----------
+Script que simula la ejecución de un algoritmo FCFS en sistemas operativos
+
+

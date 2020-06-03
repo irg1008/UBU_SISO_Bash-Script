@@ -1,9 +1,0 @@
-local archivo
-archivo=$(dirname "$0")
-archivo+="/$1"
-
-if [ "$2" == "-a" ]; then
-  tee -a "$archivo"
-else
-  tee "$archivo"
-fi

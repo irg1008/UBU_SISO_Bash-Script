@@ -1,9 +1,0 @@
-local procHanTerminado="true"
-
-for ((i = 1; i <= NUM_FIL; i++)); do
-  if [[ "${array[$PROC_EST, $i]}" != "${estados[4]}" ]]; then
-    procHanTerminado="false"
-  fi
-done
-
-echo "$procHanTerminado"

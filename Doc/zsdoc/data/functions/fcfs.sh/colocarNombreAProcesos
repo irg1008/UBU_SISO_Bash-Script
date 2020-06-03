@@ -1,7 +1,0 @@
-for ((j = 1; j <= NUM_FIL; j++)); do
-  if [[ "$j" -lt "10" ]]; then
-    array[1, $j]="P0"${j}
-  else
-    array[1, $j]="P"${j}
-  fi
-done

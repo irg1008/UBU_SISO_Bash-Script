@@ -1,7 +1,0 @@
-MEM_USE="0"
-
-for ((k = 0; k <= NUM_FIL; k++)); do
-  if [[ "${array[$PROC_EST, $k]}" == "${estados[2]}" || "${array[$PROC_EST, $k]}" == "${estados[3]}" ]]; then
-    MEM_USE+="${array[$PROC_TAM, $k]}"
-  fi
-done

@@ -1,5 +1,0 @@
-# Imprime una tabla según el tamaño del array de datos
-# @param numeroFilasImprimir
-# @param numeroColumnasImprimir
-# @param numeroDeColumnaDelQueEmpezamos
-# ----------------------------------
