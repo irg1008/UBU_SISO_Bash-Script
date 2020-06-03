@@ -1,76 +1,69 @@
-##Información de instalación de "zsdoc"
-//////////////////////////////////////////////////
+## Información de instalación de "zsdoc"
 
-#Requisitos:
+# Requisitos:
 
-    -Git para la instalación
-        $ sudo apt install git
-        $ sudo pacman -S git (ArchLinux)
+- Git para la instalación
+    $ sudo apt install git
+    $ sudo pacman -S git (ArchLinux)
 
-    -ZSH (otra shell como bash o sh, a veces viene integrada)
-        $ sudo apt install zsh
-        $ sudo pacman -S zsh (ArchLinux)
+- ZSH (otra shell como bash o sh, a veces viene integrada)
+    $ sudo apt install zsh
+    $ sudo pacman -S zsh (ArchLinux)
 
-    -Tree (generar documentación)
-        $ sudo apt install tree
-        $ sudo pacman -S tree (ArchLinux)
+- Tree (generar documentación)
+    $ sudo apt install tree
+    $ sudo pacman -S tree (ArchLinux)
 
-    -Gem (Necesario para las siguientes instalaciones)
-        $ sudo apt install gem
-        $ pacman -S gem (ArchLinux)
+- Gem (Necesario para las siguientes instalaciones)
+    $ sudo apt install gem
+    $ pacman -S gem (ArchLinux)
 
-    -Asciidoctor (convertir la documentación)
-        $ sudo apt install asciidoctor
-        $ sudo gem install asciidoctor (ArchLinux)
+- Asciidoctor (convertir la documentación)
+    $ sudo apt install asciidoctor
+    $ sudo gem install asciidoctor (ArchLinux)
 
-    -Asciidoctor-pdf (generar PDFs)
-        $ sudo gem install asciidoctor-pdf --pre
+- Asciidoctor-pdf (generar PDFs)
+    $ sudo gem install asciidoctor-pdf --pre
 
-    -Pandoc (Generador Docx)
-        $ sudo apt install pandoc
-        $ pacman -S pandoc (ArchLinux)
+- Pandoc (Generador Docx)
+    $ sudo apt install pandoc
+    $ pacman -S pandoc (ArchLinux)
 
-//////////////////////////////////////////////////
+# Pasos:
 
-#Pasos:
+1. Clonamos el repositorio de "ZSHELLDOC"
+    $ git clone https://github.com/zdharma/zshelldoc
+2. Entramos en el
+    $ cd zshelldoc
+3. Hacemos make del repositorio (acceso general)
+    $ make
+4. (Opcional). Podemos eliminar el repositorio descargado
+    $ rm -r zshelldoc
 
-    1. Clonamos el repositorio de "ZSHELLDOC"
-        $ git clone https://github.com/zdharma/zshelldoc
-    2. Entramos en el
-        $ cd zshelldoc
-    3. Hacemos make del repositorio (acceso general)
-        $ make
-    4. (Opcional). Podemos eliminar el repositorio descargado
-        $ rm -r zshelldoc
+Ya podemos documentar cualquier script con las anteriores herramientas.
 
-    Ya podemos documentar cualquier script con las anteriores herramientas.
+# Documentar un Script
 
-//////////////////////////////////////////////////
+1. Generar ADOC: 
+    $ zsd --scomm --bash "$path_script"
+    Generará la carpeta ./zsdoc
+    - --scomm: Elimina "#" de los comentarios
+    - --bash: tipo de shell utilizada en el script a documentar
 
-#Documentar un Script
+2. Generar HTML:
+    $ asciidoctor "$path_adoc"
 
-    1. Generar ADOC: 
-        $ zsd --scomm --bash "$path_script"
-        Generará la carpeta ./zsdoc
-        -\--scomm: Elimina "#" de los comentarios
-        -\--bash: tipo de shell utilizada en el script a documentar
+3. Generar PDF:
+    $ asciidoctor -b pdf -r asciidoctor-pdf "$adoc_path"
 
-    2. Generar HTML:
-        $ asciidoctor "$path_adoc"
+4. Generar DOC:
+    $ asciidoctor --backend docbook --out-file - "$adoc_path" | pandoc --from docbook --to docx --output "./zsdoc/$doc_name.docx"
 
-    3. Generar PDF:
-        $ asciidoctor -b pdf -r asciidoctor-pdf "$adoc_path"
+# Más Información
 
-    4. Generar DOC:
-        $ asciidoctor --backend docbook --out-file - "$adoc_path" | pandoc --from docbook --to docx --output "./zsdoc/$doc_name.docx"
-
-//////////////////////////////////////////////////
-
-#Más Información
-
-    -Cómo modificar un .adoc
+    - Cómo modificar un .adoc
     https://asciidoctor.org/docs/user-manual/
-        -Añadir índice (table of contents)
+        - Añadir índice (table of contents)
             Añadir :toc:
 
 //////////////////////////////////////////////////
