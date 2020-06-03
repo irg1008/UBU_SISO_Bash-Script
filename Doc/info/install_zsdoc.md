@@ -46,7 +46,7 @@ Ya podemos documentar cualquier script con las anteriores herramientas.
 
 1. Generar ADOC: 
     $ zsd --scomm --bash "$path_script"
-    Generará la carpeta ./zsdoc
+    - Generará la carpeta ./zsdoc
     - --scomm: Elimina "#" de los comentarios
     - --bash: tipo de shell utilizada en el script a documentar
 
@@ -65,5 +65,3 @@ Ya podemos documentar cualquier script con las anteriores herramientas.
     https://asciidoctor.org/docs/user-manual/
         - Añadir índice (table of contents)
             Añadir :toc:
-
-//////////////////////////////////////////////////
