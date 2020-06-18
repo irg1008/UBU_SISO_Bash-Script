@@ -32,7 +32,7 @@ function comprobarScript() {
 # Muestra las instrucciones para que el usuario instale todo lo necesario
 #------
 function mostrarInstrucciones() {
-    local install_path="./info/install_zsdoc.md"
+    local install_path="./info/instalar_zsdoc.md"
     local mostrarInstrucciones
 
     # Control de error hasta entrada correcta de ver instrucciones
@@ -118,7 +118,7 @@ function generarPDF() {
 # DOC
 #------
 function generarDOC() {
-    local doc_name=${path_script##*/} 
+    local doc_name=${path_script##*/}
     generando "DOC" & asciidoctor --backend docbook --out-file - "$adoc_path" | pandoc --from docbook --to docx --output "./zsdoc/$doc_name.docx" >/dev/null
 }
 

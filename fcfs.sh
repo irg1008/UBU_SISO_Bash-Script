@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # @title FCFS - Según Necesidades - Memoria No Continua - Memoria No Reubicable
-# @author Iván Ruiz Gázquez <a>ivanaluubu@gmail.com</a>
+# @author Iván Ruiz Gázquez <a mailto="ivanaluubu@gmail.com">¡¡Envíame un email si tienes alguna duda!! Aunque creas que ya no estoy en la Uni, no lo dudes.</a>
 # @version 2019-2020
 #
 # El código se ha hecho de la forma más óptima para que la revisión del
@@ -1975,9 +1975,9 @@ function main() {
   # Saca spam
   # ------------------------------------------------
   function imprimirSpam() {
-    local spam
+    local spam="¡Gracias por usar nuestro algoritmo!"
     clear
-    centrarEnPantalla "$(imprimirCuadro "50" "acierto" "${gitSpam[0]}")" "n"
+    centrarEnPantalla "$(imprimirCuadro "50" "acierto" "$spam")" "n"
   }
   # ------------------------------------------------
 
